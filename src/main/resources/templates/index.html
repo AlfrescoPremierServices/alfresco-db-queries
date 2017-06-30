@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Spring Boot Thymeleaf Hello World Example</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
+
+<body>
+    <script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <a class="navbar-brand" href="/">
+                <img class="media-object media-middle" alt="Alfresco" src="alfresco.png" height="25" width="25"></img>
+            </a>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="largeFolders.html" th:href="@{/largeFolders(size=${largeFolderSize})}">Large Folders</a></li>
+                    <li><a href="largeTransactions.html" th:href="@{/largeTransactions(size=${largeTransactionSize})}">Large Transactions</a></li>
+                    <li><a href="activitiesFeed.html" >Activities Feed</a></li>
+                    <li><a href="archivedNodes.html" >Archived Nodes</a></li>
+                    <li><a href="listNodesByMimeType.html" >Nodes Disk Space By MimeType</a></li>
+                    <li><a href="listNodesByType.html" >Nodes By Content Type</a></li>                                     
+                    <li><a href="listNodesByStore.html" >Nodes By Store</a></li> 
+                    <li><a href="lockedResources.html" >Locked Resources</a></li> 
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="starter-template">
+            <h1>Alfresco Database Reporting</h1>
+            
+            <ul class="list-group">
+			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> <a href="largeFolders.html" th:href="@{/largeFolders(size=${largeFolderSize})}">Large Folders</a> - Large Folders are those folders containing large number of child nodes. Alfresco recommends to keep then number of child nodes per single folder under 1000.</li>
+			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> <a href="largeTransactions.html" th:href="@{/largeTransactions(size=${largeTransactionSize})}">Large Transactions</a> - Large Transactions are those transactions containing large number of nodes. Alfresco recommends to keep the number of nodes per single transaction under 10K.</li>
+			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> <a href="archivedNodes.html">Archived Nodes</a> - Trash can should be maintained to keep the number of archived nodes to a minimum.</li>
+			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> <a href="listNodesByMimeType.html">Nodes Disk Space by Mimetype</a> - Number of nodes and total occupation on disk by Mimetype.</li>
+			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> <a href="listNodesByType.html">Nodes by Type</a> - Number of nodes by content type i.e. folder, file, etc.</li>
+			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> <a href="listNodesByStore.html">Nodes by Store</a> - Number of nodes by store type i.e. workspace://SpacesStore or archive://SpacesStore.</li>
+			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> <a href="activitiesFeed.html">Activities Feed</a> - Number of events by activity type.</li>
+			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> <a href="lockedResources.html" >Lock Resources</a> - List of resources and their status.</li>
+			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> Users and Groups - Number of users and groups.</li>
+			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> Workflows - Number of process instances and tasks.</li>
+			</ul>            
+        </div>
+    </div>
+</body>
+
+</html>
