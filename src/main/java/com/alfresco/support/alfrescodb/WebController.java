@@ -34,6 +34,37 @@ public class WebController {
         return "index";
     }
 
+    @RequestMapping("/dbSize")
+    public String dbSize(Model model) {
+
+        String tblSzSql = "SELECT nspname || '.' || relname AS relation," +
+		"pg_size_pretty(pg_total_relation_size(C.oid)) AS total_size " +
+		"FROM pg_class C " +
+		"LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)" +
+		"WHERE nspname NOT IN ('pg_catalog', 'information_schema')" +
+		"AND C.relkind <> 'i' AND nspname !~ '^pg_toast'" +
+		"ORDER BY pg_total_relation_size(C.oid) DESC LIMIT 10";
+        List < RelationInfo > listRelationInfos = jdbcTemplate.query(tblSzSql, new RowMapper < RelationInfo > () {
+            public RelationInfo mapRow(ResultSet result, int rowNum) throws SQLException {
+            	RelationInfo relationInfo = new RelationInfo();
+            	relationInfo.setRelName(result.getString("relation"));
+            	relationInfo.setRelSize(result.getString("total_size"));
+
+                return relationInfo;
+            }
+        });
+
+        String dbSzSql = "SELECT pg_catalog.pg_size_pretty(pg_catalog.pg_database_size(current_database()));";
+        String dbSize = jdbcTemplate.queryForObject(dbSzSql, String.class);
+
+        model.addAttribute("listRelationInfos", listRelationInfos);
+        model.addAttribute("dbSize", dbSize);
+
+        addAdditionalParamsToModel(model);
+
+        return null;
+    }
+
     @RequestMapping("/largeFolders")
     public String largeFolders(@RequestParam(value = "size", required = true) String size, Model model) {
 

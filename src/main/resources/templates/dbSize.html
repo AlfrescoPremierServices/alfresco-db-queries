@@ -1,17 +1,17 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-	
+
 <head>
-    <title>Sites Activities</title>
+    <title>Spring Boot Thymeleaf Hello World Example</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
 </head>
 
 <body>
-	<script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
-	<script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	
-	<!--
+    <script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+    <!--
 	<script src="/lib/w3.js"></script>
 	<div w3-include-html="static/navBar.html"></div> 
 	<script>
@@ -43,73 +43,43 @@
                     <li><a href="largeTransactions.html" th:href="@{/largeTransactions(size=${largeTransactionSize})}">Large Transactions</a></li>
                     <li><a href="activitiesFeed.html" >Activities Feed</a></li>
                     <li><a href="archivedNodes.html" >Archived Nodes</a></li>  
-                    <li><a href="listNodesByMimeType.html" >Nodes Disk Space By MimeType</a></li>  
+                    <li><a href="listNodesByMimeType.html" >Nodes Disk Space By MimeType</a></li>   
                     <li><a href="listNodesByType.html" >Nodes By Content Type</a></li>                                     
                     <li><a href="listNodesByStore.html" >Nodes By Store</a></li> 
-                    <li><a href="lockedResources.html" >Locked Resources</a></li>                 
+                    <li><a href="lockedResources.html" >Locked Resources</a></li>                     
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
         </div>
         <!-- /.container-fluid -->
     </nav>
-    	
-	<!-- Archived Nodes -->
+         
     <div class="panel panel-default">
         <!-- Default panel contents -->
-        <div class="panel-heading">Archived Nodes</div>
+        <div class="panel-heading"><span class="badge" th:text="'Database Size: ' + ${dbSize}"></span></div>
         
-        <div th:if="${not #lists.isEmpty(listArchivedNodes)}">
-	        <table class="table table-striped">
-	            <thead>
-	                <tr>
-	                    <th>Total Archived Nodes</th>
-	                </tr>
-	            </thead>
-	            <tbody>
-	                <tr th:each="archivedNodes : ${listArchivedNodes}">
-	                    <td th:text="${archivedNodes.nodes}"></td>
-	                </tr>
-	            </tbody>
-	        </table>
+        <div th:if="${not #lists.isEmpty(listRelationInfos)}">
+           <table class="table table-striped">
+               <thead>
+                   <tr>
+                       <th>Table</th>
+                       <th>Size</th>	                                       
+                   </tr>
+               </thead>
+               <tbody>
+                   <tr th:each="rel : ${listRelationInfos}">
+                       <td th:text="${rel.relName}"></td>
+                       <td th:text="${rel.relSize}"></td>	                    
+                   </tr>
+               </tbody>
+           </table>
         </div>
-	</div>
+    </div>
 	
-    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listArchivedNodes)}">
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listRelationInfos)}">
 		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
 		No Results Found
-	</div>
-	<!-- End of section -->
-	
-	<!-- Archived nodes by user -->
-    <div class="panel panel-default">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Archived Nodes By User</div>
-        
-        <div th:if="${not #lists.isEmpty(listArchivedNodes)}">
-	        <table class="table table-striped">
-	            <thead>
-	                <tr>
-	                    <th>Archived Nodes</th>
-	                    <th>By User</th>
-	                </tr>
-	            </thead>
-	            <tbody>
-	                <tr th:each="archivedNodes : ${listArchivedNodesByUser}">
-	                    <td th:text="${archivedNodes.nodes}"></td>
-	                    <td th:text="${archivedNodes.auditModifier}"></td>
-	                </tr>
-	            </tbody>
-	        </table>
-        </div>
-	</div>
-	
-    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listArchivedNodesByUser)}">
-		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-		No Results Found
-	</div>
-	<!-- End of section -->
-
+    </div>
  </body>
 
 </html>
