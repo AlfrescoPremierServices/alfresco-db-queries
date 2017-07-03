@@ -18,7 +18,7 @@
             <h1>Alfresco Database Reporting</h1>
             
             <ul class="list-group">
-			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span><a href="dbSize.html" >Database Size</a> - Database Size Information</li>
+			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> <a href="dbSize.html">Database Size</a> - Database Size Information</li>
 			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> <a href="largeFolders.html" th:href="@{/largeFolders(size=${largeFolderSize})}">Large Folders</a> - Large Folders are those folders containing large number of child nodes. Alfresco recommends to keep then number of child nodes per single folder under 1000.</li>
 			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> <a href="largeTransactions.html" th:href="@{/largeTransactions(size=${largeTransactionSize})}">Large Transactions</a> - Large Transactions are those transactions containing large number of nodes. Alfresco recommends to keep the number of nodes per single transaction under 10K.</li>
 			  <li class="list-group-item"><span class="glyphicon glyphicon glyphicon-hand-right" aria-hidden="true"></span> <a href="archivedNodes.html">Archived Nodes</a> - Trash can should be maintained to keep the number of archived nodes to a minimum.</li>
