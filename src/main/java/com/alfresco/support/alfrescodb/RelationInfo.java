@@ -1,37 +1,49 @@
 package com.alfresco.support.alfrescodb;
 
 public class RelationInfo {
-    private String relSize;
-    private String relName;
-    private int entries = 0;
-
-    @Override
-    public String toString() {
-        return String.format(
-                "relationInfos[relName=%d, relSize=%d]", relName, relSize);
-    }
-
-	public void setRelName(String relName) {
-		this.relName = relName;
+    private String tableName;
+    private String table;
+    private String total;
+    private String index;
+    private String rowStimate;
+    
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
 	}
 
-	public String getRelName(){
-		return this.relName;
+	public String getTableName(){
+		return this.tableName;
 	}
 	
-	public void setRelSize(String relSize) {
-		this.relSize = relSize;
+	public void setTotal(String total) {
+		this.total = total;
 	}
 
-	public String getRelSize(){
-		return this.relSize;
+	public String getTotal(){
+		return this.total;
 	}	
 	
-	public void setEntries(int entries){
-		this.entries = entries;
+	public void setRowStimate(String rowStimate) {
+		this.rowStimate = rowStimate;
+	}
+
+	public String getRowStimate(){
+		return this.rowStimate;
+	}	
+	
+	public void setTable(String table) {
+		this.table = table;
+	}
+
+	public String getTable(){
+		return this.table;
 	}
 	
-	public int getEntries(){
-		return this.entries;
+	public void setIndex(String index) {
+		this.index = index;
+	}
+
+	public String getIndex(){
+		return this.index;
 	}
 }

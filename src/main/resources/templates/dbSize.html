@@ -22,14 +22,20 @@
            <table class="table table-striped">
                <thead>
                    <tr>
-                       <th>Table</th>
-                       <th>Size</th>	                                       
+                       <th>Table Name</th>
+                       <th>Total Size</th>	                                       
+                       <th>Row Stimate</th>	                                       
+                       <th>Index Size</th>	                                       
+                       <th>Table Size</th>	                                       
                    </tr>
                </thead>
                <tbody>
                    <tr th:each="rel : ${listRelationInfos}">
-                       <td th:text="${rel.relName}"></td>
-                       <td th:text="${rel.relSize}"></td>	                    
+                       <td th:text="${rel.tableName}"></td>
+                       <td th:text="${rel.total}"></td>	                    
+                       <td th:text="${rel.rowStimate}"></td>	                    
+                       <td th:text="${rel.index}"></td>	                    
+                       <td th:text="${rel.table}"></td>	                    
                    </tr>
                </tbody>
            </table>
