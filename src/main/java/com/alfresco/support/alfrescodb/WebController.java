@@ -3,8 +3,6 @@ package com.alfresco.support.alfrescodb;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class WebController {
@@ -34,6 +31,107 @@ public class WebController {
         return "index";
     }
 
+    
+    @RequestMapping("/workflows")
+    public String workflows(Model model) {
+
+    	// Count workflows by process def and task name
+        String sql = "select count(*) as occurrencies, proc_def_id_, name_ " +
+		"FROM act_hi_taskinst " +
+		"GROUP BY proc_def_id_, name_ " +
+		"ORDER BY occurrencies desc";
+        List < Workflow > listWorkflows = jdbcTemplate.query(sql, new RowMapper < Workflow > () {
+            public Workflow mapRow(ResultSet result, int rowNum) throws SQLException {
+            	Workflow workflow = new Workflow();
+            	workflow.setOccurrencies(result.getInt("occurrencies"));
+            	workflow.setProcDefId(result.getString("proc_def_id_"));
+            	workflow.setName(result.getString("name_"));
+
+                return workflow;
+            }
+        });
+
+        model.addAttribute("listWorkflows", listWorkflows);
+
+    	// Count open processes
+        sql = "select count(proc_def_id_) as occurrencies, proc_def_id_ " +
+        "FROM act_hi_procinst " +
+        "WHERE end_time_ is null " +
+		"GROUP BY proc_def_id_ " +
+		"ORDER BY occurrencies desc";
+        List < Workflow > listOpenWorkflows = jdbcTemplate.query(sql, new RowMapper < Workflow > () {
+            public Workflow mapRow(ResultSet result, int rowNum) throws SQLException {
+            	Workflow workflow = new Workflow();
+            	workflow.setOccurrencies(result.getInt("occurrencies"));
+            	workflow.setProcDefId(result.getString("proc_def_id_"));
+
+                return workflow;
+            }
+        });
+
+        model.addAttribute("listOpenWorkflows", listOpenWorkflows);
+        
+    	// Count closed processes
+        sql = "select count(proc_def_id_) as occurrencies, proc_def_id_ " +
+        "FROM act_hi_procinst " +
+        "WHERE end_time_ is not null " +
+		"GROUP BY proc_def_id_ " +
+		"ORDER BY occurrencies desc";
+        List < Workflow > listClosedWorkflows = jdbcTemplate.query(sql, new RowMapper < Workflow > () {
+            public Workflow mapRow(ResultSet result, int rowNum) throws SQLException {
+            	Workflow workflow = new Workflow();
+            	workflow.setOccurrencies(result.getInt("occurrencies"));
+            	workflow.setProcDefId(result.getString("proc_def_id_"));
+
+                return workflow;
+            }
+        });
+
+        model.addAttribute("listClosedWorkflows", listClosedWorkflows);
+        
+    	// Count open taks
+        sql = "select count(proc_def_id_) as occurrencies, proc_def_id_, name_ " +
+        "FROM act_hi_taskinst " +
+        "WHERE end_time_ is null " +
+		"GROUP BY proc_def_id_, name_ " +
+		"ORDER BY occurrencies desc";
+        List < Workflow > listOpenTasks = jdbcTemplate.query(sql, new RowMapper < Workflow > () {
+            public Workflow mapRow(ResultSet result, int rowNum) throws SQLException {
+            	Workflow workflow = new Workflow();
+            	workflow.setOccurrencies(result.getInt("occurrencies"));
+            	workflow.setProcDefId(result.getString("proc_def_id_"));
+            	workflow.setName(result.getString("name_"));
+
+                return workflow;
+            }
+        });
+
+        model.addAttribute("listOpenTasks", listOpenTasks);
+        
+    	// Count closed tasks
+        sql = "select count(proc_def_id_) as occurrencies, proc_def_id_, name_ " +
+        "FROM act_hi_taskinst " +
+        "WHERE end_time_ is not null " +
+		"GROUP BY proc_def_id_, name_ " +
+		"ORDER BY occurrencies desc";
+        List < Workflow > listClosedTasks = jdbcTemplate.query(sql, new RowMapper < Workflow > () {
+            public Workflow mapRow(ResultSet result, int rowNum) throws SQLException {
+            	Workflow workflow = new Workflow();
+            	workflow.setOccurrencies(result.getInt("occurrencies"));
+            	workflow.setProcDefId(result.getString("proc_def_id_"));
+            	workflow.setName(result.getString("name_"));
+
+                return workflow;
+            }
+        });
+
+        model.addAttribute("listClosedTasks", listClosedTasks);
+        
+        addAdditionalParamsToModel(model);
+
+        return null;
+    }
+    
     @RequestMapping("/dbSize")
     public String dbSize(Model model) {
 
