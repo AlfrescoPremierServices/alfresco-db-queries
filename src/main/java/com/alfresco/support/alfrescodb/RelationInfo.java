@@ -27,7 +27,7 @@ public class RelationInfo {
 		this.rowEstimate = rowEstimate;
 	}
 
-	public String getRowStimate(){
+	public String getRowEstimate(){
 		return this.rowEstimate;
 	}	
 	
