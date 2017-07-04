@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+	
+<head>
+    <title>Sites Activities</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
+
+<body>
+	<script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
+	<script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- Add navigation bar here -->
+	<div th:insert="navBar :: navBar"></div>
+    	
+	<!-- Workflows count grouped by process and task -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Activiti Workflows by Process Definition and Task</div>
+        
+        <div th:if="${not #lists.isEmpty(listWorkflows)}">
+	        <table class="table table-striped">
+	            <thead>
+	                <tr>
+	                    <th>Process Definition</th>
+	                    <th>Task Name</th>	 
+	                    <th>Count</th> 
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <tr th:each="workflow : ${listWorkflows}">
+	                    <td th:text="${workflow.procDefId}"></td>
+	                    <td th:text="${workflow.name}"></td>
+	                    <td th:text="${workflow.occurrencies}"></td>
+	                </tr>
+	            </tbody>
+	        </table>
+        </div>
+	</div>
+	
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listWorkflows)}">
+		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+		No Results Found
+	</div>
+	<!-- End of section -->
+	
+	<!-- Open workflows -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Open Workflows</div>
+        
+        <div th:if="${not #lists.isEmpty(listOpenWorkflows)}">
+	        <table class="table table-striped">
+	            <thead>
+	                <tr>
+	                    <th>Process Definition</th>
+	                    <th>Count</th> 
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <tr th:each="workflow : ${listOpenWorkflows}">
+	                    <td th:text="${workflow.procDefId}"></td>
+	                    <td th:text="${workflow.occurrencies}"></td>
+	                </tr>
+	            </tbody>
+	        </table>
+        </div>
+	</div>
+	
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listOpenWorkflows)}">
+		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+		No Results Found
+	</div>
+	<!-- End of section -->
+
+	<!-- Closed workflows -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Closed Workflows</div>
+        
+        <div th:if="${not #lists.isEmpty(listClosedWorkflows)}">
+	        <table class="table table-striped">
+	            <thead>
+	                <tr>
+	                    <th>Process Definition</th>
+	                    <th>Count</th> 
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <tr th:each="workflow : ${listClosedWorkflows}">
+	                    <td th:text="${workflow.procDefId}"></td>
+	                    <td th:text="${workflow.occurrencies}"></td>
+	                </tr>
+	            </tbody>
+	        </table>
+        </div>
+	</div>
+	
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listClosedWorkflows)}">
+		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+		No Results Found
+	</div>
+	<!-- End of section -->
+		
+	<!-- Open Tasks -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Open Tasks</div>
+        
+        <div th:if="${not #lists.isEmpty(listOpenTasks)}">
+	        <table class="table table-striped">
+	            <thead>
+	                <tr>
+	                    <th>Process Definition</th>
+	                    <th>Task</th>
+	                    <th>Count</th> 
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <tr th:each="workflow : ${listOpenTasks}">
+	                    <td th:text="${workflow.procDefId}"></td>
+	                    <td th:text="${workflow.name}"></td>
+	                    <td th:text="${workflow.occurrencies}"></td>
+	                </tr>
+	            </tbody>
+	        </table>
+        </div>
+	</div>
+	
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listOpenTasks)}">
+		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+		No Results Found
+	</div>
+	<!-- End of section -->
+
+	<!-- Closed Tasks -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Closed Tasks</div>
+        
+        <div th:if="${not #lists.isEmpty(listClosedTasks)}">
+	        <table class="table table-striped">
+	            <thead>
+	                <tr>
+	                    <th>Process Definition</th>
+	                    <th>Task</th>
+	                    <th>Count</th> 
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <tr th:each="workflow : ${listClosedTasks}">
+	                    <td th:text="${workflow.procDefId}"></td>
+	                    <td th:text="${workflow.name}"></td>
+	                    <td th:text="${workflow.occurrencies}"></td>
+	                </tr>
+	            </tbody>
+	        </table>
+        </div>
+	</div>
+	
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listClosedTasks)}">
+		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+		No Results Found
+	</div>
+	<!-- End of section -->
+	
+ </body>
+
+</html>
