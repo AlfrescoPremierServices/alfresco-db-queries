@@ -149,7 +149,7 @@ public class WebController {
             	RelationInfo relationInfo = new RelationInfo();
             	relationInfo.setTableName(result.getString("table_name"));
             	relationInfo.setTotal(result.getString("total"));
-            	relationInfo.setRowStimate(result.getString("row_estimate"));
+            	relationInfo.setRowEstimate(result.getString("row_estimate"));
             	relationInfo.setIndex(result.getString("index"));
             	relationInfo.setTable(result.getString("table"));
 

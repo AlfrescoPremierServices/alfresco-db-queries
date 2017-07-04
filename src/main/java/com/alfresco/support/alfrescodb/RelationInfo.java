@@ -5,7 +5,7 @@ public class RelationInfo {
     private String table;
     private String total;
     private String index;
-    private String rowStimate;
+    private String rowEstimate;
     
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
@@ -23,12 +23,12 @@ public class RelationInfo {
 		return this.total;
 	}	
 	
-	public void setRowStimate(String rowStimate) {
-		this.rowStimate = rowStimate;
+	public void setRowEstimate(String rowEstimate) {
+		this.rowEstimate = rowEstimate;
 	}
 
 	public String getRowStimate(){
-		return this.rowStimate;
+		return this.rowEstimate;
 	}	
 	
 	public void setTable(String table) {
