@@ -36,14 +36,14 @@ public class WebController {
     public String workflows(Model model) {
 
     	// Count workflows by process def and task name
-        String sql = "select count(*) as occurrencies, proc_def_id_, name_ " +
+        String sql = "select count(*) as occurrences, proc_def_id_, name_ " +
 		"FROM act_hi_taskinst " +
 		"GROUP BY proc_def_id_, name_ " +
-		"ORDER BY occurrencies desc";
+		"ORDER BY occurrences desc";
         List < Workflow > listWorkflows = jdbcTemplate.query(sql, new RowMapper < Workflow > () {
             public Workflow mapRow(ResultSet result, int rowNum) throws SQLException {
             	Workflow workflow = new Workflow();
-            	workflow.setOccurrencies(result.getInt("occurrencies"));
+            	workflow.setOccurrences(result.getInt("occurrences"));
             	workflow.setProcDefId(result.getString("proc_def_id_"));
             	workflow.setName(result.getString("name_"));
 
@@ -54,15 +54,15 @@ public class WebController {
         model.addAttribute("listWorkflows", listWorkflows);
 
     	// Count open processes
-        sql = "select count(proc_def_id_) as occurrencies, proc_def_id_ " +
+        sql = "select count(proc_def_id_) as occurrences, proc_def_id_ " +
         "FROM act_hi_procinst " +
         "WHERE end_time_ is null " +
 		"GROUP BY proc_def_id_ " +
-		"ORDER BY occurrencies desc";
+		"ORDER BY occurrences desc";
         List < Workflow > listOpenWorkflows = jdbcTemplate.query(sql, new RowMapper < Workflow > () {
             public Workflow mapRow(ResultSet result, int rowNum) throws SQLException {
             	Workflow workflow = new Workflow();
-            	workflow.setOccurrencies(result.getInt("occurrencies"));
+            	workflow.setOccurrences(result.getInt("occurrences"));
             	workflow.setProcDefId(result.getString("proc_def_id_"));
 
                 return workflow;
@@ -72,15 +72,15 @@ public class WebController {
         model.addAttribute("listOpenWorkflows", listOpenWorkflows);
         
     	// Count closed processes
-        sql = "select count(proc_def_id_) as occurrencies, proc_def_id_ " +
+        sql = "select count(proc_def_id_) as occurrences, proc_def_id_ " +
         "FROM act_hi_procinst " +
         "WHERE end_time_ is not null " +
 		"GROUP BY proc_def_id_ " +
-		"ORDER BY occurrencies desc";
+		"ORDER BY occurrences desc";
         List < Workflow > listClosedWorkflows = jdbcTemplate.query(sql, new RowMapper < Workflow > () {
             public Workflow mapRow(ResultSet result, int rowNum) throws SQLException {
             	Workflow workflow = new Workflow();
-            	workflow.setOccurrencies(result.getInt("occurrencies"));
+            	workflow.setOccurrences(result.getInt("occurrences"));
             	workflow.setProcDefId(result.getString("proc_def_id_"));
 
                 return workflow;
@@ -90,15 +90,15 @@ public class WebController {
         model.addAttribute("listClosedWorkflows", listClosedWorkflows);
         
     	// Count open taks
-        sql = "select count(proc_def_id_) as occurrencies, proc_def_id_, name_ " +
+        sql = "select count(proc_def_id_) as occurrences, proc_def_id_, name_ " +
         "FROM act_hi_taskinst " +
         "WHERE end_time_ is null " +
 		"GROUP BY proc_def_id_, name_ " +
-		"ORDER BY occurrencies desc";
+		"ORDER BY occurrences desc";
         List < Workflow > listOpenTasks = jdbcTemplate.query(sql, new RowMapper < Workflow > () {
             public Workflow mapRow(ResultSet result, int rowNum) throws SQLException {
             	Workflow workflow = new Workflow();
-            	workflow.setOccurrencies(result.getInt("occurrencies"));
+            	workflow.setOccurrences(result.getInt("occurrences"));
             	workflow.setProcDefId(result.getString("proc_def_id_"));
             	workflow.setName(result.getString("name_"));
 
@@ -109,15 +109,15 @@ public class WebController {
         model.addAttribute("listOpenTasks", listOpenTasks);
         
     	// Count closed tasks
-        sql = "select count(proc_def_id_) as occurrencies, proc_def_id_, name_ " +
+        sql = "select count(proc_def_id_) as occurrences, proc_def_id_, name_ " +
         "FROM act_hi_taskinst " +
         "WHERE end_time_ is not null " +
 		"GROUP BY proc_def_id_, name_ " +
-		"ORDER BY occurrencies desc";
+		"ORDER BY occurrences desc";
         List < Workflow > listClosedTasks = jdbcTemplate.query(sql, new RowMapper < Workflow > () {
             public Workflow mapRow(ResultSet result, int rowNum) throws SQLException {
             	Workflow workflow = new Workflow();
-            	workflow.setOccurrencies(result.getInt("occurrencies"));
+            	workflow.setOccurrences(result.getInt("occurrences"));
             	workflow.setProcDefId(result.getString("proc_def_id_"));
             	workflow.setName(result.getString("name_"));
 
@@ -171,7 +171,7 @@ public class WebController {
     @RequestMapping("/largeFolders")
     public String largeFolders(@RequestParam(value = "size", required = true) String size, Model model) {
 
-        String sql = "SELECT count(*) as occurrencies, (stores.protocol || '://' || stores.identifier || '/' || nodes.uuid) as nodeRef, props.string_value as name, qname.local_name " +
+        String sql = "SELECT count(*) as occurrences, (stores.protocol || '://' || stores.identifier || '/' || nodes.uuid) as nodeRef, props.string_value as name, qname.local_name " +
             "FROM alf_node as nodes, alf_store as stores, alf_child_assoc as children, alf_node_properties as props, alf_qname as qname " +
             "WHERE children.parent_node_id=nodes.id and " +
             "stores.id=nodes.store_id and " +
@@ -180,11 +180,11 @@ public class WebController {
             "qname.id = nodes.type_qname_id " +
             "GROUP BY nodeRef, name, local_name " +
             "HAVING count(*) > " + size + " " +
-            "ORDER BY occurrencies desc";
+            "ORDER BY occurrences desc";
         List < LargeFolder > listLargeFolders = jdbcTemplate.query(sql, new RowMapper < LargeFolder > () {
             public LargeFolder mapRow(ResultSet result, int rowNum) throws SQLException {
                 LargeFolder largeFolder = new LargeFolder();
-                largeFolder.setOccurrencies(result.getInt("occurrencies"));
+                largeFolder.setOccurrences(result.getInt("occurrences"));
                 largeFolder.setNodeRef(result.getString("nodeRef"));
                 largeFolder.setName(result.getString("name"));
                 largeFolder.setType(result.getString("local_name"));
@@ -236,7 +236,7 @@ public class WebController {
     public String activitiesFeed(Model model) {
 
         // Activities by application activity type
-        String sql = "select count(*) as occurrencies, to_char(post_date, 'YYYY-Mon-DD') as date, site_network, activity_type " +
+        String sql = "select count(*) as occurrences, to_char(post_date, 'YYYY-Mon-DD') as date, site_network, activity_type " +
             "from alf_activity_feed " +
             "where feed_user_id != '@@NULL@@' " +
             "and feed_user_id = post_user_id " +
@@ -245,7 +245,7 @@ public class WebController {
         List < ActivitiesFeed > listActivitiesFeed = jdbcTemplate.query(sql, new RowMapper < ActivitiesFeed > () {
             public ActivitiesFeed mapRow(ResultSet result, int rowNum) throws SQLException {
                 ActivitiesFeed activitiesFeed = new ActivitiesFeed();
-                activitiesFeed.setOccurrencies(result.getInt("occurrencies"));
+                activitiesFeed.setOccurrences(result.getInt("occurrences"));
                 activitiesFeed.setDate(result.getString("date"));
                 activitiesFeed.setSiteNetwork(result.getString("site_network"));
                 activitiesFeed.setActivityType(result.getString("activity_type"));
@@ -258,7 +258,7 @@ public class WebController {
         model.addAttribute("listActivitiesFeedByActivityType", listActivitiesFeed);
 
         // Activities by application user        
-        sql = "select count(*) as occurrencies, to_char(post_date, 'YYYY-Mon-DD') as date, site_network, feed_user_id " +
+        sql = "select count(*) as occurrences, to_char(post_date, 'YYYY-Mon-DD') as date, site_network, feed_user_id " +
             "from alf_activity_feed " +
             "where feed_user_id != '@@NULL@@' " +
             "and feed_user_id = post_user_id " +
@@ -267,7 +267,7 @@ public class WebController {
         listActivitiesFeed = jdbcTemplate.query(sql, new RowMapper < ActivitiesFeed > () {
             public ActivitiesFeed mapRow(ResultSet result, int rowNum) throws SQLException {
                 ActivitiesFeed activitiesFeed = new ActivitiesFeed();
-                activitiesFeed.setOccurrencies(result.getInt("occurrencies"));
+                activitiesFeed.setOccurrences(result.getInt("occurrences"));
                 activitiesFeed.setDate(result.getString("date"));
                 activitiesFeed.setSiteNetwork(result.getString("site_network"));
                 activitiesFeed.setFeedUserId(result.getString("feed_user_id"));
@@ -280,7 +280,7 @@ public class WebController {
         model.addAttribute("listActivitiesFeedByUser", listActivitiesFeed);
 
         // Activities by application interface
-        sql = "select count(*) as occurrencies, to_char(post_date, 'YYYY-Mon-DD') as date, site_network, app_tool " +
+        sql = "select count(*) as occurrences, to_char(post_date, 'YYYY-Mon-DD') as date, site_network, app_tool " +
                 "from alf_activity_feed " +
                 "where feed_user_id != '@@NULL@@' " +
                 "and feed_user_id = post_user_id " +
@@ -289,7 +289,7 @@ public class WebController {
         listActivitiesFeed = jdbcTemplate.query(sql, new RowMapper < ActivitiesFeed > () {
             public ActivitiesFeed mapRow(ResultSet result, int rowNum) throws SQLException {
                 ActivitiesFeed activitiesFeed = new ActivitiesFeed();
-                activitiesFeed.setOccurrencies(result.getInt("occurrencies"));
+                activitiesFeed.setOccurrences(result.getInt("occurrences"));
                 activitiesFeed.setDate(result.getString("date"));
                 activitiesFeed.setSiteNetwork(result.getString("site_network"));
                 activitiesFeed.setAppTool(result.getString("app_tool"));
@@ -371,20 +371,20 @@ public class WebController {
         model.addAttribute("totalDiskSpace", diskSpace);
         
         // Nodes by mime type
-        sql = "SELECT mimetype_str as mimetype, count(*) occurrencies, sum(content_size) disk_space " +
+        sql = "SELECT mimetype_str as mimetype, count(*) occurrences, sum(content_size) disk_space " +
         			 "FROM (SELECT DISTINCT content_url_id,mimetype_str,content_size " +
         			 "FROM alf_content_data  content, alf_content_url  contentUrl, alf_mimetype  mime " +
         			 "WHERE content.content_mimetype_id = mime.id and " +
         			 "contentUrl.id = content.content_url_id) AS dct " +
         			 "GROUP BY mimetype " +
-        			 "ORDER BY occurrencies DESC";
+        			 "ORDER BY occurrences DESC";
         
         List < NodesList > listNodesByMimeType = jdbcTemplate.query(sql, new RowMapper < NodesList > () {
             public NodesList mapRow(ResultSet result, int rowNum) throws SQLException {
             	NodesList nodesByMimeType = new NodesList();
             	nodesByMimeType.setDiskSpace(result.getLong("disk_space"));
             	nodesByMimeType.setMimeType(result.getString("mimeType"));
-            	nodesByMimeType.setOccurrencies(result.getInt("occurrencies"));
+            	nodesByMimeType.setOccurrences(result.getInt("occurrences"));
 
                 return nodesByMimeType;
             }
@@ -401,19 +401,19 @@ public class WebController {
     public String nodesByType(Model model) {
    
         // Nodes by type
-        String sql = "SELECT ('{' || ns.uri || '}' || names.local_name) as node_type, count(*)  as occurrencies " +
+        String sql = "SELECT ('{' || ns.uri || '}' || names.local_name) as node_type, count(*)  as occurrences " +
         			 "FROM alf_node nodes " +
         			 "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
         			 "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
         			 "WHERE nodes.type_qname_id=names.id " +
         			 "GROUP BY nodes.type_qname_id, names.local_name, ns.uri " +
-        			 "ORDER BY occurrencies DESC";
+        			 "ORDER BY occurrences DESC";
         
         List < NodesList > listNodesByType = jdbcTemplate.query(sql, new RowMapper < NodesList > () {
             public NodesList mapRow(ResultSet result, int rowNum) throws SQLException {
             	NodesList nodesByMimeType = new NodesList();
             	nodesByMimeType.setNodeType(result.getString("node_type"));
-            	nodesByMimeType.setOccurrencies(result.getInt("occurrencies"));
+            	nodesByMimeType.setOccurrences(result.getInt("occurrences"));
 
                 return nodesByMimeType;
             }
@@ -430,7 +430,7 @@ public class WebController {
     public String nodesByStore(Model model) {
     	
         // Nodes by store
-        String sql = "SELECT (stores.protocol || concat('://' || stores.identifier)) as store, count(*) as occurrencies " +
+        String sql = "SELECT (stores.protocol || concat('://' || stores.identifier)) as store, count(*) as occurrences " +
         			 "FROM alf_node nodes, alf_store stores " +
         			 "WHERE stores.id=nodes.store_id " +
         			 "GROUP BY stores.protocol, stores.identifier ";
@@ -439,7 +439,7 @@ public class WebController {
             public NodesList mapRow(ResultSet result, int rowNum) throws SQLException {
             	NodesList nodesByStore = new NodesList();
             	nodesByStore.setStore(result.getString("store"));
-            	nodesByStore.setOccurrencies(result.getInt("occurrencies"));
+            	nodesByStore.setOccurrences(result.getInt("occurrences"));
 
                 return nodesByStore;
             }
@@ -484,7 +484,43 @@ public class WebController {
 
         return null;
     }
-    
+
+    @RequestMapping("/authorities")
+    public String authorities(Model model) {
+
+        //Count users
+        String sql = "select count(*) as users from alf_authority " +
+                     "where authority not like 'GROUP_%'";
+        List < Authority > listUsers = jdbcTemplate.query(sql, new RowMapper < Authority > () {
+            public Authority mapRow(ResultSet result, int rowNum) throws SQLException {
+                Authority listUsers = new Authority();
+                listUsers.setAuthoritiesCount(result.getInt("users"));
+
+                return listUsers;
+            }
+        });
+
+        model.addAttribute("listUsers", listUsers);
+
+        //Count groups
+        sql = "select count(*) as groups from alf_authority " +
+                "where authority like 'GROUP_%'";
+        List < Authority > listGroups = jdbcTemplate.query(sql, new RowMapper < Authority > () {
+            public Authority mapRow(ResultSet result, int rowNum) throws SQLException {
+                Authority listGroups = new Authority();
+                listGroups.setAuthoritiesCount(result.getInt("groups"));
+
+                return listGroups;
+            }
+        });
+
+        model.addAttribute("listGroups", listGroups);
+
+        addAdditionalParamsToModel(model);
+
+        return null;
+    }
+
     private void addAdditionalParamsToModel(Model model) {
         // Need this entry for large folders url
         model.addAttribute("largeFolderSize", largeFolderSize);

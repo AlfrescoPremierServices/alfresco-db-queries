@@ -1,7 +1,7 @@
 package com.alfresco.support.alfrescodb;
 
 public class ActivitiesFeed {
-    private int occurrencies;
+    private int occurrences;
     private String date;
     private String siteNetwork;
     private String activityType;
@@ -63,11 +63,11 @@ public class ActivitiesFeed {
 		return this.entries;
 	}
 
-	public void setOccurrencies(int occurrencies) {
-		this.occurrencies = occurrencies;
+	public void setOccurrences(int occurrences) {
+		this.occurrences = occurrences;
 	}
 
-	public int getOccurrencies(){
-		return this.occurrencies;
+	public int getOccurrences(){
+		return this.occurrences;
 	}
 }

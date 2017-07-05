@@ -31,7 +31,7 @@
 	                <tr th:each="workflow : ${listWorkflows}">
 	                    <td th:text="${workflow.procDefId}"></td>
 	                    <td th:text="${workflow.name}"></td>
-	                    <td th:text="${workflow.occurrencies}"></td>
+	                    <td th:text="${workflow.occurrences}"></td>
 	                </tr>
 	            </tbody>
 	        </table>
@@ -60,7 +60,7 @@
 	            <tbody>
 	                <tr th:each="workflow : ${listOpenWorkflows}">
 	                    <td th:text="${workflow.procDefId}"></td>
-	                    <td th:text="${workflow.occurrencies}"></td>
+	                    <td th:text="${workflow.occurrences}"></td>
 	                </tr>
 	            </tbody>
 	        </table>
@@ -89,7 +89,7 @@
 	            <tbody>
 	                <tr th:each="workflow : ${listClosedWorkflows}">
 	                    <td th:text="${workflow.procDefId}"></td>
-	                    <td th:text="${workflow.occurrencies}"></td>
+	                    <td th:text="${workflow.occurrences}"></td>
 	                </tr>
 	            </tbody>
 	        </table>
@@ -120,7 +120,7 @@
 	                <tr th:each="workflow : ${listOpenTasks}">
 	                    <td th:text="${workflow.procDefId}"></td>
 	                    <td th:text="${workflow.name}"></td>
-	                    <td th:text="${workflow.occurrencies}"></td>
+	                    <td th:text="${workflow.occurrences}"></td>
 	                </tr>
 	            </tbody>
 	        </table>
@@ -151,7 +151,7 @@
 	                <tr th:each="workflow : ${listClosedTasks}">
 	                    <td th:text="${workflow.procDefId}"></td>
 	                    <td th:text="${workflow.name}"></td>
-	                    <td th:text="${workflow.occurrencies}"></td>
+	                    <td th:text="${workflow.occurrences}"></td>
 	                </tr>
 	            </tbody>
 	        </table>

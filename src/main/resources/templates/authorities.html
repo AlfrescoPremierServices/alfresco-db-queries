@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+	
+<head>
+    <title>Sites Activities</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
+
+<body>
+	<script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
+	<script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- Add navigation bar here -->
+	<div th:insert="navBar :: navBar"></div>
+    	
+	<!-- Users -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Users Count</div>
+        
+        <div th:if="${not #lists.isEmpty(listUsers)}">
+	        <table class="table table-striped">
+	            <thead>
+	                <tr>
+	                    <th>Users</th>
+
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <tr th:each="users : ${listUsers}">
+	                    <td th:text="${users.authoritiesCount}"></td>
+	                </tr>
+	            </tbody>
+	        </table>
+        </div>
+	</div>
+
+	<div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listUsers)}">
+		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+		No Results Found
+	</div>
+	<!-- end of section -->
+
+	<!-- Groups -->
+	<div class="panel panel-default">
+		<!-- Default panel contents -->
+		<div class="panel-heading">Groups Count</div>
+
+		<div th:if="${not #lists.isEmpty(listGroups)}">
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th>Groups</th>
+
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="groups : ${listGroups}">
+					<td th:text="${groups.authoritiesCount}"></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listGroups)}">
+		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+		No Results Found
+	</div>
+	<!-- End of section -->
+
+ </body>
+
+</html>

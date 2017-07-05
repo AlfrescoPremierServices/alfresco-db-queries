@@ -1,8 +1,6 @@
 package com.alfresco.support.alfrescodb;
 
 public class ArchivedNodes {
-    private int occurrencies;
-
     private String auditModifier;
     private int nodes;
     private int entries;

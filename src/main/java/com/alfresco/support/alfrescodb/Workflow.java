@@ -1,7 +1,7 @@
 package com.alfresco.support.alfrescodb;
 
 public class Workflow {
-    private int occurrencies;
+    private int occurrences;
     private int open;
     private int closed;
     private String name;
@@ -24,12 +24,12 @@ public class Workflow {
 		return this.procDefId;
 	}
 	
-	public void setOccurrencies(int occurrencies) {
-		this.occurrencies = occurrencies;
+	public void setOccurrences(int occurrences) {
+		this.occurrences = occurrences;
 	}
 
-	public int getOccurrencies(){
-		return this.occurrencies;
+	public int getOccurrences(){
+		return this.occurrences;
 	}
 	
 	public void setOpen(int open) {
