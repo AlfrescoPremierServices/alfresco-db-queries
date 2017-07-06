@@ -1,4 +1,6 @@
-package com.alfresco.support.alfrescodb;
+package com.alfresco.support.alfrescodb.model;
+
+import javax.annotation.sql.DataSourceDefinition;
 
 public class LargeFolder {
     private int occurrences;

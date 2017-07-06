@@ -1,4 +1,4 @@
-package com.alfresco.support.alfrescodb;
+package com.alfresco.support.alfrescodb.model;
 
 public class ActivitiesFeed {
     private int occurrences;
