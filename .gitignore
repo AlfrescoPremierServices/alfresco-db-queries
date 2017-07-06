@@ -1,7 +1,8 @@
 /target/
-.settings
+/.settings/
 .project
 .classpath
-.idea
-.mvn/wrapper
-.metadata
+/.idea/
+/.mvn/
+/.metadata/
+alfresco-db.iml
