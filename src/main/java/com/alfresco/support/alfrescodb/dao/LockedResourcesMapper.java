@@ -1,7 +1,6 @@
 package com.alfresco.support.alfrescodb.dao;
 
 import com.alfresco.support.alfrescodb.model.LockedResources;
-import com.alfresco.support.alfrescodb.model.NodesList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 

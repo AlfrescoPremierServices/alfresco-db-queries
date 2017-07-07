@@ -1,15 +1,11 @@
 package com.alfresco.support.alfrescodb.controller;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
-
 import com.alfresco.support.alfrescodb.dao.*;
 import com.alfresco.support.alfrescodb.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +18,12 @@ public class WebController {
 
     @Value("${largeTransactionSize}")
     private Integer largeTransactionSize;
-    
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    ResultSet resultSet;
+    @Autowired
+    SqlMapperController sqlMapper;
 
     @RequestMapping("/")
     public String index(String name, Model model) {
@@ -69,10 +66,10 @@ public class WebController {
     @Autowired
     private DbSizeMapper dbSizeMapper;
 
-    @RequestMapping("/dbSize")
+     @RequestMapping("/dbSize")
     public String dbSize(Model model) {
-        List <RelationInfo> listRelationInfos = dbSizeMapper.findTablesInfo();
-        String dbSize = dbSizeMapper.findDbSize();
+        List <RelationInfo> listRelationInfos = sqlMapper.findTablesInfo();
+        String dbSize = sqlMapper.findDbSize();
 
         model.addAttribute("listRelationInfos", listRelationInfos);
         model.addAttribute("dbSize", dbSize);
@@ -114,24 +111,21 @@ public class WebController {
         return null;
     }
 
-    @Autowired
-    private ActivitiesFeedMapper activitiesFeedMapper;
-
     @RequestMapping("/activitiesFeed")
     public String activitiesFeed(Model model) {
 
         // Activities by activity type
-        List <ActivitiesFeed> listActivitiesFeed = activitiesFeedMapper.findActivitiesByActivityType();
+        List <ActivitiesFeed> listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
 
         model.addAttribute("listActivitiesFeedByActivityType", listActivitiesFeed);
 
         // Activities by user
-        listActivitiesFeed = activitiesFeedMapper.findActivitiesByUser();
+        listActivitiesFeed = sqlMapper.findActivitiesByUser();
 
         model.addAttribute("listActivitiesFeedByUser", listActivitiesFeed);
 
         // Activities by application interface
-        listActivitiesFeed = activitiesFeedMapper.findActivitiesByApplicationInterface();
+        listActivitiesFeed = sqlMapper.findActivitiesByApplicationInterface();
 
         model.addAttribute("listActivitiesFeedByAppTool", listActivitiesFeed);
           
@@ -154,7 +148,7 @@ public class WebController {
         // Archived nodes by user
         List <ArchivedNodes> listArchivedNodesByUser = archivedNodesMapper.findArchivedNodesByUser();
 
-        model.addAttribute("listArchivedNodesByUser", listArchivedNodes);
+        model.addAttribute("listArchivedNodesByUser", listArchivedNodesByUser);
         addAdditionalParamsToModel(model);
 
         return null;
@@ -178,12 +172,11 @@ public class WebController {
 
         addAdditionalParamsToModel(model);
     }
-    
+
     @RequestMapping("/listNodesByType")
     public String nodesByType(Model model) {
-   
         // Nodes by type
-        List < NodesList > listNodesByType = nodeListMapper.findNodesSizeByContentType();
+        List < NodesList > listNodesByType = sqlMapper.findNodesByContentType();
 
         model.addAttribute("listNodesByType", listNodesByType);
 
@@ -194,9 +187,8 @@ public class WebController {
     
     @RequestMapping("/listNodesByStore")
     public String nodesByStore(Model model) {
-    	
         // Nodes by store
-        List < NodesList > listNodesByStore = nodeListMapper.findNodesByStore();
+        List < NodesList > listNodesByStore = sqlMapper.findNodesByStore();
         
         model.addAttribute("listNodesByStore", listNodesByStore);
 

@@ -1,6 +1,5 @@
 package com.alfresco.support.alfrescodb.dao;
 
-import com.alfresco.support.alfrescodb.model.ActivitiesFeed;
 import com.alfresco.support.alfrescodb.model.NodesList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -32,12 +31,26 @@ public interface NodeListMapper {
             "WHERE nodes.type_qname_id=names.id " +
             "GROUP BY nodes.type_qname_id, names.local_name, ns.uri " +
             "ORDER BY occurrences DESC") //SQL
-    List<NodesList> findNodesSizeByContentType();
+    List<NodesList> findNodesSizeByContentTypePostgres();
 
     @Select("SELECT (stores.protocol || concat('://' || stores.identifier)) as store, count(*) as occurrences " +
             "FROM alf_node nodes, alf_store stores " +
             "WHERE stores.id=nodes.store_id " +
             "GROUP BY stores.protocol, stores.identifier ") //SQL
-    List<NodesList> findNodesByStore();
+    List<NodesList> findNodesByStorePostgres();
 
+    @Select("SELECT concat('{', ns.uri, '}', names.local_name) as nodeType, count(*)  as occurrences " +
+            "FROM alf_node nodes " +
+            "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
+            "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
+            "WHERE nodes.type_qname_id=names.id " +
+            "GROUP BY nodes.type_qname_id, names.local_name, ns.uri " +
+            "ORDER BY occurrences DESC") //SQL
+    List<NodesList> findNodesSizeByContentTypeMySQL();
+
+    @Select("SELECT concat(stores.protocol, concat('://', stores.identifier)) as store, count(*) as occurrences " +
+            "FROM alf_node nodes, alf_store stores " +
+            "WHERE stores.id=nodes.store_id " +
+            "GROUP BY stores.protocol, stores.identifier ") //SQL
+    List<NodesList> findNodesByStoreMySQL();
 }
