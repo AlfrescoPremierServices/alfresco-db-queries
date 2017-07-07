@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface LargeFolderMapper {
-    @Select("SELECT count(*) as occurrences, (stores.protocol || '://' || stores.identifier || '/' || nodes.uuid) as nodeRef, props.string_value as name, qname.local_name " +
+    @Select("SELECT count(*) as occurrences, (stores.protocol || '://' || stores.identifier || '/' || nodes.uuid) as nodeRef, props.string_value as name, qname.local_name as type " +
             "FROM alf_node as nodes, alf_store as stores, alf_child_assoc as children, alf_node_properties as props, alf_qname as qname " +
             "WHERE children.parent_node_id=nodes.id and " +
             "stores.id=nodes.store_id and " +

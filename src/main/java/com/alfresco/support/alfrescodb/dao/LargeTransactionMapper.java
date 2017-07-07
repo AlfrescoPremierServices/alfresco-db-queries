@@ -1,6 +1,5 @@
 package com.alfresco.support.alfrescodb.dao;
 
-import com.alfresco.support.alfrescodb.model.LargeFolder;
 import com.alfresco.support.alfrescodb.model.LargeTransaction;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -15,6 +14,6 @@ public interface LargeTransactionMapper {
             "WHERE an.transaction_id = trx.id " +
             "GROUP BY trx.id " +
             "HAVING count(*) > #{size} " +
-            "ORDER BY nodes desc") //SQL
+            "ORDER BY nodes desc")
     List<LargeTransaction> findBySize(@Param("size") int size);
 }
