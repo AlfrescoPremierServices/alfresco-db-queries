@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface ActivitiesFeedMapper {
-    @Select("select count(*) as occurrences, to_char(post_date, 'YYYY-Mon-DD') as date, site_network as siteNetowkr, activity_type as activityType " +
+    @Select("select count(*) as occurrences, to_char(post_date, 'YYYY-Mon-DD') as date, site_network as siteNetwork, activity_type as activityType " +
             "from alf_activity_feed " +
             "where feed_user_id != '@@NULL@@' " +
             "and feed_user_id = post_user_id " +

@@ -14,10 +14,9 @@
 	<div th:insert="navBar :: navBar"></div>
     	
 	<!-- Archived Nodes -->
-    <div class="panel panel-default">
+	<h1>Archived Nodes</h1>
+	<div class="panel panel-default">
         <!-- Default panel contents -->
-        <div class="panel-heading">Archived Nodes</div>
-        
         <div th:if="${not #lists.isEmpty(listArchivedNodes)}">
 	        <table class="table table-striped">
 	            <thead>

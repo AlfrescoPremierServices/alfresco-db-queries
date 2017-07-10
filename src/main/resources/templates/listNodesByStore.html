@@ -13,12 +13,11 @@
     <!-- Add navigation bar here -->
 	<div th:insert="navBar :: navBar"></div>
 	    	
-	<!-- Nodes by type -->
-    <div th:if="${listNodesByStore} != null">
+	<!-- Nodes by store -->
+	<div class="panel-heading"><h1>Nodes by Store</h1></div>
+	<div th:if="${listNodesByStore} != null">
 	    <div class="panel panel-default">
 	        <!-- Default panel contents -->
-	        <div class="panel-heading">Nodes By Store</div>
-	        
 	        <div th:if="${not #lists.isEmpty(listNodesByStore)}">
 		        <table class="table table-striped">
 		            <thead>

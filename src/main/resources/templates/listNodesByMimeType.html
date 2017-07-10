@@ -14,11 +14,10 @@
 	<div th:insert="navBar :: navBar"></div>
 	    	
 	<!-- Nodes by mimetype -->
-    <div th:if="${listNodesByMimeType} != null">
+	<div class="panel-heading"><h1>Nodes by MimeType</h1></div>
+	<div th:if="${listNodesByMimeType} != null">
 	    <div class="panel panel-default">
 	        <!-- Default panel contents -->
-	        <div class="panel-heading">Nodes By MimeType</div>
-	        
 	        <div th:if="${not #lists.isEmpty(listNodesByMimeType)}">
 				<div>
 			        <table class="table table-striped">

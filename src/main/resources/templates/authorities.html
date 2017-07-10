@@ -14,15 +14,15 @@
 	<div th:insert="navBar :: navBar"></div>
     	
 	<!-- Users -->
-    <div class="panel panel-default">
+	<div class="panel-heading"><h1>Users and Groups</h1></div>
+	<div class="panel panel-default">
         <!-- Default panel contents -->
-        <div class="panel-heading">Users Count</div>
-        
+
         <div th:if="${not #lists.isEmpty(listUsers)}">
 	        <table class="table table-striped">
 	            <thead>
 	                <tr>
-	                    <th>Users</th>
+	                    <th>Users Count</th>
 
 	                </tr>
 	            </thead>
@@ -44,13 +44,11 @@
 	<!-- Groups -->
 	<div class="panel panel-default">
 		<!-- Default panel contents -->
-		<div class="panel-heading">Groups Count</div>
-
 		<div th:if="${not #lists.isEmpty(listGroups)}">
 			<table class="table table-striped">
 				<thead>
 				<tr>
-					<th>Groups</th>
+					<th>Groups Count</th>
 
 				</tr>
 				</thead>

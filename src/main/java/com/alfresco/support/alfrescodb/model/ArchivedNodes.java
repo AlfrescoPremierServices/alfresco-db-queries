@@ -34,4 +34,12 @@ public class ArchivedNodes {
 	public int getEntries(){
 		return this.entries;
 	}
+
+	public String printArchivedNodes() {
+		return String.format("\n'%s'", nodes);
+	}
+
+	public String printArchivedNodesByUser() {
+		return String.format("\n'%s', '%s'", nodes, auditModifier);
+	}
 }

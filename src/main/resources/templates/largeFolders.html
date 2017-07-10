@@ -15,8 +15,8 @@
 	         
     <div class="panel panel-default">
         <!-- Default panel contents -->
-        <div class="panel-heading">Large Folders ( > <span th:text="${size}"></span> child nodes)</div>
-        
+		<h1>Large Folders ( > <span th:text="${size}"></span> child nodes)</h1>
+
         <div th:if="${not #lists.isEmpty(listLargeFolders)}">
 	        <table class="table table-striped">
 	            <thead>

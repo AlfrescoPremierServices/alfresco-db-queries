@@ -9,12 +9,6 @@ public class LargeFolder {
     private String type;
     private int entries = 0;
 
-    @Override
-    public String toString() {
-        return String.format(
-                "largeFolder[name='%s', nodeRef='%s', occurrences=%d, type='%s']", name, nodeRef, occurrences, type);
-    }
-
 	public void setOccurrences(int occurrences) {
 		this.occurrences = occurrences;
 	}
@@ -53,5 +47,9 @@ public class LargeFolder {
 	
 	public String getType(){
 		return this.type;
+	}
+
+	public String printLargeFolders() {
+		return String.format("\n'%s', '%s', '%s'", name, nodeRef, type, occurrences);
 	}
 }

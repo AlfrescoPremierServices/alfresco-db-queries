@@ -11,4 +11,11 @@ public class Authority {
 		return this.authoritiesCount;
 	}
 
+	public String printUsers() {
+		return String.format("\n'%s'", authoritiesCount);
+	}
+
+	public String printGroups() {
+		return String.format("\n'%s'", authoritiesCount);
+	}
 }

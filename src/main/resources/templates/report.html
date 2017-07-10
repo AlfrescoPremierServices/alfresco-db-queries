@@ -1,0 +1,661 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+	
+<head>
+    <title>Sites Activities</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
+
+<body>
+	<script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
+	<script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- Add navigation bar here -->
+	<div th:insert="navBar :: navBar"></div>
+
+    <!-- Database Info -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <h1>Database Information</h1>
+
+        <div th:if="${not #lists.isEmpty(listRelationInfos)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Table Name</th>
+                    <th>Total Size</th>
+                    <th>Row Estimate</th>
+                    <th>Table Size</th>
+                    <th>Index Size</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="rel : ${listRelationInfos}">
+                    <td th:text="${rel.tableName}"></td>
+                    <td th:text="${rel.total}"></td>
+                    <td th:text="${rel.rowEstimate}"></td>
+                    <td th:text="${rel.table}"></td>
+                    <td th:text="${rel.index}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Database Size</div>
+        <div th:if="${not #lists.isEmpty(listRelationInfos)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Size</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${dbSize}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listRelationInfos)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+
+    <hr>
+
+    <!-- Large Folders -->
+    <h1>Large Folders</h1>
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Large Folders ( > <span th:text="${largeFolderSize}"></span> child nodes)</div>
+
+        <div th:if="${not #lists.isEmpty(listLargeFolders)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Node Ref</th>
+                    <th>Type</th>
+                    <th>No. of Child Nodes</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="alf_node : ${listLargeFolders}">
+                    <td th:text="${alf_node.name}"></td>
+                    <td th:text="${alf_node.nodeRef}"></td>
+                    <td th:text="${alf_node.type}"></td>
+                    <td th:text="${alf_node.occurrences}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listLargeFolders)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+
+    <hr>
+
+    <!-- Large Transactions -->
+    <h1>Large Transactions</h1>
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Large Transactions ( > <span th:text="${largeTransactionSize}"></span> nodes)</div>
+
+        <div th:if="${not #lists.isEmpty(listLargeTransactions)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Transaction Id</th>
+                    <th>Nodes Count</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="trx : ${listLargeTransactions}">
+                    <td th:text="${trx.trxId}"></td>
+                    <td th:text="${trx.nodes}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listLargeTransactions)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+
+    <hr>
+
+    <!-- Activities grouped by activity type -->
+    <h1>Activities Feed</h1>
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Sites Activities By Activity Type</div>
+
+        <div th:if="${not #lists.isEmpty(listActivitiesFeedByActivityType)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Site Network</th>
+                    <th>Activity Type</th>
+                    <th>Count</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="activityFeed : ${listActivitiesFeedByActivityType}">
+                    <td th:text="${activityFeed.date}"></td>
+                    <td th:text="${activityFeed.siteNetwork}"></td>
+                    <td th:text="${activityFeed.activityType}"></td>
+                    <td th:text="${activityFeed.occurrences}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listActivitiesFeedByActivityType)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+    <!-- End of section -->
+
+    <!-- Activities grouped by user -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Sites Activities By User</div>
+
+        <div th:if="${not #lists.isEmpty(listActivitiesFeedByUser)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Site Network</th>
+                    <th>User Id</th>
+                    <th>Count</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="activityFeed : ${listActivitiesFeedByUser}">
+                    <td th:text="${activityFeed.date}"></td>
+                    <td th:text="${activityFeed.siteNetwork}"></td>
+                    <td th:text="${activityFeed.feedUserId}"></td>
+                    <td th:text="${activityFeed.occurrences}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listActivitiesFeedByUser)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+    <!-- End of section -->
+
+    <!-- Activities grouped by app tool -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Sites Activities By Application Interface</div>
+
+        <div th:if="${not #lists.isEmpty(listActivitiesFeedByAppTool)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Site Network</th>
+                    <th>Application Interface</th>
+                    <th>Count</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="activityFeed : ${listActivitiesFeedByAppTool}">
+                    <td th:text="${activityFeed.date}"></td>
+                    <td th:text="${activityFeed.siteNetwork}"></td>
+                    <td th:text="${activityFeed.appTool}"></td>
+                    <td th:text="${activityFeed.occurrences}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listActivitiesFeedByAppTool)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+
+    <hr>
+
+    <!-- Workflows count grouped by process and task -->
+    <h1>Workflows</h1>
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Activiti Workflows by Process Definition and Task</div>
+
+        <div th:if="${not #lists.isEmpty(listWorkflows)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Process Definition</th>
+                    <th>Task Name</th>
+                    <th>Count</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="workflow : ${listWorkflows}">
+                    <td th:text="${workflow.procDefId}"></td>
+                    <td th:text="${workflow.taskName}"></td>
+                    <td th:text="${workflow.occurrences}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listWorkflows)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+    <!-- End of section -->
+
+    <!-- Open workflows -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Open Workflows</div>
+
+        <div th:if="${not #lists.isEmpty(listOpenWorkflows)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Process Definition</th>
+                    <th>Count</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="workflow : ${listOpenWorkflows}">
+                    <td th:text="${workflow.procDefId}"></td>
+                    <td th:text="${workflow.occurrences}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listOpenWorkflows)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+    <!-- End of section -->
+
+    <!-- Closed workflows -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Closed Workflows</div>
+
+        <div th:if="${not #lists.isEmpty(listClosedWorkflows)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Process Definition</th>
+                    <th>Count</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="workflow : ${listClosedWorkflows}">
+                    <td th:text="${workflow.procDefId}"></td>
+                    <td th:text="${workflow.occurrences}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listClosedWorkflows)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+    <!-- End of section -->
+
+    <!-- Open Tasks -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Open Tasks</div>
+
+        <div th:if="${not #lists.isEmpty(listOpenTasks)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Process Definition</th>
+                    <th>Task</th>
+                    <th>Count</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="workflow : ${listOpenTasks}">
+                    <td th:text="${workflow.procDefId}"></td>
+                    <td th:text="${workflow.taskName}"></td>
+                    <td th:text="${workflow.occurrences}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listOpenTasks)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+    <!-- End of section -->
+
+    <!-- Closed Tasks -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Closed Tasks</div>
+
+        <div th:if="${not #lists.isEmpty(listClosedTasks)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Process Definition</th>
+                    <th>Task</th>
+                    <th>Count</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="workflow : ${listClosedTasks}">
+                    <td th:text="${workflow.procDefId}"></td>
+                    <td th:text="${workflow.taskName}"></td>
+                    <td th:text="${workflow.occurrences}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listClosedTasks)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+    <!-- End of section -->
+
+    <hr>
+
+    <!-- Archived Nodes -->
+    <h1>Archived Nodes</h1>
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div th:if="${not #lists.isEmpty(listArchivedNodes)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Total Archived Nodes</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="archivedNodes : ${listArchivedNodes}">
+                    <td th:text="${archivedNodes.nodes}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listArchivedNodes)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+    <!-- End of section -->
+
+    <!-- Archived nodes by user -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Archived Nodes By User</div>
+
+        <div th:if="${not #lists.isEmpty(listArchivedNodes)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Archived Nodes</th>
+                    <th>By User</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="archivedNodes : ${listArchivedNodesByUser}">
+                    <td th:text="${archivedNodes.nodes}"></td>
+                    <td th:text="${archivedNodes.auditModifier}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listArchivedNodesByUser)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+    <!-- End of section -->
+
+    <hr>
+
+    <!-- Nodes by mimetype -->
+    <h1>Nodes by MimeType</h1>
+    <div th:if="${listNodesByMimeType} != null">
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div th:if="${not #lists.isEmpty(listNodesByMimeType)}">
+                <div>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>MimeType</th>
+                            <th>Nodes Count</th>
+                            <th>Disk Space (Bytes)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="nodes : ${listNodesByMimeType}">
+                            <td th:text="${nodes.mimeType}"></td>
+                            <td th:text="${nodes.occurrences}"></td>
+                            <td th:text="${nodes.diskSpace}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Total Disk Space (Bytes)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="nodes : ${totalDiskSpace}">
+                            <td th:text="${nodes.diskSpace}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listNodesByMimeType)}">
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+            No Results Found
+        </div>
+    </div>
+    <!-- End of section -->
+
+    <hr>
+
+    <!-- Nodes by type -->
+    <h1>Nodes by Content Type</h1>
+    <div th:if="${listNodesByType} != null">
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div th:if="${not #lists.isEmpty(listNodesByType)}">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Node Type</th>
+                        <th>Nodes Count</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="nodes : ${listNodesByType}">
+                        <td th:text="${nodes.nodeType}"></td>
+                        <td th:text="${nodes.occurrences}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listNodesByType)}">
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+            No Results Found
+        </div>
+    </div>
+    <!-- End of section -->
+
+    <hr>
+
+    <!-- Nodes by store -->
+    <h1>Nodes by Store</h1>
+    <div th:if="${listNodesByStore} != null">
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div th:if="${not #lists.isEmpty(listNodesByStore)}">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Store</th>
+                        <th>Nodes Count</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="nodes : ${listNodesByStore}">
+                        <td th:text="${nodes.store}"></td>
+                        <td th:text="${nodes.occurrences}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listNodesByStore)}">
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+            No Results Found
+        </div>
+    </div>
+    <!-- End of section -->
+
+    <hr>
+
+    <!-- Locked Resources -->
+    <h1>Locked Resources</h1>
+    <div th:if="${listLockedResources} != null">
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div th:if="${not #lists.isEmpty(listLockedResources)}">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Lock Token</th>
+                        <th>Start Time</th>
+                        <th>Expiry Time</th>
+                        <th>Shared Resource</th>
+                        <th>Exclusive Resource</th>
+                        <th>URI</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="lock : ${listLockedResources}">
+                        <td th:text="${lock.id}"></td>
+                        <td th:text="${lock.lockToken}"></td>
+                        <td th:text="${lock.startTime}"></td>
+                        <td th:text="${lock.expiryTime}"></td>
+                        <td th:text="${lock.sharedResource}"></td>
+                        <td th:text="${lock.exclusiveResource}"></td>
+                        <td th:text="${lock.uri}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listLockedResources)}">
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+            No Results Found
+        </div>
+    </div>
+    <!-- End of section -->
+
+    <hr>
+
+    <!-- Users -->
+    <h1>Users and Groups</h1>
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+
+        <div th:if="${not #lists.isEmpty(listUsers)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Users Count</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="users : ${listUsers}">
+                    <td th:text="${users.authoritiesCount}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listUsers)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+    <!-- end of section -->
+
+    <!-- Groups -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div th:if="${not #lists.isEmpty(listGroups)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Groups Count</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="groups : ${listGroups}">
+                    <td th:text="${groups.authoritiesCount}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listGroups)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+    <!-- End of section -->
+
+</body>
+
+</html>

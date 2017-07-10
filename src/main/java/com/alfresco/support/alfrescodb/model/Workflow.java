@@ -1,19 +1,23 @@
 package com.alfresco.support.alfrescodb.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Workflow {
     private int occurrences;
     private int open;
     private int closed;
-    private String name;
+    private String taskName;
     private String procDefId;
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTaskName(String taskName) {
+		this.taskName = taskName;
 	}
 	
-	public String getName(){
-		return this.name;
+	public String getTaskName(){
+		return this.taskName;
 	}
 	
 	public void setProcDefId(String procDefId) {
@@ -31,20 +35,13 @@ public class Workflow {
 	public int getOccurrences(){
 		return this.occurrences;
 	}
-	
-	public void setOpen(int open) {
-		this.open = open;
+
+
+	public String printProcesses() {
+		return String.format("\n'%s', '%s'", procDefId, occurrences);
 	}
 
-	public int getOpen(){
-		return this.open;
-	}
-	
-	public void setClosed(int closed) {
-		this.closed = closed;
-	}
-
-	public int getClosed(){
-		return this.closed;
+	public String printTasks() {
+		return String.format("\n'%s', '%s', '%s'", procDefId, taskName, occurrences);
 	}
 }

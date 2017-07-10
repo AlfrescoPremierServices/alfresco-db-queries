@@ -48,4 +48,16 @@ public class NodesList {
 	public int getOccurrences(){
 		return this.occurrences;
 	}
+
+	public String printNodesByMimeType() {
+		return String.format("\n'%s', '%s', '%s'", mimeType, occurrences, diskSpace);
+	}
+
+	public String printNodesByType() {
+		return String.format("\n'%s', '%s'", nodeType, occurrences);
+	}
+
+	public String printNodesByStore() {
+		return String.format("\n'%s', '%s'", store, occurrences);
+	}
 }

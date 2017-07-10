@@ -16,8 +16,8 @@
          
     <div class="panel panel-default">
         <!-- Default panel contents -->
-        <div class="panel-heading"><span class="badge" th:text="'Database Size: ' + ${dbSize}"></span></div>
-        
+        <h1>Database Information</h1>
+
         <div th:if="${not #lists.isEmpty(listRelationInfos)}">
            <table class="table table-striped">
                <thead>
@@ -41,7 +41,26 @@
            </table>
         </div>
     </div>
-	
+
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Database Size</div>
+        <div th:if="${not #lists.isEmpty(listRelationInfos)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Size</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${dbSize}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listRelationInfos)}">
 		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
 		No Results Found

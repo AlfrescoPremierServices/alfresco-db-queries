@@ -14,6 +14,7 @@
 	<div th:insert="navBar :: navBar"></div>
     	
 	<!-- Workflows count grouped by process and task -->
+	<h1>Workflows</h1>
     <div class="panel panel-default">
         <!-- Default panel contents -->
         <div class="panel-heading">Activiti Workflows by Process Definition and Task</div>
@@ -30,7 +31,7 @@
 	            <tbody>
 	                <tr th:each="workflow : ${listWorkflows}">
 	                    <td th:text="${workflow.procDefId}"></td>
-	                    <td th:text="${workflow.name}"></td>
+	                    <td th:text="${workflow.taskName}"></td>
 	                    <td th:text="${workflow.occurrences}"></td>
 	                </tr>
 	            </tbody>
@@ -119,7 +120,7 @@
 	            <tbody>
 	                <tr th:each="workflow : ${listOpenTasks}">
 	                    <td th:text="${workflow.procDefId}"></td>
-	                    <td th:text="${workflow.name}"></td>
+	                    <td th:text="${workflow.taskName}"></td>
 	                    <td th:text="${workflow.occurrences}"></td>
 	                </tr>
 	            </tbody>
@@ -150,7 +151,7 @@
 	            <tbody>
 	                <tr th:each="workflow : ${listClosedTasks}">
 	                    <td th:text="${workflow.procDefId}"></td>
-	                    <td th:text="${workflow.name}"></td>
+	                    <td th:text="${workflow.taskName}"></td>
 	                    <td th:text="${workflow.occurrences}"></td>
 	                </tr>
 	            </tbody>

@@ -15,8 +15,8 @@
          
     <div class="panel panel-default">
         <!-- Default panel contents -->
-        <div class="panel-heading">Large Transactions ( > <span th:text="${size}"></span> nodes)</div>
-        
+		<h1>Large Transactions ( > <span th:text="${size}"></span> nodes)</h1>
+
         <div th:if="${not #lists.isEmpty(listLargeTransactions)}">
 	        <table class="table table-striped">
 	            <thead>

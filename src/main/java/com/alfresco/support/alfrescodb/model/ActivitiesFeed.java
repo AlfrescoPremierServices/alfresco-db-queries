@@ -9,12 +9,6 @@ public class ActivitiesFeed {
     private String appTool;
     private int entries = 0;
 
-    @Override
-    public String toString() {
-        return String.format(
-                "ActivtiesFeed[date='%s', siteNetwork='%s', activityType='%s', feedUserId='%s']", date, siteNetwork, activityType, feedUserId);
-    }
-
 	public void setDate(String date) {
 		this.date = date;
 	}
@@ -69,5 +63,17 @@ public class ActivitiesFeed {
 
 	public int getOccurrences(){
 		return this.occurrences;
+	}
+
+	public String printActivitiesByActivityType() {
+		return String.format("\n'%s', '%s', '%s', '%s'", date, siteNetwork, activityType, occurrences);
+	}
+
+	public String printActivitiesByUser() {
+		return String.format("\n'%s', '%s', '%s', '%s'", date, siteNetwork, feedUserId, occurrences);
+	}
+
+	public String printActivitiesByInterface() {
+		return String.format("\n'%s', '%s', '%s', '%s'", date, siteNetwork, appTool, occurrences);
 	}
 }

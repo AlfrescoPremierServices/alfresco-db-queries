@@ -34,4 +34,9 @@ public class LargeTransaction {
 	public int getEntries(){
 		return this.entries;
 	}
+
+	public String printLargeTransactions() {
+		return String.format("\n'%s', '%s'", trxId, nodes);
+	}
+
 }

@@ -14,11 +14,10 @@
 	<div th:insert="navBar :: navBar"></div>
 	    	
 	<!-- Nodes by type -->
-    <div th:if="${listNodesByType} != null">
+	<div class="panel-heading"><h1>Nodes by Content Type</h1></div>
+	<div th:if="${listNodesByType} != null">
 	    <div class="panel panel-default">
 	        <!-- Default panel contents -->
-	        <div class="panel-heading">Nodes By Content Type</div>
-	        
 	        <div th:if="${not #lists.isEmpty(listNodesByType)}">
 		        <table class="table table-striped">
 		            <thead>

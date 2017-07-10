@@ -46,4 +46,8 @@ public class RelationInfo {
 	public String getIndex(){
 		return this.index;
 	}
+
+	public String printDbInfo() {
+		return String.format("\n'%s', '%s', '%s', '%s', '%s' ", tableName, total, rowEstimate, table, index);
+	}
 }
