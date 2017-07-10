@@ -64,48 +64,6 @@ public class WebController {
 
           addAdditionalParamsToModel(model);
 
-          /* Workflows */
-          listWorkflows = workflowMapper.findAll();
-          out.write("All Workflows Grouped by Process Definition and Task Name");
-          out.write("\nProcess Definition, Task Name, No Occurrencies");
-          for(int i=0;i<listWorkflows.size();i++){
-              out.write(listWorkflows.get(i).printTasks());
-          }
-          model.addAttribute("listWorkflows", listWorkflows);
-
-          List < Workflow > listOpenWorkflows = workflowMapper.openWorkflows();
-          out.write("\n\nOpen Workflows");
-          out.write("\nProcess Definition, No Occurrencies");
-          for(int i=0;i<listWorkflows.size();i++){
-              out.write(listWorkflows.get(i).printProcesses());
-          }
-          model.addAttribute("listOpenWorkflows", listOpenWorkflows);
-
-          List < Workflow > listClosedWorkflows =  workflowMapper.closedWorkflows();
-          out.write("\n\nClosed Workflows");
-          out.write("\nProcess Definition, No Occurrencies");
-          for(int i=0;i<listWorkflows.size();i++){
-              out.write(listWorkflows.get(i).printProcesses());
-          }
-          model.addAttribute("listClosedWorkflows", listClosedWorkflows);
-
-          List < Workflow > listOpenTasks = workflowMapper.openTasks();
-          out.write("\n\nOpen Tasks");
-          out.write("\nProcess Definition, Task Name, No Occurrencies");
-          for(int i=0;i<listOpenTasks.size();i++){
-              out.write(listOpenTasks.get(i).printTasks());
-          }
-          model.addAttribute("listOpenTasks", listOpenTasks);
-
-
-          List < Workflow > listClosedTasks = workflowMapper.closedTasks();
-          out.write("\n\nClosed Tasks");
-          out.write("\nProcess Definition, Task Name, No Occurrencies");
-          for(int i=0;i<listClosedTasks.size();i++){
-              out.write(listClosedTasks.get(i).printTasks());
-          }
-          model.addAttribute("listClosedTasks", listClosedTasks);
-
           // Database Size
           listRelationInfos = sqlMapper.findTablesInfo();
           out.write("\n\nDatabase Tables Information");
@@ -148,7 +106,6 @@ public class WebController {
           }
           model.addAttribute("listActivitiesFeedByActivityType", listActivitiesFeed);
 
-
           listActivitiesFeed = sqlMapper.findActivitiesByUser();
           out.write("\n\nActivities by User");
           out.write("\nDate, Site Network, User Id, Count");
@@ -164,6 +121,48 @@ public class WebController {
               out.write(listActivitiesFeed.get(i).printActivitiesByInterface());
           }
           model.addAttribute("listActivitiesFeedByAppTool", listActivitiesFeed);
+
+          /* Workflows */
+          listWorkflows = workflowMapper.findAll();
+          out.write("All Workflows Grouped by Process Definition and Task Name");
+          out.write("\nProcess Definition, Task Name, No Occurrencies");
+          for(int i=0;i<listWorkflows.size();i++){
+              out.write(listWorkflows.get(i).printTasks());
+          }
+          model.addAttribute("listWorkflows", listWorkflows);
+
+          List < Workflow > listOpenWorkflows = workflowMapper.openWorkflows();
+          out.write("\n\nOpen Workflows");
+          out.write("\nProcess Definition, No Occurrencies");
+          for(int i=0;i<listWorkflows.size();i++){
+              out.write(listWorkflows.get(i).printProcesses());
+          }
+          model.addAttribute("listOpenWorkflows", listOpenWorkflows);
+
+          List < Workflow > listClosedWorkflows =  workflowMapper.closedWorkflows();
+          out.write("\n\nClosed Workflows");
+          out.write("\nProcess Definition, No Occurrencies");
+          for(int i=0;i<listWorkflows.size();i++){
+              out.write(listWorkflows.get(i).printProcesses());
+          }
+          model.addAttribute("listClosedWorkflows", listClosedWorkflows);
+
+          List < Workflow > listOpenTasks = workflowMapper.openTasks();
+          out.write("\n\nOpen Tasks");
+          out.write("\nProcess Definition, Task Name, No Occurrencies");
+          for(int i=0;i<listOpenTasks.size();i++){
+              out.write(listOpenTasks.get(i).printTasks());
+          }
+          model.addAttribute("listOpenTasks", listOpenTasks);
+
+
+          List < Workflow > listClosedTasks = workflowMapper.closedTasks();
+          out.write("\n\nClosed Tasks");
+          out.write("\nProcess Definition, Task Name, No Occurrencies");
+          for(int i=0;i<listClosedTasks.size();i++){
+              out.write(listClosedTasks.get(i).printTasks());
+          }
+          model.addAttribute("listClosedTasks", listClosedTasks);
 
           // Archived Nodes
           listArchivedNodes = archivedNodesMapper.findArchivedNodes();

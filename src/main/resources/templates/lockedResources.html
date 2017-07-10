@@ -11,10 +11,10 @@
 	<script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
 	<script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- Add navigation bar here -->
-	<div class="panel-heading"><h1>Locked Resources</h1></div>
 	<div th:insert="navBar :: navBar"></div>
 	    	
 	<!-- Locked Resources -->
+	<h1>Locked Resources</h1>
 	<div th:if="${listLockedResources} != null">
 	    <div class="panel panel-default">
 	        <!-- Default panel contents -->
