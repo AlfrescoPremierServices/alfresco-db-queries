@@ -48,6 +48,6 @@ public class RelationInfo {
 	}
 
 	public String printDbInfo() {
-		return String.format("\n'%s', '%s', '%s', '%s', '%s' ", tableName, total, rowEstimate, table, index);
+		return String.format("\n%s, %s, %s, %s, %s ", tableName, total, rowEstimate, table, index);
 	}
 }

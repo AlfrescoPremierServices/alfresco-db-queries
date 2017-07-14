@@ -38,10 +38,10 @@ public class Workflow {
 
 
 	public String printProcesses() {
-		return String.format("\n'%s', '%s'", procDefId, occurrences);
+		return String.format("\n%s, %s", procDefId, occurrences);
 	}
 
 	public String printTasks() {
-		return String.format("\n'%s', '%s', '%s'", procDefId, taskName, occurrences);
+		return String.format("\n%s, %s, %s", procDefId, taskName, occurrences);
 	}
 }

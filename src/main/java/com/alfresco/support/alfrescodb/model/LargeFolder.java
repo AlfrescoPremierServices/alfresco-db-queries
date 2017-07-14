@@ -5,8 +5,8 @@ import javax.annotation.sql.DataSourceDefinition;
 public class LargeFolder {
     private int occurrences;
     private String nodeRef;
-    private String name;
-    private String type;
+    private String nodeName;
+    private String localName;
     private int entries = 0;
 
 	public void setOccurrences(int occurrences) {
@@ -33,23 +33,23 @@ public class LargeFolder {
 		return this.entries;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setNodeName(String nodeName) {
+		this.nodeName = nodeName;
 	}
 	
-	public String getName(){
-		return this.name;
+	public String getNodeName(){
+		return this.nodeName;
 	}
 	
-	public void setType(String type) {
-		this.type = type;
+	public void setType(String localName) {
+		this.localName = localName;
 	}
 	
-	public String getType(){
-		return this.type;
+	public String getLocalName(){
+		return this.localName;
 	}
 
 	public String printLargeFolders() {
-		return String.format("\n'%s', '%s', '%s'", name, nodeRef, type, occurrences);
+		return String.format("\n%s, %s, %s, %s", nodeName, nodeRef, localName, occurrences);
 	}
 }

@@ -29,9 +29,9 @@
 	            </thead>
 	            <tbody>
 	                <tr th:each="alf_node : ${listLargeFolders}">
-	                    <td th:text="${alf_node.name}"></td>
+	                    <td th:text="${alf_node.nodeName}"></td>
 	                    <td th:text="${alf_node.nodeRef}"></td>
-	                    <td th:text="${alf_node.type}"></td>
+	                    <td th:text="${alf_node.localName}"></td>
 	                    <td th:text="${alf_node.occurrences}"></td>
 	                </tr>
 	            </tbody>

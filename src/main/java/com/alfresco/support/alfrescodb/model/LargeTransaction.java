@@ -36,7 +36,7 @@ public class LargeTransaction {
 	}
 
 	public String printLargeTransactions() {
-		return String.format("\n'%s', '%s'", trxId, nodes);
+		return String.format("\n%s, %s", trxId, nodes);
 	}
 
 }

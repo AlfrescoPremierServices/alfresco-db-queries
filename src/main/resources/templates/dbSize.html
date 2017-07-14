@@ -30,7 +30,7 @@
                    </tr>
                </thead>
                <tbody>
-                   <tr th:each="rel : ${listRelationInfos}">
+                   <tr th:each="rel : ${istRelationInfos}">
                        <td th:text="${rel.tableName}"></td>
                        <td th:text="${rel.total}"></td>	                    
                        <td th:text="${rel.rowEstimate}"></td>
@@ -42,10 +42,105 @@
         </div>
     </div>
 
+    <!--MS SQL -->
+    <div th:if="${not #lists.isEmpty(MSSqlListRelationInfos)}">
+        <div class="panel panel-default">
+            <div class="panel-heading">Tables Sizing</div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Table Name</th>
+                    <th>Rows Count</th>
+                    <th>Total Space KB</th>
+                    <th>Used Space KB</th>
+                    <th>Unused Space KB</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="rel : ${MSSqlListRelationInfos}">
+                    <td th:text="${rel.TableName}"></td>
+                    <td th:text="${rel.RowCounts}"></td>
+                    <td th:text="${rel.TotalSpaceKB}"></td>
+                    <td th:text="${rel.UsedSpaceKB}"></td>
+                    <td th:text="${rel.UnusedSpaceKB}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:if="${not #lists.isEmpty(MSSqlListIndexesInfos)}">
+        <div class="panel panel-default">
+            <div class="panel-heading">Indexes Sizing</div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Table Name</th>
+                    <th>Index Name</th>
+                    <th>Index Size KB</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="rel : ${MSSqlListIndexesInfos}">
+                    <td th:text="${rel.TableName}"></td>
+                    <td th:text="${rel.IndexName}"></td>
+                    <td th:text="${rel.IndexSize}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- End of section -->
+
+    <!--Oracle -->
+    <div th:if="${not #lists.isEmpty(OracleListRelationInfos)}">
+        <div class="panel panel-default">
+            <div class="panel-heading">Tables Sizing</div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Table Name</th>
+                    <th>Size MB</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="rel : ${OracleListRelationInfos}">
+                    <td th:text="${rel.tableName}"></td>
+                    <td th:text="${rel.sizeMB}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:if="${not #lists.isEmpty(OracleListIndexesInfos)}">
+        <div class="panel panel-default">
+            <div class="panel-heading">Indexes Sizing</div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Table Name</th>
+                    <th>Index Name</th>
+                    <th>Size MB</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="rel : ${OracleListIndexesInfos}">
+                    <td th:text="${rel.tableName}"></td>
+                    <td th:text="${rel.indexName}"></td>
+                    <td th:text="${rel.sizeMB}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- End of section -->
+
     <div class="panel panel-default">
         <!-- Default panel contents -->
-        <div class="panel-heading">Database Size</div>
         <div th:if="${not #lists.isEmpty(listRelationInfos)}">
+            <div class="panel-heading">Database Size</div>
+
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -61,10 +156,6 @@
         </div>
     </div>
 
-    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listRelationInfos)}">
-		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-		No Results Found
-    </div>
  </body>
 
 </html>

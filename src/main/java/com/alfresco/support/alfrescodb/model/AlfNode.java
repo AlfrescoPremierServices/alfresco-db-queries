@@ -6,13 +6,6 @@ public class AlfNode {
     private String audit_modifier;
     private String audit_modified;
 
-    @Override
-    public String toString() {
-        return String.format(
-                "alf_node[id=%d, uuid='%s', audit_modifier='%s', audit_modified='%s']",
-                id, uuid, audit_modifier, audit_modified);
-    }
-
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -43,7 +36,5 @@ public class AlfNode {
 	
 	public String getAuditModified(){
 		return this.audit_modified;
-	}	
-	
-	
+	}
 }

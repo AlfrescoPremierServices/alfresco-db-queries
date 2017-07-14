@@ -12,10 +12,10 @@ public class Authority {
 	}
 
 	public String printUsers() {
-		return String.format("\n'%s'", authoritiesCount);
+		return String.format("\n%s", authoritiesCount);
 	}
 
 	public String printGroups() {
-		return String.format("\n'%s'", authoritiesCount);
+		return String.format("\n%s", authoritiesCount);
 	}
 }

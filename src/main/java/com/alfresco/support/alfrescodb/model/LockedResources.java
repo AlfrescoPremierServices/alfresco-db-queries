@@ -66,6 +66,6 @@ public class LockedResources {
 	}
 
 	public String findAll() {
-		return String.format("\n'%s', '%s', '%s', '%s', '%s', '%s', '%s'", id, lockToken, startTime, expiryTime, sharedResource, exclusiveResource, uri);
+		return String.format("\n%s, %s, %s, %s, %s, %s, %s", id, lockToken, startTime, expiryTime, sharedResource, exclusiveResource, uri);
 	}
 }

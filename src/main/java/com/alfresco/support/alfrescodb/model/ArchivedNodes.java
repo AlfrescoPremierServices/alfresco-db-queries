@@ -5,12 +5,6 @@ public class ArchivedNodes {
     private int nodes;
     private int entries;
 
-    @Override
-    public String toString() {
-        return String.format(
-                "ArchivedNodes[User='%s', archivedNodes=%d]", auditModifier, nodes);
-    }
-
 	public void setAuditModifier(String auditModifier) {
 		this.auditModifier = auditModifier;
 	}
@@ -40,6 +34,6 @@ public class ArchivedNodes {
 	}
 
 	public String printArchivedNodesByUser() {
-		return String.format("\n'%s', '%s'", nodes, auditModifier);
+		return String.format("\n%s, %s", nodes, auditModifier);
 	}
 }

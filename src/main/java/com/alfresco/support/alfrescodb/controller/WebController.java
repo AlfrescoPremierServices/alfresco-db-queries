@@ -26,11 +26,17 @@ public class WebController {
     @Value("${largeTransactionSize}")
     private Integer largeTransactionSize;
 
+    @Value("${reportFile}")
+    private String reportFile;
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
     SqlMapperController sqlMapper;
+
+    @Value("${spring.datasource.platform}")
+    private String dbType;
 
     @RequestMapping("/")
     public String index(String name, Model model) {
@@ -45,201 +51,275 @@ public class WebController {
     @RequestMapping("/report")
     public void report(Model model) {
 
-        List <RelationInfo> listRelationInfos;
-        List <LargeFolder> listLargeFolders;
-        List <LargeTransaction> listLargeTransactions;
-        List <ActivitiesFeed> listActivitiesFeed;
-        List <ArchivedNodes> listArchivedNodes;
+        List < RelationInfo > listRelationInfos;
+        List < LargeFolder > listLargeFolders;
+        List < LargeTransaction > listLargeTransactions;
+        List < ActivitiesFeed > listActivitiesFeed;
+        List < ArchivedNodes > listArchivedNodes;
         List < NodesList > listNodesByMimeType;
         List < NodesList > listNodesByType;
         List < NodesList > listNodesByStore;
         List < LockedResources > listLockedResources;
-        List <Authority> listUsers;
-        List <Authority> listGroups;
+        List < Authority > listUsers;
+        List < Authority > listGroups;
+        List < Workflow > listWorkflows;
 
-        List <Workflow> listWorkflows;
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(reportFile));
 
-      try {
-          BufferedWriter out = new BufferedWriter(new FileWriter("report.txt"));
+            addAdditionalParamsToModel(model);
 
-          addAdditionalParamsToModel(model);
+            // Database Size
+            listRelationInfos = sqlMapper.findTablesInfo();
+            out.write("Database Tables Information");
 
-          // Database Size
-          listRelationInfos = sqlMapper.findTablesInfo();
-          out.write("\n\nDatabase Tables Information");
-          out.write("\nTable, Total Size, Row Estimate, Table Size, Index Size");
-          for(int i=0;i<listRelationInfos.size();i++){
-              out.write(listRelationInfos.get(i).printDbInfo());
-          }
-          model.addAttribute("listRelationInfos", listRelationInfos);
+            if (dbType.equalsIgnoreCase("mysql") || dbType.equalsIgnoreCase("postgres")) {
+                logger.info("Getting DB informatio for mysql or postgres");
+                out.write("\nTable Name, Total Size, Row Estimate, Table Size, Index Size");
 
-          String dbSize = sqlMapper.findDbSize();
-          out.write("\n\nDatabase Size");
-          out.write("\nSize");
-          out.write(dbSize);
-          model.addAttribute("dbSize", dbSize);
+                for (int i = 0; i < listRelationInfos.size(); i++) {
+                    out.write(listRelationInfos.get(i).printDbInfo());
+                }
+                model.addAttribute("listRelationInfos", listRelationInfos);
 
-          // Large Folders
-          listLargeFolders = largeFolderMapper.findBySize(largeFolderSize);
-          out.write("\n\nLarge Folders");
-          out.write("\nFolder Name, Node Reference, Type, TNo. of Child Nodes");
-          for(int i=0;i<listLargeFolders.size();i++){
-              out.write(listLargeFolders.get(i).printLargeFolders());
-          }
-          model.addAttribute("listLargeFolders", listLargeFolders);
+                String dbSize = sqlMapper.findDbSize();
+                out.write("\n\nDatabase Size");
+                out.write("\nSize");
+                out.write(dbSize);
+                model.addAttribute("dbSize", dbSize);
+            } else if (dbType.equalsIgnoreCase("oracle")){
+                logger.info("Getting DB informatio for oracle");
+                List<OracleRelationInfo> OracleListRelationInfos = sqlMapper.findTablesInfo();
+                model.addAttribute("OracleListRelationInfos", OracleListRelationInfos);
 
-          // Large Transactions
-          listLargeTransactions = largeTransactionMapper.findBySize(largeTransactionSize);
-          out.write("\n\nLarge Transactions");
-          out.write("\nTransaction Id, Nodes Count");
-          for(int i=0;i<listLargeTransactions.size();i++){
-              out.write(listLargeTransactions.get(i).printLargeTransactions());
-          }
-          model.addAttribute("listLargeTransactions", listLargeTransactions);
+                out.write("\nTables Size");
+                out.write("\nTable Name, Size MB");
+                for (int i = 0; i < OracleListRelationInfos.size(); i++) {
+                    out.write(OracleListRelationInfos.get(i).printTableInfo());
+                }
 
-          // Activities
-          listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
-          out.write("\n\nActivities by Activity Type");
-          out.write("\nDate, Site Network, Activity Type, Count");
-          for(int i=0;i<listActivitiesFeed.size();i++){
-              out.write(listActivitiesFeed.get(i).printActivitiesByActivityType());
-          }
-          model.addAttribute("listActivitiesFeedByActivityType", listActivitiesFeed);
+                List<OracleRelationInfo> OracleListIndexesInfos = dbSizeMapper.findIndexesInfoOracle();
+                model.addAttribute("OracleListIndexesInfos", OracleListIndexesInfos);
 
-          listActivitiesFeed = sqlMapper.findActivitiesByUser();
-          out.write("\n\nActivities by User");
-          out.write("\nDate, Site Network, User Id, Count");
-          for(int i=0;i<listActivitiesFeed.size();i++){
-              out.write(listActivitiesFeed.get(i).printActivitiesByUser());
-          }
-          model.addAttribute("listActivitiesFeedByUser", listActivitiesFeed);
+                out.write("\n\nIndexes Size");
+                out.write("\nTable Name, Index Name, Index Size MB");
+                for (int i = 0; i < OracleListIndexesInfos.size(); i++) {
+                    out.write(OracleListIndexesInfos.get(i).printIndexInfo());
+                }
+            } else if (dbType.equalsIgnoreCase("microsoft")) {
+                logger.info("Getting DB informatio for ms sql");
+                List<MSSqlRelationInfo> MSSqlListRelationInfos = sqlMapper.findTablesInfo();
+                model.addAttribute("MSSqlListRelationInfos", MSSqlListRelationInfos);
 
-          listActivitiesFeed = sqlMapper.findActivitiesByApplicationInterface();
-          out.write("\n\nActivities by Application Interface");
-          out.write("\nDate, Site Network, Application Interface, Count");
-          for(int i=0;i<listActivitiesFeed.size();i++){
-              out.write(listActivitiesFeed.get(i).printActivitiesByInterface());
-          }
-          model.addAttribute("listActivitiesFeedByAppTool", listActivitiesFeed);
+                out.write("\nTables Size");
+                out.write("\nTable Name, Rows Count, Total Space KB, Used Space KB, Unused Space KB");
+                for (int i = 0; i < listRelationInfos.size(); i++) {
+                    out.write(MSSqlListRelationInfos.get(i).printTableInfo());
+                }
 
-          /* Workflows */
-          listWorkflows = workflowMapper.findAll();
-          out.write("All Workflows Grouped by Process Definition and Task Name");
-          out.write("\nProcess Definition, Task Name, No Occurrencies");
-          for(int i=0;i<listWorkflows.size();i++){
-              out.write(listWorkflows.get(i).printTasks());
-          }
-          model.addAttribute("listWorkflows", listWorkflows);
+                List<MSSqlRelationInfo> MSSqlListIndexesInfos = dbSizeMapper.findIndexesInfoMSSql();
+                model.addAttribute("MSSqlListIndexesInfos", MSSqlListIndexesInfos);
 
-          List < Workflow > listOpenWorkflows = workflowMapper.openWorkflows();
-          out.write("\n\nOpen Workflows");
-          out.write("\nProcess Definition, No Occurrencies");
-          for(int i=0;i<listWorkflows.size();i++){
-              out.write(listWorkflows.get(i).printProcesses());
-          }
-          model.addAttribute("listOpenWorkflows", listOpenWorkflows);
+                out.write("\n\nIndexes Size");
+                out.write("\nTable Name, Index Name, Index Size KB");
+                for (int i = 0; i < MSSqlListIndexesInfos.size(); i++) {
+                    out.write(MSSqlListIndexesInfos.get(i).printIndexInfo());
+                }
+            }
 
-          List < Workflow > listClosedWorkflows =  workflowMapper.closedWorkflows();
-          out.write("\n\nClosed Workflows");
-          out.write("\nProcess Definition, No Occurrencies");
-          for(int i=0;i<listWorkflows.size();i++){
-              out.write(listWorkflows.get(i).printProcesses());
-          }
-          model.addAttribute("listClosedWorkflows", listClosedWorkflows);
+            // Large Folders
+            listLargeFolders = sqlMapper.findLargeFolders();
+            out.write("\n\nLarge Folders");
+            out.write("\nFolder Name, Node Reference, Type, No. of Child Nodes");
+            if (listLargeFolders != null) {
+                for (int i = 0; i < listLargeFolders.size(); i++) {
+                    out.write(listLargeFolders.get(i).printLargeFolders());
+                }
+            }
+            model.addAttribute("listLargeFolders", listLargeFolders);
 
-          List < Workflow > listOpenTasks = workflowMapper.openTasks();
-          out.write("\n\nOpen Tasks");
-          out.write("\nProcess Definition, Task Name, No Occurrencies");
-          for(int i=0;i<listOpenTasks.size();i++){
-              out.write(listOpenTasks.get(i).printTasks());
-          }
-          model.addAttribute("listOpenTasks", listOpenTasks);
+            // Large Transactions
+            listLargeTransactions = largeTransactionMapper.findBySize(largeTransactionSize);
+            out.write("\n\nLarge Transactions");
+            out.write("\nTransaction Id, Nodes Count");
+            if (listLargeTransactions != null) {
+                for (int i = 0; i < listLargeTransactions.size(); i++) {
+                    out.write(listLargeTransactions.get(i).printLargeTransactions());
+                }
+            }
+            model.addAttribute("listLargeTransactions", listLargeTransactions);
+
+            // Activities
+            listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
+            out.write("\n\nActivities by Activity Type");
+            out.write("\nDate, Site Network, Activity Type, Activities Count");
+            if (listActivitiesFeed != null) {
+                for (int i = 0; i < listActivitiesFeed.size(); i++) {
+                    out.write(listActivitiesFeed.get(i).printActivitiesByActivityType());
+                }
+            }
+            model.addAttribute("listActivitiesFeedByActivityType", listActivitiesFeed);
+
+            listActivitiesFeed = sqlMapper.findActivitiesByUser();
+            out.write("\n\nActivities by User");
+            out.write("\nDate, Site Network, User Id, Activities Count");
+            if (listActivitiesFeed != null) {
+                for (int i = 0; i < listActivitiesFeed.size(); i++) {
+                    out.write(listActivitiesFeed.get(i).printActivitiesByUser());
+                }
+            }
+            model.addAttribute("listActivitiesFeedByUser", listActivitiesFeed);
+
+            listActivitiesFeed = sqlMapper.findActivitiesByApplicationInterface();
+            out.write("\n\nActivities by Application Interface");
+            out.write("\nDate, Site Network, Application Interface, Activities Count");
+            if (listActivitiesFeed != null) {
+                for (int i = 0; i < listActivitiesFeed.size(); i++) {
+                    out.write(listActivitiesFeed.get(i).printActivitiesByInterface());
+                }
+            }
+            model.addAttribute("listActivitiesFeedByAppTool", listActivitiesFeed);
+
+            /* Workflows */
+            listWorkflows = workflowMapper.findAll();
+            out.write("\n\nAll Workflows Grouped by Process Definition and Task Name");
+            out.write("\nProcess Definition, Task Name, No Occurrencies");
+            if (listWorkflows != null) {
+                for (int i = 0; i < listWorkflows.size(); i++) {
+                    out.write(listWorkflows.get(i).printTasks());
+                }
+            }
+            model.addAttribute("listWorkflows", listWorkflows);
+
+            List < Workflow > listOpenWorkflows = workflowMapper.openWorkflows();
+            out.write("\n\nOpen Workflows");
+            out.write("\nProcess Definition, No Occurrencies");
+            if (listWorkflows != null) {
+                for (int i = 0; i < listWorkflows.size(); i++) {
+                    out.write(listWorkflows.get(i).printProcesses());
+                }
+            }
+            model.addAttribute("listOpenWorkflows", listOpenWorkflows);
+
+            List < Workflow > listClosedWorkflows = workflowMapper.closedWorkflows();
+            out.write("\n\nClosed Workflows");
+            out.write("\nProcess Definition, No Occurrencies");
+            if (listWorkflows != null) {
+                for (int i = 0; i < listWorkflows.size(); i++) {
+                    out.write(listWorkflows.get(i).printProcesses());
+                }
+            }
+            model.addAttribute("listClosedWorkflows", listClosedWorkflows);
+
+            List < Workflow > listOpenTasks = workflowMapper.openTasks();
+            out.write("\n\nOpen Tasks");
+            out.write("\nProcess Definition, Task Name, No Occurrencies");
+            if (listOpenTasks != null) {
+                for (int i = 0; i < listOpenTasks.size(); i++) {
+                    out.write(listOpenTasks.get(i).printTasks());
+                }
+            }
+            model.addAttribute("listOpenTasks", listOpenTasks);
 
 
-          List < Workflow > listClosedTasks = workflowMapper.closedTasks();
-          out.write("\n\nClosed Tasks");
-          out.write("\nProcess Definition, Task Name, No Occurrencies");
-          for(int i=0;i<listClosedTasks.size();i++){
-              out.write(listClosedTasks.get(i).printTasks());
-          }
-          model.addAttribute("listClosedTasks", listClosedTasks);
+            List < Workflow > listClosedTasks = workflowMapper.closedTasks();
+            out.write("\n\nClosed Tasks");
+            out.write("\nProcess Definition, Task Name, No Occurrencies");
+            if (listClosedTasks != null) {
+                for (int i = 0; i < listClosedTasks.size(); i++) {
+                    out.write(listClosedTasks.get(i).printTasks());
+                }
+            }
+            model.addAttribute("listClosedTasks", listClosedTasks);
 
-          // Archived Nodes
-          listArchivedNodes = archivedNodesMapper.findArchivedNodes();
-          out.write("\n\nAll Archived Nodes");
-          for(int i=0;i<listArchivedNodes.size();i++){
-              out.write(listArchivedNodes.get(i).printArchivedNodes());
-          }
-          model.addAttribute("listArchivedNodes", listArchivedNodes);
+            // Archived Nodes
+            listArchivedNodes = archivedNodesMapper.findArchivedNodes();
+            out.write("\n\nAll Archived Nodes");
+            if (listArchivedNodes != null) {
+                for (int i = 0; i < listArchivedNodes.size(); i++) {
+                    out.write(listArchivedNodes.get(i).printArchivedNodes());
+                }
+            }
+            model.addAttribute("listArchivedNodes", listArchivedNodes);
 
-          listArchivedNodes = archivedNodesMapper.findArchivedNodesByUser();
-          out.write("\n\nArchived Nodes by User");
-          out.write("\nArchived Nodes, User");
-          for(int i=0;i<listArchivedNodes.size();i++){
-              out.write(listArchivedNodes.get(i).printArchivedNodesByUser());
-          }
-          model.addAttribute("listArchivedNodesByUser", listArchivedNodes);
+            listArchivedNodes = archivedNodesMapper.findArchivedNodesByUser();
+            out.write("\n\nArchived Nodes by User");
+            out.write("\nArchived Nodes, User");
+            if (listArchivedNodes != null) {
+                for (int i = 0; i < listArchivedNodes.size(); i++) {
+                    out.write(listArchivedNodes.get(i).printArchivedNodesByUser());
+                }
+            }
+            model.addAttribute("listArchivedNodesByUser", listArchivedNodes);
 
-          // List Nodes by Mimetype
-          listNodesByMimeType = nodeListMapper.findNodesSizeByMimeType();
-          out.write("\n\nNodes Disk Space by Mimetype");
-          out.write("\nMime Types, Nodes Count, Disk Space");
-          for(int i=0;i<listNodesByMimeType.size();i++){
-              out.write(listNodesByMimeType.get(i).printNodesByMimeType());
-          }
-          model.addAttribute("listNodesByMimeType", listNodesByMimeType);
+            // List Nodes by Mimetype
+            listNodesByMimeType = sqlMapper.findNodesSizeByMimeType();
+            out.write("\n\nNodes Disk Space by Mimetype");
+            out.write("\nMime Types, Nodes Count, Disk Space");
+            if (listNodesByMimeType != null) {
+                for (int i = 0; i < listNodesByMimeType.size(); i++) {
+                    out.write(listNodesByMimeType.get(i).printNodesByMimeType());
+                }
+            }
+            model.addAttribute("listNodesByMimeType", listNodesByMimeType);
 
-          // Nodes disk space
-          List < NodesList > diskSpace = nodeListMapper.findNodesSize();
-          model.addAttribute("totalDiskSpace", diskSpace);
+            // Nodes disk space
+            List < NodesList > diskSpace = sqlMapper.findNodesSize();
+            model.addAttribute("totalDiskSpace", diskSpace);
 
-          // List Nodes by Content Type
-          listNodesByType = sqlMapper.findNodesByContentType();
-          out.write("\n\nNodes by Content Type");
-          out.write("\nNode Type, Nodes Count");
-          for(int i=0;i<listNodesByType.size();i++){
-              out.write(listNodesByType.get(i).printNodesByType());
-          }
-          model.addAttribute("listNodesByType", listNodesByType);
+            // List Nodes by Content Type
+            listNodesByType = sqlMapper.findNodesByContentType();
+            out.write("\n\nNodes by Content Type");
+            out.write("\nNode Type, Nodes Count");
+            if (listNodesByType != null) {
+                for (int i = 0; i < listNodesByType.size(); i++) {
+                    out.write(listNodesByType.get(i).printNodesByType());
+                }
+            }
+            model.addAttribute("listNodesByType", listNodesByType);
 
-          // List Nodes by Store
-          listNodesByStore = sqlMapper.findNodesByStore();
-          out.write("\n\nNodes by Store");
-          out.write("\nStore, Nodes Count");
-          for(int i=0;i<listNodesByStore.size();i++){
-              out.write(listNodesByStore.get(i).printNodesByStore());
-          }
-          model.addAttribute("listNodesByStore", listNodesByStore);
+            // List Nodes by Store
+            listNodesByStore = sqlMapper.findNodesByStore();
+            out.write("\n\nNodes by Store");
+            out.write("\nStore, Nodes Count");
+            if (listNodesByStore != null) {
+                for (int i = 0; i < listNodesByStore.size(); i++) {
+                    out.write(listNodesByStore.get(i).printNodesByStore());
+                }
+            }
+            model.addAttribute("listNodesByStore", listNodesByStore);
 
-          // Resource Locking
-          listLockedResources = lockedResourcesMapper.findAll();
-          out.write("\n\nResource Locking");
-          out.write("\nIde, Lock Token, Start Time, Expiry Time, Shared Resource, Exclusive Resource, URI");
-          for(int i=0;i<listLockedResources.size();i++){
-              out.write(listLockedResources.get(i).findAll());
-          }
-          model.addAttribute("listLockedResources", listLockedResources);
+            // Resource Locking
+            listLockedResources = lockedResourcesMapper.findAll();
+            out.write("\n\nResource Locking");
+            out.write("\nIde, Lock Token, Start Time, Expiry Time, Shared Resource, Exclusive Resource, URI");
+            for (int i = 0; i < listLockedResources.size(); i++) {
+                out.write(listLockedResources.get(i).findAll());
+            }
+            model.addAttribute("listLockedResources", listLockedResources);
 
-          // Authorities
-          out.write("\n\nAuthorities");
-          listUsers = authorityMapper.findUsers();
-          out.write("\n\nUsers Count");
-          for(int i=0;i<listUsers.size();i++){
-              out.write(listUsers.get(i).printUsers());
-          }
-          model.addAttribute("listUsers", listUsers);
+            // Authorities
+            out.write("\n\nAuthorities");
+            listUsers = authorityMapper.findUsers();
+            out.write("\nUsers Count");
+            if (listUsers != null) {
+                for (int i = 0; i < listUsers.size(); i++) {
+                    out.write(listUsers.get(i).printUsers());
+                }
+            }
+            model.addAttribute("listUsers", listUsers);
 
-          listGroups = authorityMapper.findGroups();
-          out.write("\n\nGroups Count");
-          for(int i=0;i<listUsers.size();i++){
-              out.write(listUsers.get(i).printGroups());
-          }
-          model.addAttribute("listGroups", listGroups);
+            listGroups = authorityMapper.findGroups();
+            out.write("\n\nGroups Count");
+            if (listUsers != null) {
+                for (int i = 0; i < listUsers.size(); i++) {
+                    out.write(listUsers.get(i).printGroups());
+                }
+            }
+            model.addAttribute("listGroups", listGroups);
 
-          out.close();
-        }
-        catch (IOException e)
-        {
+            out.close();
+        } catch (IOException e) {
             System.out.println("Exception ");
 
         }
@@ -248,26 +328,26 @@ public class WebController {
     @RequestMapping("/workflows")
     public String workflows(Model model) {
 
-    	// Count workflows by process def and task name
-        List <Workflow> listWorkflows = workflowMapper.findAll();
+        // Count workflows by process def and task name
+        List < Workflow > listWorkflows = workflowMapper.findAll();
         model.addAttribute("listWorkflows", listWorkflows);
 
-    	// Count open processes
+        // Count open processes
         List < Workflow > listOpenWorkflows = workflowMapper.openWorkflows();
         model.addAttribute("listOpenWorkflows", listOpenWorkflows);
-        
-    	// Count closed processes
+
+        // Count closed processes
         List < Workflow > listClosedWorkflows = workflowMapper.closedWorkflows();
         model.addAttribute("listClosedWorkflows", listClosedWorkflows);
-        
-    	// Count open taks
+
+        // Count open taks
         List < Workflow > listOpenTasks = workflowMapper.openTasks();
         model.addAttribute("listOpenTasks", listOpenTasks);
-        
-    	// Count closed tasks
+
+        // Count closed tasks
         List < Workflow > listClosedTasks = workflowMapper.closedTasks();
         model.addAttribute("listClosedTasks", listClosedTasks);
-        
+
         addAdditionalParamsToModel(model);
 
         return null;
@@ -276,14 +356,28 @@ public class WebController {
     @Autowired
     private DbSizeMapper dbSizeMapper;
 
-     @RequestMapping("/dbSize")
+    @RequestMapping("/dbSize")
     public String dbSize(Model model) {
-        List <RelationInfo> listRelationInfos = sqlMapper.findTablesInfo();
-        String dbSize = sqlMapper.findDbSize();
+        if (dbType.equalsIgnoreCase("microsoft")){
+            List<MSSqlRelationInfo> MSSqlListRelationInfos = sqlMapper.findTablesInfo();
+            model.addAttribute("MSSqlListRelationInfos", MSSqlListRelationInfos);
 
-        model.addAttribute("listRelationInfos", listRelationInfos);
-        model.addAttribute("dbSize", dbSize);
+            List<MSSqlRelationInfo> MSSqlListIndexesInfos = dbSizeMapper.findIndexesInfoMSSql();
+            model.addAttribute("MSSqlListIndexesInfos", MSSqlListIndexesInfos);
+        } else if (dbType.equalsIgnoreCase("oracle")){
+            List<OracleRelationInfo> OracleListRelationInfos = sqlMapper.findTablesInfo();
+            model.addAttribute("OracleListRelationInfos", OracleListRelationInfos);
 
+            List<OracleRelationInfo> OracleListIndexesInfos = dbSizeMapper.findIndexesInfoOracle();
+            model.addAttribute("OracleListIndexesInfos", OracleListIndexesInfos);
+        } else {
+            List<RelationInfo> listRelationInfos = sqlMapper.findTablesInfo();
+
+            String dbSize = sqlMapper.findDbSize();
+
+            model.addAttribute("listRelationInfos", listRelationInfos);
+            model.addAttribute("dbSize", dbSize);
+        }
         addAdditionalParamsToModel(model);
 
         return null;
@@ -294,12 +388,12 @@ public class WebController {
 
     @RequestMapping("/largeFolders")
     public String largeFolders(@RequestParam(value = "size", required = true) String size, Model model) {
-        List <LargeFolder> listLargeFolders = largeFolderMapper.findBySize(largeFolderSize);
+        List < LargeFolder > listLargeFolders = sqlMapper.findLargeFolders();
 
         model.addAttribute("largeFolderSize", largeFolderSize);
         model.addAttribute("listLargeFolders", listLargeFolders);
         model.addAttribute("size", size);
-        
+
         addAdditionalParamsToModel(model);
 
         return null;
@@ -310,7 +404,7 @@ public class WebController {
 
     @RequestMapping("/largeTransactions")
     public String largeTransactions(@RequestParam(value = "size", required = true) String size, Model model) {
-        List <LargeTransaction> listLargeTransactions = largeTransactionMapper.findBySize(largeTransactionSize);
+        List < LargeTransaction > listLargeTransactions = largeTransactionMapper.findBySize(largeTransactionSize);
 
         model.addAttribute("largeTransactionSize", largeTransactionSize);
         model.addAttribute("listLargeTransactions", listLargeTransactions);
@@ -325,7 +419,7 @@ public class WebController {
     public String activitiesFeed(Model model) {
 
         // Activities by activity type
-        List <ActivitiesFeed> listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
+        List < ActivitiesFeed > listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
 
         model.addAttribute("listActivitiesFeedByActivityType", listActivitiesFeed);
 
@@ -338,7 +432,7 @@ public class WebController {
         listActivitiesFeed = sqlMapper.findActivitiesByApplicationInterface();
 
         model.addAttribute("listActivitiesFeedByAppTool", listActivitiesFeed);
-          
+
         addAdditionalParamsToModel(model);
 
         return null;
@@ -351,12 +445,12 @@ public class WebController {
     public String archivedNodes(Model model) {
 
         // Archived nodes
-        List <ArchivedNodes> listArchivedNodes = archivedNodesMapper.findArchivedNodes();
-        
+        List < ArchivedNodes > listArchivedNodes = archivedNodesMapper.findArchivedNodes();
+
         model.addAttribute("listArchivedNodes", listArchivedNodes);
 
         // Archived nodes by user
-        List <ArchivedNodes> listArchivedNodesByUser = archivedNodesMapper.findArchivedNodesByUser();
+        List < ArchivedNodes > listArchivedNodesByUser = archivedNodesMapper.findArchivedNodesByUser();
 
         model.addAttribute("listArchivedNodesByUser", listArchivedNodesByUser);
         addAdditionalParamsToModel(model);
@@ -371,12 +465,12 @@ public class WebController {
     public void nodesByMimeType(Model model) {
 
         // Nodes disk space
-        List < NodesList > diskSpace = nodeListMapper.findNodesSize();
-        
+        List < NodesList > diskSpace = sqlMapper.findNodesSize();
+
         model.addAttribute("totalDiskSpace", diskSpace);
-        
+
         // Nodes by mime type
-        List < NodesList > listNodesByMimeType = nodeListMapper.findNodesSizeByMimeType();
+        List < NodesList > listNodesByMimeType = sqlMapper.findNodesSizeByMimeType();
 
         model.addAttribute("listNodesByMimeType", listNodesByMimeType);
 
@@ -394,12 +488,12 @@ public class WebController {
 
         return null;
     }
-    
+
     @RequestMapping("/listNodesByStore")
     public String nodesByStore(Model model) {
         // Nodes by store
         List < NodesList > listNodesByStore = sqlMapper.findNodesByStore();
-        
+
         model.addAttribute("listNodesByStore", listNodesByStore);
 
         addAdditionalParamsToModel(model);
@@ -412,11 +506,11 @@ public class WebController {
 
     @RequestMapping("/lockedResources")
     public String lockedResources(Model model) {
-        			 
+
         List < LockedResources > listLockedResources = lockedResourcesMapper.findAll();
-        
+
         model.addAttribute("listLockedResources", listLockedResources);
-        
+
         addAdditionalParamsToModel(model);
 
         return null;
@@ -429,7 +523,7 @@ public class WebController {
     public String authorities(Model model) {
 
         //Count users
-       List <Authority> listUsers = authorityMapper.findUsers();
+        List < Authority > listUsers = authorityMapper.findUsers();
 
         model.addAttribute("listUsers", listUsers);
 
@@ -447,6 +541,6 @@ public class WebController {
         // Need this entry for large folders url
         model.addAttribute("largeFolderSize", largeFolderSize);
         // Need this entry for large transactions url
-        model.addAttribute("largeTransactionSize", largeTransactionSize);   		
-	}
+        model.addAttribute("largeTransactionSize", largeTransactionSize);
+    }
 }

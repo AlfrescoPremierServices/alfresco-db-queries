@@ -50,14 +50,14 @@ public class NodesList {
 	}
 
 	public String printNodesByMimeType() {
-		return String.format("\n'%s', '%s', '%s'", mimeType, occurrences, diskSpace);
+		return String.format("\n%s, %s, %s", mimeType, occurrences, diskSpace);
 	}
 
 	public String printNodesByType() {
-		return String.format("\n'%s', '%s'", nodeType, occurrences);
+		return String.format("\n%s, %s", nodeType, occurrences);
 	}
 
 	public String printNodesByStore() {
-		return String.format("\n'%s', '%s'", store, occurrences);
+		return String.format("\n%s, %s", store, occurrences);
 	}
 }

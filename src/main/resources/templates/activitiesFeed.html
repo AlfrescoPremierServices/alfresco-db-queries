@@ -31,7 +31,7 @@
 	            </thead>
 	            <tbody>
 	                <tr th:each="activityFeed : ${listActivitiesFeedByActivityType}">
-	                    <td th:text="${activityFeed.date}"></td>
+	                    <td th:text="${activityFeed.postDate}"></td>
 	                    <td th:text="${activityFeed.siteNetwork}"></td>
 	                    <td th:text="${activityFeed.activityType}"></td>
 	                    <td th:text="${activityFeed.occurrences}"></td>
@@ -64,7 +64,7 @@
 	            </thead>
 	            <tbody>
 	                <tr th:each="activityFeed : ${listActivitiesFeedByUser}">
-	                    <td th:text="${activityFeed.date}"></td>
+	                    <td th:text="${activityFeed.postDate}"></td>
 	                    <td th:text="${activityFeed.siteNetwork}"></td>
 	                    <td th:text="${activityFeed.feedUserId}"></td>
 	                    <td th:text="${activityFeed.occurrences}"></td>
@@ -97,7 +97,7 @@
 	            </thead>
 	            <tbody>
 	                <tr th:each="activityFeed : ${listActivitiesFeedByAppTool}">
-	                    <td th:text="${activityFeed.date}"></td>
+	                    <td th:text="${activityFeed.postDate}"></td>
 	                    <td th:text="${activityFeed.siteNetwork}"></td>
 	                    <td th:text="${activityFeed.appTool}"></td>
 	                    <td th:text="${activityFeed.occurrences}"></td>
