@@ -32,7 +32,6 @@ public class SqlMapperController {
     @Autowired
     private LargeFolderMapper largeFolderMapper;
 
-
     public List findTablesInfo(){
         if (dbType.equalsIgnoreCase("postgres")){
             return dbSizeMapper.findTablesInfoPostgres();

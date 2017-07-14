@@ -74,7 +74,6 @@ public class WebController {
             out.write("Database Tables Information");
 
             if (dbType.equalsIgnoreCase("mysql") || dbType.equalsIgnoreCase("postgres")) {
-                logger.info("Getting DB informatio for mysql or postgres");
                 out.write("\nTable Name, Total Size, Row Estimate, Table Size, Index Size");
 
                 for (int i = 0; i < listRelationInfos.size(); i++) {
@@ -88,7 +87,6 @@ public class WebController {
                 out.write(dbSize);
                 model.addAttribute("dbSize", dbSize);
             } else if (dbType.equalsIgnoreCase("oracle")){
-                logger.info("Getting DB informatio for oracle");
                 List<OracleRelationInfo> OracleListRelationInfos = sqlMapper.findTablesInfo();
                 model.addAttribute("OracleListRelationInfos", OracleListRelationInfos);
 
@@ -107,7 +105,6 @@ public class WebController {
                     out.write(OracleListIndexesInfos.get(i).printIndexInfo());
                 }
             } else if (dbType.equalsIgnoreCase("microsoft")) {
-                logger.info("Getting DB informatio for ms sql");
                 List<MSSqlRelationInfo> MSSqlListRelationInfos = sqlMapper.findTablesInfo();
                 model.addAttribute("MSSqlListRelationInfos", MSSqlListRelationInfos);
 
@@ -358,26 +355,26 @@ public class WebController {
 
     @RequestMapping("/dbSize")
     public String dbSize(Model model) {
-        if (dbType.equalsIgnoreCase("microsoft")){
-            List<MSSqlRelationInfo> MSSqlListRelationInfos = sqlMapper.findTablesInfo();
-            model.addAttribute("MSSqlListRelationInfos", MSSqlListRelationInfos);
+        if (dbType.equalsIgnoreCase("mysql") || dbType.equalsIgnoreCase("postgres")) {
+            List < RelationInfo > listRelationInfos = sqlMapper.findTablesInfo();
+            model.addAttribute("listRelationInfos", listRelationInfos);
 
-            List<MSSqlRelationInfo> MSSqlListIndexesInfos = dbSizeMapper.findIndexesInfoMSSql();
-            model.addAttribute("MSSqlListIndexesInfos", MSSqlListIndexesInfos);
+            String dbSize = sqlMapper.findDbSize();
+            model.addAttribute("dbSize", dbSize);
         } else if (dbType.equalsIgnoreCase("oracle")){
             List<OracleRelationInfo> OracleListRelationInfos = sqlMapper.findTablesInfo();
             model.addAttribute("OracleListRelationInfos", OracleListRelationInfos);
 
             List<OracleRelationInfo> OracleListIndexesInfos = dbSizeMapper.findIndexesInfoOracle();
             model.addAttribute("OracleListIndexesInfos", OracleListIndexesInfos);
-        } else {
-            List<RelationInfo> listRelationInfos = sqlMapper.findTablesInfo();
+        } else if (dbType.equalsIgnoreCase("microsoft")) {
+            List<MSSqlRelationInfo> MSSqlListRelationInfos = sqlMapper.findTablesInfo();
+            model.addAttribute("MSSqlListRelationInfos", MSSqlListRelationInfos);
 
-            String dbSize = sqlMapper.findDbSize();
-
-            model.addAttribute("listRelationInfos", listRelationInfos);
-            model.addAttribute("dbSize", dbSize);
+            List<MSSqlRelationInfo> MSSqlListIndexesInfos = dbSizeMapper.findIndexesInfoMSSql();
+            model.addAttribute("MSSqlListIndexesInfos", MSSqlListIndexesInfos);
         }
+
         addAdditionalParamsToModel(model);
 
         return null;

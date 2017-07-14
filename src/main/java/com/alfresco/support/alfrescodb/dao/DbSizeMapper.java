@@ -3,7 +3,6 @@ package com.alfresco.support.alfrescodb.dao;
 import com.alfresco.support.alfrescodb.model.MSSqlRelationInfo;
 import com.alfresco.support.alfrescodb.model.OracleRelationInfo;
 import com.alfresco.support.alfrescodb.model.RelationInfo;
-import com.alfresco.support.alfrescodb.model.RelationInfoMySQL;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
