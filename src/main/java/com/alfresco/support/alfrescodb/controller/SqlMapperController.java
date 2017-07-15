@@ -1,9 +1,7 @@
 package com.alfresco.support.alfrescodb.controller;
 
-import com.alfresco.support.alfrescodb.dao.ActivitiesFeedMapper;
-import com.alfresco.support.alfrescodb.dao.DbSizeMapper;
-import com.alfresco.support.alfrescodb.dao.LargeFolderMapper;
-import com.alfresco.support.alfrescodb.dao.NodeListMapper;
+import com.alfresco.support.alfrescodb.dao.*;
+import com.alfresco.support.alfrescodb.model.ArchivedNodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
@@ -31,6 +29,9 @@ public class SqlMapperController {
 
     @Autowired
     private LargeFolderMapper largeFolderMapper;
+
+    @Autowired
+    private SolrMemoryMapper solrMemoryMapper;
 
     public List findTablesInfo(){
         if (dbType.equalsIgnoreCase("postgres")){
@@ -156,5 +157,9 @@ public class SqlMapperController {
         }
 
         return null;
+    }
+
+    public List solrMemory(){
+        return solrMemoryMapper.solrMemory();
     }
 }

@@ -748,6 +748,63 @@
     </div>
     <!-- End of section -->
 
+
+    <hr>
+
+    <!-- Solr Memory -->
+    <h1>Solr Memory</h1>
+
+    <div th:if="${not #lists.isEmpty(solrMemoryList)}">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Alfresco Nodes</th>
+                <th>Archive Nodes</th>
+                <th>Transactions</th>
+                <th>ACLs</th>
+                <th>ACL Transactions</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="memory : ${solrMemoryList}">
+                <td th:text="${memory.alfrescoNodes}"></td>
+                <td th:text="${memory.archiveNodes}"></td>
+                <td th:text="${memory.transactions}"></td>
+                <td th:text="${memory.acls}"></td>
+                <td th:text="${memory.aclTransactions}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Alfresco Core Memory MB</th>
+                <th>Archive Core Memory MB</th>
+                <th>Total Memory MB</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="${alfrescoCoreMemory}"></td>
+                <td th:text="${archiveCoreMemory}"></td>
+                <td th:text="${solrTotalMemory}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(solrMemoryList)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+
+    <!-- end of section -->
+
 </body>
 
 </html>

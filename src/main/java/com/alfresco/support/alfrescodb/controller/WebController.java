@@ -315,6 +315,35 @@ public class WebController {
             }
             model.addAttribute("listGroups", listGroups);
 
+            // Solr memory
+            List < SolrMemory > solrMemoryList = sqlMapper.solrMemory();
+            out.write("\n\nSolr Memory");
+            out.write("\nAlfresco Nodes, Archive Nodes, ACLs, ACL Transactions");
+            if (listUsers != null) {
+                for (int i = 0; i < solrMemoryList.size(); i++) {
+                    out.write(solrMemoryList.get(i).printSolrMemory());
+                }
+            }
+            model.addAttribute("solrMemoryList", solrMemoryList);
+
+            for (int i = 0; i < solrMemoryList.size(); i++) {
+                Long alfrescoNodes = Long.valueOf(solrMemoryList.get(i).getAlfrescoNodes());
+                Long archiveNodes = Long.valueOf(solrMemoryList.get(i).getArchiveNodes());
+                Long transactions = Long.valueOf(solrMemoryList.get(i).getTransactions());
+                Long acls = Long.valueOf(solrMemoryList.get(i).getAcls());
+                Long aclTransactions = Long.valueOf(solrMemoryList.get(i).getAclTransactions());
+
+                Long alfrescoCoreMemory = (120*alfrescoNodes + 32*(transactions + acls + aclTransactions))/1024/1024;
+                Long archiveCoreMemory = (120*archiveNodes + 32*(transactions + acls + aclTransactions))/1024/1024;
+                Long totalMemory = alfrescoCoreMemory + archiveCoreMemory;
+
+                model.addAttribute("alfrescoCoreMemory", alfrescoCoreMemory);
+                model.addAttribute("archiveCoreMemory", archiveCoreMemory);
+                model.addAttribute("solrTotalMemory", totalMemory);
+                
+                out.write("\n\nAlfresco Core Memory MB, Archive Core Memory MB, Total Solr Memory MB");
+                out.write("\n" + String.valueOf(alfrescoCoreMemory) + ", " + String.valueOf(archiveCoreMemory) + ", " + String.valueOf(totalMemory));
+            }
             out.close();
         } catch (IOException e) {
             System.out.println("Exception ");
@@ -528,6 +557,32 @@ public class WebController {
         List < Authority > listGroups = authorityMapper.findGroups();
 
         model.addAttribute("listGroups", listGroups);
+
+        addAdditionalParamsToModel(model);
+
+        return null;
+    }
+
+    @RequestMapping("/solrMemory")
+    public String solrMemory(Model model) {
+        List < SolrMemory > solrMemoryList = sqlMapper.solrMemory();
+        model.addAttribute("solrMemoryList", solrMemoryList);
+
+        for (int i = 0; i < solrMemoryList.size(); i++) {
+            Long alfrescoNodes = Long.valueOf(solrMemoryList.get(i).getAlfrescoNodes());
+            Long archiveNodes = Long.valueOf(solrMemoryList.get(i).getArchiveNodes());
+            Long transactions = Long.valueOf(solrMemoryList.get(i).getTransactions());
+            Long acls = Long.valueOf(solrMemoryList.get(i).getAcls());
+            Long aclTransactions = Long.valueOf(solrMemoryList.get(i).getAclTransactions());
+
+            Long alfrescoCoreMemory = (120*alfrescoNodes + 32*(transactions + acls + aclTransactions))/1024/1024;
+            Long archiveCoreMemory = (120*archiveNodes + 32*(transactions + acls + aclTransactions))/1024/1024;
+            Long totalMemory = alfrescoCoreMemory + archiveCoreMemory;
+
+            model.addAttribute("alfrescoCoreMemory", alfrescoCoreMemory);
+            model.addAttribute("archiveCoreMemory", archiveCoreMemory);
+            model.addAttribute("solrTotalMemory", totalMemory);
+        }
 
         addAdditionalParamsToModel(model);
 
