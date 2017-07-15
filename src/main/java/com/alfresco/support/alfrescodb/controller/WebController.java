@@ -340,7 +340,7 @@ public class WebController {
                 model.addAttribute("alfrescoCoreMemory", alfrescoCoreMemory);
                 model.addAttribute("archiveCoreMemory", archiveCoreMemory);
                 model.addAttribute("solrTotalMemory", totalMemory);
-                
+
                 out.write("\n\nAlfresco Core Memory MB, Archive Core Memory MB, Total Solr Memory MB");
                 out.write("\n" + String.valueOf(alfrescoCoreMemory) + ", " + String.valueOf(archiveCoreMemory) + ", " + String.valueOf(totalMemory));
             }
