@@ -3,9 +3,9 @@ package com.alfresco.support.alfrescodb.model;
 public class MSSqlRelationInfo {
     private String TableName;
 	private String RowCounts;
-	private String TotalSpaceKB;
-    private String UsedSpaceKB;
-    private String UnusedSpaceKB;
+	private String TotalSpace;
+    private String UsedSpace;
+    private String UnUsedSpace;
     private String IndexName;
     private String IndexSize;
     private String IndexID;
@@ -26,28 +26,28 @@ public class MSSqlRelationInfo {
 		return this.RowCounts;
 	}	
 	
-	public void setTotalSpaceKB(String TotalSpaceKB) {
-		this.TotalSpaceKB = TotalSpaceKB;
+	public void setTotalSpace(String TotalSpace) {
+		this.TotalSpace = TotalSpace;
 	}
 
-	public String getTotalSpaceKB(){
-		return this.TotalSpaceKB;
+	public String getTotalSpace(){
+		return this.TotalSpace;
 	}
 
-	public void setUsedSpaceKB(String UsedSpaceKB) {
-		this.UsedSpaceKB = UsedSpaceKB;
+	public void setUsedSpace(String UsedSpace) {
+		this.UsedSpace = UsedSpace;
 	}
 
-	public String getUsedSpaceKB(){
-		return this.UsedSpaceKB;
+	public String getUsedSpace(){
+		return this.UsedSpace;
 	}
 
-    public void setUnusedSpaceKB(String UnusedSpaceKB) {
-        this.UnusedSpaceKB = UnusedSpaceKB;
+    public void setUnUsedSpace(String UnUsedSpace) {
+        this.UnUsedSpace = UnUsedSpace;
     }
 
-    public String getUnusedSpaceKB(){
-        return this.UnusedSpaceKB;
+    public String getUnusedSpace(){
+        return this.UnUsedSpace;
     }
 
     public void setIndexName(String IndexName) {
@@ -75,7 +75,7 @@ public class MSSqlRelationInfo {
     }
 
     public String printTableInfo() {
-		return String.format("\n%s, %s, %s, %s, %s ", TableName, RowCounts, TotalSpaceKB, UsedSpaceKB, UnusedSpaceKB);
+		return String.format("\n%s, %s, %s, %s, %s ", TableName, RowCounts, TotalSpace, UsedSpace, UnUsedSpace);
 	}
 
     public String printIndexInfo() {

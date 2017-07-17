@@ -14,6 +14,30 @@
     <script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" class="init">
         $(document).ready( function () {
+            $('table.orderingPostgresMySql').DataTable({
+             "order": [1, 'desc'],
+            });
+        } );
+
+        $(document).ready( function () {
+            $('table.orderingMsSql').DataTable({
+             "order": [2, 'desc'],
+            });
+        } );
+
+        $(document).ready( function () {
+            $('table.orderingTablesOracle').DataTable({
+             "order": [1, 'desc'],
+            });
+        } );
+
+        $(document).ready( function () {
+            $('table.orderingIndexesOracle').DataTable({
+             "order": [2, 'desc'],
+            });
+        } );
+
+	    $(document).ready( function () {
             $('table.display').DataTable();
         } );
     </script>
@@ -28,24 +52,24 @@
         <h1>Database Information</h1>
 
         <div th:if="${not #lists.isEmpty(listRelationInfos)}">
-            <table class="display" cellspacing="0" width="100%">
+            <table class="display orderingPostgresMySql" cellspacing="0" width="100%">
 
                 <thead>
                 <tr>
                     <th>Table Name</th>
-                    <th>Total Size</th>
+                    <th>Total Size MB</th>
+                    <th>Table Size MB</th>
+                    <th>Index Size MB</th>
                     <th>Row Estimate</th>
-                    <th>Table Size</th>
-                    <th>Index Size</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="rel : ${listRelationInfos}">
                     <td th:text="${rel.tableName}"></td>
                     <td th:text="${rel.total}"></td>
-                    <td th:text="${rel.rowEstimate}"></td>
                     <td th:text="${rel.table}"></td>
                     <td th:text="${rel.index}"></td>
+                    <td th:text="${rel.rowEstimate}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -75,7 +99,7 @@
     <div th:if="${not #lists.isEmpty(OracleListRelationInfos)}">
         <div class="panel panel-default">
             <div class="panel-heading">Tables Sizing</div>
-            <table class="display" cellspacing="0" width="100%">
+            <table class="display orderingTablesOracle" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>Table Name</th>
@@ -95,7 +119,7 @@
     <div th:if="${not #lists.isEmpty(OracleListIndexesInfos)}">
         <div class="panel panel-default">
             <div class="panel-heading">Indexes Sizing</div>
-            <table class="display" cellspacing="0" width="100%">
+            <table class="display orderingIndexesOracle" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>Table Name</th>
@@ -119,23 +143,23 @@
     <div th:if="${not #lists.isEmpty(MSSqlListRelationInfos)}">
         <div class="panel panel-default">
             <div class="panel-heading">Tables Sizing</div>
-            <table class="display" cellspacing="0" width="100%">
+            <table class="display orderingMsSql" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>Table Name</th>
                     <th>Rows Count</th>
-                    <th>Total Space KB</th>
-                    <th>Used Space KB</th>
-                    <th>Unused Space KB</th>
+                    <th>Total Space MB</th>
+                    <th>Used Space MB</th>
+                    <th>Unused Space MB</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="rel : ${MSSqlListRelationInfos}">
                     <td th:text="${rel.TableName}"></td>
                     <td th:text="${rel.RowCounts}"></td>
-                    <td th:text="${rel.TotalSpaceKB}"></td>
-                    <td th:text="${rel.UsedSpaceKB}"></td>
-                    <td th:text="${rel.UnusedSpaceKB}"></td>
+                    <td th:text="${rel.TotalSpace}"></td>
+                    <td th:text="${rel.UsedSpace}"></td>
+                    <td th:text="${rel.UnusedSpace}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -145,12 +169,12 @@
     <div th:if="${not #lists.isEmpty(MSSqlListIndexesInfos)}">
         <div class="panel panel-default">
             <div class="panel-heading">Indexes Sizing</div>
-            <table class="display" cellspacing="0" width="100%">
+            <table class="display orderingMsSql" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>Table Name</th>
                     <th>Index Name</th>
-                    <th>Index Size KB</th>
+                    <th>Index Size MB</th>
                 </tr>
                 </thead>
                 <tbody>

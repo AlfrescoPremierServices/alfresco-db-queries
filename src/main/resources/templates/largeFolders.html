@@ -17,6 +17,7 @@
             $('table.noPaging').DataTable({
              "paging": false,
              "info": false,
+             "order": [3, 'desc'],
             });
         } );
 
@@ -25,6 +26,7 @@
              "paging": false,
              "info": false,
              "searching": false,
+             "order": [3, 'desc'],
             });
         } );
 
@@ -41,7 +43,7 @@
 		<h1>Large Folders ( > <span th:text="${size}"></span> child nodes)</h1>
 
         <div th:if="${not #lists.isEmpty(listLargeFolders)}">
-			<table class="noPaging-noSearching" cellspacing="0" width="100%">
+			<table class="display noPaging-noSearching" cellspacing="0" width="100%">
 	            <thead>
 	                <tr>
 	                    <th>Name</th>

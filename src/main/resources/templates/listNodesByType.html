@@ -14,7 +14,9 @@
 	<script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" class="init">
         $(document).ready( function () {
-            $('table.display').DataTable();
+            $('table.display').DataTable({
+             "order": [1, 'desc'],
+            });
         } );
     </script>
 

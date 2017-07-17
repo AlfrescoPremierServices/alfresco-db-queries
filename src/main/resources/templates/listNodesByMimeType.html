@@ -14,7 +14,9 @@
 	<script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" class="init">
         $(document).ready( function () {
-            $('table.display').DataTable();
+            $('table.display').DataTable({
+             "order": [2, 'desc'],
+            });
         } );
     </script>
 
@@ -33,7 +35,7 @@
 			                <tr>
 			                    <th>MimeType</th>
 			                    <th>Nodes Count</th>
-			                    <th>Disk Space (Bytes)</th>
+			                    <th>Disk Space MB</th>
 			                </tr>
 			            </thead>
 			            <tbody>
@@ -49,7 +51,7 @@
 			        <table class="table table-striped">
 			            <thead>
 			                <tr>
-			                    <th>Total Disk Space (Bytes)</th>
+			                    <th>Total Disk Space MB</th>
 			                </tr>
 			            </thead>
 			            <tbody>

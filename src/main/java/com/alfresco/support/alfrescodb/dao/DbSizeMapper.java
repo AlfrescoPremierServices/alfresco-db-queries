@@ -11,8 +11,8 @@ import java.util.List;
 @Mapper
 public interface DbSizeMapper {
     // Postgres Queries
-    @Select("SELECT table_name as tableName, pg_size_pretty(total_bytes) AS total, " +
-            "row_estimate as rowEstimate , pg_size_pretty(index_bytes) AS INDEX, pg_size_pretty(table_bytes) AS TABLE " +
+    @Select("SELECT table_name as tableName, (total_bytes / 1024 / 1024) AS total, " +
+            "row_estimate as rowEstimate , (index_bytes / 1024 / 1024) AS INDEX, (table_bytes / 1024 / 1024) AS TABLE " +
             "FROM (SELECT *, total_bytes-index_bytes-COALESCE(toast_bytes,0) AS table_bytes " +
             "FROM (SELECT c.oid,nspname AS table_schema, relname AS TABLE_NAME, " +
             "c.reltuples AS row_estimate, pg_total_relation_size(c.oid) AS total_bytes, " +
@@ -26,9 +26,9 @@ public interface DbSizeMapper {
     String findDbSizePostgres();
 
     // MySQL Queries
-    @Select("SELECT TABLE_NAME 'tableName', concat(round(((data_length + index_length) / 1024 / 1024),2), ' MB') 'total', " +
-            "table_rows 'rowEstimate', concat(round(((index_length) / 1024 / 1024),2), ' MB') 'index',  " +
-            "concat(round(((data_length) / 1024 / 1024),2), ' MB') 'table' " +
+    @Select("SELECT TABLE_NAME 'tableName', round(((data_length + index_length) / 1024 / 1024),2) 'total', " +
+            "table_rows 'rowEstimate', round(((index_length) / 1024 / 1024),2) 'index',  " +
+            "round(((data_length) / 1024 / 1024),2) 'table' " +
             "FROM information_schema.TABLES " +
             "WHERE table_schema like '%' and TABLE_TYPE='BASE TABLE' ORDER BY data_length DESC")
     List<RelationInfo> findTablesInfoMysql();
@@ -55,13 +55,13 @@ public interface DbSizeMapper {
             "order by 1 desc")
     List<OracleRelationInfo> findIndexesInfoOracle();
 
-    // MS SQLL Queries
+    // MS SQL Queries
     @Select("SELECT \n" +
             "    t.NAME AS TableName,\n" +
             "    p.rows AS RowCounts,\n" +
-            "    SUM(a.total_pages) * 8 AS TotalSpaceKB, \n" +
-            "    SUM(a.used_pages) * 8 AS UsedSpaceKB, \n" +
-            "    (SUM(a.total_pages) - SUM(a.used_pages)) * 8 AS UnusedSpaceKB\n" +
+            "    (SUM(a.total_pages) * 8 / 1024) AS TotalSpace, \n" +
+            "    (SUM(a.used_pages) * 8 / 1024) AS UsedSpace, \n" +
+            "    ((SUM(a.total_pages) - SUM(a.used_pages)) * 8 / 1024) AS UnusedSpace\n" +
             "FROM \n" +
             "    sys.tables t\n" +
             "INNER JOIN \n" +
@@ -79,14 +79,14 @@ public interface DbSizeMapper {
             "GROUP BY \n" +
             "    t.Name, s.Name, p.Rows\n" +
             "ORDER BY \n" +
-            "    TotalSpaceKB DESC")
+            "    TotalSpace DESC")
     List<MSSqlRelationInfo> findTablesInfoMSSql();
 
     @Select("SELECT\n" +
             "OBJECT_NAME(i.OBJECT_ID) AS TableName,\n" +
             "i.name AS IndexName,\n" +
             "i.index_id AS IndexID,\n" +
-            "8 * SUM(a.used_pages) AS 'IndexSize'\n" +
+            "(8 * SUM(a.used_pages) / 1024) AS 'IndexSize'\n" +
             "FROM sys.indexes AS i\n" +
             "JOIN sys.partitions AS p ON p.OBJECT_ID = i.OBJECT_ID AND p.index_id = i.index_id\n" +
             "JOIN sys.allocation_units AS a ON a.container_id = p.partition_id\n" +

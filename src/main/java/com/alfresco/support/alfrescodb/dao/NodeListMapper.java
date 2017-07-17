@@ -9,11 +9,11 @@ import java.util.List;
 @Mapper
 public interface NodeListMapper {
 
-    @Select("SELECT sum(content_size) diskSpace " +
+    @Select("SELECT (sum(content_size) / 1024 / 1024) diskSpace " +
             "FROM alf_content_url")
     List<NodesList> findNodesSize();
 
-    @Select("SELECT mimetype_str mimeType, count(*) occurrences, sum(content_size) diskSpace \n" +
+    @Select("SELECT mimetype_str mimeType, count(*) occurrences, (sum(content_size) / 1024 / 1024) diskSpace \n" +
             "FROM alf_content_data  content, alf_content_url  contentUrl, alf_mimetype  mime\n" +
             "WHERE content.content_mimetype_id = mime.id \n" +
             "AND contentUrl.id = content.content_url_id\n" +
@@ -69,7 +69,7 @@ public interface NodeListMapper {
             "GROUP BY stores.protocol, stores.identifier")
     List<NodesList> findNodesByStoreOracle();
 
-    @Select("SELECT sum(content_size) diskSpace " +
+    @Select("SELECT (sum(content_size) / 1024 / 1024) diskSpace " +
             "FROM alf_content_url")
     List<NodesList> findNodesSizeOracle();
 
@@ -89,7 +89,7 @@ public interface NodeListMapper {
             "GROUP BY stores.protocol, stores.identifier ")
     List<NodesList> findNodesByStoreMSSql();
 
-    @Select("SELECT sum(content_size) diskSpace " +
+    @Select("SELECT (sum(content_size) / 1024 / 1024) diskSpace " +
             "FROM alf_content_url")
     List<NodesList> findNodesSizeMSSql();
 }
