@@ -14,6 +14,21 @@
 	<script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" class="init">
         $(document).ready( function () {
+            $('table.noPaging').DataTable({
+             "paging": false,
+             "info": false,
+            });
+        } );
+
+        $(document).ready( function () {
+            $('table.noPaging-noSearching').DataTable({
+             "paging": false,
+             "info": false,
+             "searching": false,
+            });
+        } );
+
+	    $(document).ready( function () {
             $('table.display').DataTable();
         } );
     </script>
