@@ -5,11 +5,19 @@
     <title>Spring Boot Thymeleaf Hello World Example</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="webjars/datatables/1.10.15/css/jquery.dataTables.min.css">
 </head>
 
 <body>
     <script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" class="init">
+        $(document).ready( function () {
+            $('table.display').DataTable();
+        } );
+    </script>
+
 	<!-- Add navigation bar here -->
 	<div th:insert="navBar :: navBar"></div>
 
@@ -20,7 +28,8 @@
         <h1>Database Information</h1>
 
         <div th:if="${not #lists.isEmpty(listRelationInfos)}">
-            <table class="table table-striped">
+            <table id="datatable" class="display" cellspacing="0" width="100%">
+
                 <thead>
                 <tr>
                     <th>Table Name</th>
@@ -66,7 +75,7 @@
     <div th:if="${not #lists.isEmpty(OracleListRelationInfos)}">
         <div class="panel panel-default">
             <div class="panel-heading">Tables Sizing</div>
-            <table class="table table-striped">
+            <table class="display" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>Table Name</th>
@@ -86,7 +95,7 @@
     <div th:if="${not #lists.isEmpty(OracleListIndexesInfos)}">
         <div class="panel panel-default">
             <div class="panel-heading">Indexes Sizing</div>
-            <table class="table table-striped">
+            <table class="display" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>Table Name</th>
@@ -110,7 +119,7 @@
     <div th:if="${not #lists.isEmpty(MSSqlListRelationInfos)}">
         <div class="panel panel-default">
             <div class="panel-heading">Tables Sizing</div>
-            <table class="table table-striped">
+            <table class="display" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>Table Name</th>
@@ -136,7 +145,7 @@
     <div th:if="${not #lists.isEmpty(MSSqlListIndexesInfos)}">
         <div class="panel panel-default">
             <div class="panel-heading">Indexes Sizing</div>
-            <table class="table table-striped">
+            <table class="display" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>Table Name</th>

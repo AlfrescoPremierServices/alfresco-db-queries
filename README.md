@@ -10,6 +10,7 @@ Alfresco Database Queries Report is a Spring-Boot application developed to run a
   - List Nodes by Content Type
   - List Site Activities
   - List Workflows and Tasks
+  - Solr Memory Configuration
   - Export Report
   - etc
 
