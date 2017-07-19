@@ -1,0 +1,304 @@
+Database Tables Information
+Table Name, Total Size, Row Estimate, Table Size, Index Size
+alf_node_properties, 533, 1208519, 161, 372 
+alf_node, 280, 204235, 31, 249 
+alf_child_assoc, 185, 335925, 50, 135 
+alf_acl_member, 132, 653265, 46, 86 
+alf_access_control_list, 112, 268574, 44, 68 
+alf_node_aspects, 25, 192987, 9, 16 
+alf_transaction, 18, 83231, 8, 9 
+alf_authority, 15, 62564, 5, 9 
+alf_access_control_entry, 14, 62574, 5, 9 
+alf_acl_change_set, 9, 66739, 3, 6 
+alf_prop_link, 0, 571, 0, 0 
+act_hi_detail, 0, 354, 0, 0 
+alf_content_url, 0, 232, 0, 0 
+act_ge_bytearray, 0, 0, 0, 0 
+act_hi_varinst, 0, 334, 0, 0 
+act_ru_variable, 0, 183, 0, 0 
+alf_content_data, 0, 235, 0, 0 
+alf_activity_feed, 0, 0, 0, 0 
+alf_applied_patch, 0, 231, 0, 0 
+alf_prop_unique_ctx, 0, 19, 0, 0 
+jbpm_log, 0, 0, 0, 0 
+act_ru_identitylink, 0, 0, 0, 0 
+act_ru_execution, 0, 0, 0, 0 
+alf_qname, 0, 230, 0, 0 
+act_ru_task, 0, 0, 0, 0 
+act_hi_actinst, 0, 0, 0, 0 
+alf_lock, 0, 35, 0, 0 
+alf_node_assoc, 0, 0, 0, 0 
+alf_prop_value, 0, 0, 0, 0 
+alf_activity_post, 0, 0, 0, 0 
+alf_prop_root, 0, 571, 0, 0 
+alf_auth_status, 0, 0, 0, 0 
+act_hi_identitylink, 0, 0, 0, 0 
+act_hi_procinst, 0, 0, 0, 0 
+alf_audit_app, 0, 0, 0, 0 
+jbpm_task, 0, 0, 0, 0 
+jbpm_action, 0, 0, 0, 0 
+jbpm_variableinstance, 0, 0, 0, 0 
+alf_prop_string_value, 0, 0, 0, 0 
+jbpm_node, 0, 0, 0, 0 
+jbpm_job, 0, 0, 0, 0 
+jbpm_taskinstance, 0, 0, 0, 0 
+alf_store, 0, 0, 0, 0 
+alf_permission, 0, 0, 0, 0 
+alf_prop_class, 0, 0, 0, 0 
+alf_audit_model, 0, 0, 0, 0 
+act_re_procdef, 0, 8, 0, 0 
+act_hi_taskinst, 0, 0, 0, 0 
+avm_version_roots, 0, 0, 0, 0 
+jbpm_token, 0, 0, 0, 0 
+alf_namespace, 0, 0, 0, 0 
+alf_server, 0, 0, 0, 0 
+alf_locale, 0, 0, 0, 0 
+alf_lock_resource, 0, 0, 0, 0 
+alf_mimetype, 0, 0, 0, 0 
+alf_encoding, 0, 0, 0, 0 
+alf_audit_entry, 0, 0, 0, 0 
+avm_nodes, 0, 0, 0, 0 
+jbpm_event, 0, 0, 0, 0 
+jbpm_variableaccess, 0, 0, 0, 0 
+jbpm_transition, 0, 0, 0, 0 
+act_re_model, 0, 0, 0, 0 
+alf_authority_alias, 0, 0, 0, 0 
+avm_history_links, 0, 0, 0, 0 
+jbpm_swimlaneinstance, 0, 0, 0, 0 
+avm_child_entries, 0, 0, 0, 0 
+alf_content_url_encryption, 0, 0, 0, 0 
+alf_prop_serializable_value, 0, 0, 0, 0 
+jbpm_swimlane, 0, 0, 0, 0 
+act_procdef_info, 0, 0, 0, 0 
+jbpm_processinstance, 0, 0, 0, 0 
+avm_stores, 0, 0, 0, 0 
+act_re_deployment, 0, 8, 0, 0 
+avm_node_properties, 0, 0, 0, 0 
+act_ru_event_subscr, 0, 0, 0, 0 
+avm_store_properties, 0, 0, 0, 0 
+jbpm_comment, 0, 0, 0, 0 
+jbpm_processdefinition, 0, 0, 0, 0 
+jbpm_delegation, 0, 0, 0, 0 
+jbpm_runtimeaction, 0, 0, 0, 0 
+act_id_membership, 0, 0, 0, 0 
+jbpm_moduledefinition, 0, 0, 0, 0 
+jbpm_byteblock, 0, 0, 0, 0 
+avm_aspects, 0, 0, 0, 0 
+jbpm_decisionconditions, 0, 0, 0, 0 
+avm_merge_links, 0, 0, 0, 0 
+jbpm_taskactorpool, 0, 0, 0, 0 
+jbpm_tokenvariablemap, 0, 0, 0, 0 
+act_ge_property, 0, 0, 0, 0 
+act_ru_job, 0, 0, 0, 0 
+avm_version_layered_node_entry, 0, 0, 0, 0 
+alf_activity_feed_control, 0, 0, 0, 0 
+jbpm_moduleinstance, 0, 0, 0, 0 
+alf_usage_delta, 0, 0, 0, 0 
+jbpm_exceptionhandler, 0, 0, 0, 0 
+act_evt_log, 0, 0, 0, 0 
+alf_prop_double_value, 0, 0, 0, 0 
+alf_prop_date_value, 0, 0, 0, 0 
+act_hi_comment, 0, 0, 0, 0 
+jbpm_taskcontroller, 0, 0, 0, 0 
+alf_ace_context, 0, 0, 0, 0 
+act_hi_attachment, 0, 0, 0, 0 
+act_id_info, 0, 0, 0, 0 
+act_id_group, 0, 0, 0, 0 
+act_id_user, 0, 0, 0, 0 
+jbpm_pooledactor, 0, 0, 0, 0 
+jbpm_bytearray, 0, 0, 0, 0 
+alf_tenant, 0, 0, 0, 0 
+alf_subscriptions, 0, 0, 0, 0 
+
+Database Size
+Size1343 MB
+
+Large Folders
+Folder Name, Node Reference, Type, No. of Child Nodes
+User Homes, workspace://SpacesStore/d514e0e1-7a3a-49ee-b8ef-5ccc7cf84bfa, folder, 67771
+
+Large Transactions
+Transaction Id, Nodes Count
+
+Activities by Activity Type
+Date, Site Network, Activity Type, Activities Count
+2017-Jul-03, test, org.alfresco.documentlibrary.file-deleted, 2
+2017-Jul-03, test, org.alfresco.documentlibrary.file-updated, 5
+2017-Jul-03, test, org.alfresco.documentlibrary.file-added, 3
+2017-Jul-05, test, org.alfresco.documentlibrary.file-added, 1
+
+Activities by User
+Date, Site Network, User Id, Activities Count
+2017-Jul-03, test, admin, 10
+2017-Jul-05, test, admin, 1
+
+Activities by Application Interface
+Date, Site Network, Application Interface, Activities Count
+2017-Jul-03, test, , 1
+2017-Jul-03, test, documentlibrary, 9
+2017-Jul-05, test, documentlibrary, 1
+
+All Workflows Grouped by Process Definition and Task Name
+Process Definition, Task Name, No Occurrencies
+activitiReview:1:8, Review Task, 5
+activitiAdhoc:1:4, Adhoc Task, 4
+activitiParallelReview:1:16, Document Approved, 1
+activitiParallelReview:1:16, Review Task, 1
+activitiAdhoc:1:4, Verify Adhoc Task Completed., 1
+activitiReview:1:8, Document Approved, 1
+
+Open Workflows
+Process Definition, No Occurrencies
+activitiReview:1:8, 5
+activitiAdhoc:1:4, 4
+activitiParallelReview:1:16, 1
+activitiParallelReview:1:16, 1
+activitiAdhoc:1:4, 1
+activitiReview:1:8, 1
+
+Closed Workflows
+Process Definition, No Occurrencies
+activitiReview:1:8, 5
+activitiAdhoc:1:4, 4
+activitiParallelReview:1:16, 1
+activitiParallelReview:1:16, 1
+activitiAdhoc:1:4, 1
+activitiReview:1:8, 1
+
+Open Tasks
+Process Definition, Task Name, No Occurrencies
+activitiReview:1:8, Review Task, 4
+activitiAdhoc:1:4, Adhoc Task, 3
+
+Closed Tasks
+Process Definition, Task Name, No Occurrencies
+activitiParallelReview:1:16, Document Approved, 1
+activitiAdhoc:1:4, Adhoc Task, 1
+activitiParallelReview:1:16, Review Task, 1
+activitiAdhoc:1:4, Verify Adhoc Task Completed., 1
+activitiReview:1:8, Document Approved, 1
+activitiReview:1:8, Review Task, 1
+
+All Archived Nodes
+'4'
+
+Archived Nodes by User
+Archived Nodes, User
+2, null
+2, admin
+
+Nodes Disk Space by Mimetype
+Mime Types, Nodes Count, Disk Space
+text/plain, 112, 0
+image/png, 45, 3
+text/xml, 41, 0
+text/html, 21, 0
+application/octet-stream, 15, 0
+application/x-javascript, 11, 0
+image/jpeg, 8, 1
+application/x-shockwave-flash, 8, 1
+application/msword, 3, 0
+application/vnd.openxmlformats-officedocument.wordprocessingml.document, 3, 0
+application/pdf, 2, 0
+application/vnd.ms-powerpoint, 2, 4
+video/mp4, 1, 3
+application/vnd.ms-excel, 1, 0
+
+Nodes by Content Type
+Node Type, Nodes Count
+{http://www.alfresco.org/model/content/1.0}folder, 67852
+{http://www.alfresco.org/model/content/1.0}person, 67775
+{http://www.alfresco.org/model/user/1.0}user, 67774
+{http://www.alfresco.org/model/content/1.0}category, 335
+{http://www.alfresco.org/model/content/1.0}content, 209
+{http://www.alfresco.org/model/action/1.0}actionparameter, 118
+{http://www.alfresco.org/model/content/1.0}thumbnail, 43
+{http://www.alfresco.org/model/system/1.0}deleted, 28
+{http://www.alfresco.org/model/system/1.0}container, 14
+{http://www.alfresco.org/model/content/1.0}authorityContainer, 12
+{http://www.alfresco.org/model/bpm/1.0}package, 10
+{http://www.alfresco.org/model/action/1.0}action, 9
+{http://www.alfresco.org/model/versionstore/2.0}versionHistory, 8
+{http://www.alfresco.org/model/forum/1.0}post, 7
+{http://www.alfresco.org/model/system/1.0}store_root, 6
+{http://www.alfresco.org/model/content/1.0}systemfolder, 5
+{http://www.alfresco.org/model/datalist/1.0}todoList, 5
+{http://www.alfresco.org/model/datalist/1.0}issue, 4
+{http://www.alfresco.org/model/rule/1.0}rule, 3
+{http://www.alfresco.org/model/action/1.0}compositeaction, 3
+{http://www.alfresco.org/model/action/1.0}actioncondition, 3
+{http://www.alfresco.org/model/content/1.0}zone, 3
+{http://www.alfresco.org/model/forum/1.0}topic, 3
+{http://www.alfresco.org/model/system/1.0}descriptor, 2
+{http://www.alfresco.org/model/site/1.0}site, 2
+{http://www.alfresco.org/model/linksmodel/1.0}link, 2
+{http://www.alfresco.org/model/datalist/1.0}dataList, 2
+{http://www.alfresco.org/model/publishing/1.0}Environment, 1
+{http://www.alfresco.org/model/system/1.0}archiveUser, 1
+{http://www.alfresco.org/model/content/1.0}category_root, 1
+{http://www.alfresco.org/model/transfer/1.0}transferGroup, 1
+{http://www.alfresco.org/model/content/1.0}mlRoot, 1
+{http://www.alfresco.org/model/publishing/1.0}PublishingQueue, 1
+{http://www.alfresco.org/model/forum/1.0}forum, 1
+{http://www.alfresco.org/model/site/1.0}sites, 1
+
+Nodes by Store
+Store, Nodes Count
+system://system, 7
+archive://SpacesStore, 4
+user://alfrescoUserStore, 67777
+workspace://version2Store, 37
+workspace://SpacesStore, 136419
+workspace://lightWeightVersionStore, 1
+
+Resource Locking
+Ide, Lock Token, Start Time, Expiry Time, Shared Resource, Exclusive Resource, URI
+1, not-locked, 0, 0, verifylicense, verifylicense, http://www.alfresco.org/model/content/1.0
+2, not-locked, 0, 0, repousagecomponent, repousagecomponent.users, http://www.alfresco.org/model/system/1.0
+3, not-locked, 0, 0, repousagecomponent.users, repousagecomponent.users, http://www.alfresco.org/model/system/1.0
+4, not-locked, 0, 0, repousagecomponent, repousagecomponent.documents, http://www.alfresco.org/model/system/1.0
+5, not-locked, 0, 0, repousagecomponent.documents, repousagecomponent.documents, http://www.alfresco.org/model/system/1.0
+6, not-locked, 0, 0, org, org.alfresco.repo.usage.userusagetrackingcomponent, http://www.alfresco.org/model/system/1.0
+7, not-locked, 0, 0, org.alfresco, org.alfresco.repo.usage.userusagetrackingcomponent, http://www.alfresco.org/model/system/1.0
+8, not-locked, 0, 0, org.alfresco.repo, org.alfresco.repo.usage.userusagetrackingcomponent, http://www.alfresco.org/model/system/1.0
+9, not-locked, 0, 0, org.alfresco.repo.usage, org.alfresco.repo.usage.userusagetrackingcomponent, http://www.alfresco.org/model/system/1.0
+10, not-locked, 0, 0, org.alfresco.repo.usage.userusagetrackingcomponent, org.alfresco.repo.usage.userusagetrackingcomponent, http://www.alfresco.org/model/system/1.0
+11, not-locked, 0, 0, chaininguserregistrysynchronizer, chaininguserregistrysynchronizer, http://www.alfresco.org/model/system/1.0
+12, not-locked, 0, 0, feedgenerator, feedgenerator, http://www.alfresco.org/model/system/1.0
+13, not-locked, 0, 0, activitypostlookup, activitypostlookup, http://www.alfresco.org/model/system/1.0
+14, not-locked, 0, 0, org, org.alfresco.repo.activities.feed.cleanup.feedcleaner, http://www.alfresco.org/model/system/1.0
+15, not-locked, 0, 0, org.alfresco, org.alfresco.repo.activities.feed.cleanup.feedcleaner, http://www.alfresco.org/model/system/1.0
+16, not-locked, 0, 0, org.alfresco.repo, org.alfresco.repo.activities.feed.cleanup.feedcleaner, http://www.alfresco.org/model/system/1.0
+17, not-locked, 0, 0, org.alfresco.repo.activities, org.alfresco.repo.activities.feed.cleanup.feedcleaner, http://www.alfresco.org/model/system/1.0
+18, not-locked, 0, 0, org.alfresco.repo.activities.feed, org.alfresco.repo.activities.feed.cleanup.feedcleaner, http://www.alfresco.org/model/system/1.0
+19, not-locked, 0, 0, org.alfresco.repo.activities.feed.cleanup, org.alfresco.repo.activities.feed.cleanup.feedcleaner, http://www.alfresco.org/model/system/1.0
+20, not-locked, 0, 0, org.alfresco.repo.activities.feed.cleanup.feedcleaner, org.alfresco.repo.activities.feed.cleanup.feedcleaner, http://www.alfresco.org/model/system/1.0
+21, not-locked, 0, 0, org, org.alfresco.repo.activities.post.cleanup.postcleaner, http://www.alfresco.org/model/system/1.0
+22, not-locked, 0, 0, org.alfresco, org.alfresco.repo.activities.post.cleanup.postcleaner, http://www.alfresco.org/model/system/1.0
+23, not-locked, 0, 0, org.alfresco.repo, org.alfresco.repo.activities.post.cleanup.postcleaner, http://www.alfresco.org/model/system/1.0
+24, not-locked, 0, 0, org.alfresco.repo.activities, org.alfresco.repo.activities.post.cleanup.postcleaner, http://www.alfresco.org/model/system/1.0
+25, not-locked, 0, 0, org.alfresco.repo.activities.post, org.alfresco.repo.activities.post.cleanup.postcleaner, http://www.alfresco.org/model/system/1.0
+26, not-locked, 0, 0, org.alfresco.repo.activities.post.cleanup, org.alfresco.repo.activities.post.cleanup.postcleaner, http://www.alfresco.org/model/system/1.0
+27, not-locked, 0, 0, org.alfresco.repo.activities.post.cleanup.postcleaner, org.alfresco.repo.activities.post.cleanup.postcleaner, http://www.alfresco.org/model/system/1.0
+28, not-locked, 0, 0, nodecleanup, nodecleanup, http://www.alfresco.org/model/system/1.0
+29, not-locked, 0, 0, clusterservice, clusterservice, http://www.alfresco.org/model/system/1.0
+62, not-locked, 0, 0, contentstorecleaner, contentstorecleaner, http://www.alfresco.org/model/system/1.0
+63, not-locked, 0, 0, activityfeednotifier, activityfeednotifier, http://www.alfresco.org/model/system/1.0
+64, not-locked, 0, 0, solrbackupclient-alfresco, solrbackupclient-alfresco, http://www.alfresco.org/model/system/1.0
+65, not-locked, 0, 0, solrbackupclient-archive, solrbackupclient-archive, http://www.alfresco.org/model/system/1.0
+66, not-locked, 0, 0, authorizationsconsistencymonitor, authorizationsconsistencymonitor.check, http://www.alfresco.org/model/system/1.0
+67, not-locked, 0, 0, authorizationsconsistencymonitor.check, authorizationsconsistencymonitor.check, http://www.alfresco.org/model/system/1.0
+
+Authorities
+Users Count
+67776
+
+Groups Count
+67776
+
+Solr Memory
+Alfresco Nodes, Archive Nodes, ACLs, ACL Transactions
+136419, 4, 84124, 271160, 67793
+
+Alfresco Core Memory MB, Archive Core Memory MB, Total Solr Memory MB
+28, 12, 40
