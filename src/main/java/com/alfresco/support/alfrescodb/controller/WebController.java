@@ -61,8 +61,10 @@ public class WebController {
         List < NodesList > listNodesByStore;
         List < LockedResources > listLockedResources;
         List < Authority > listUsers;
+        List < Authority > listAuthorizedUsers;
         List < Authority > listGroups;
         List < Workflow > listWorkflows;
+        List < JmxProperties > jmxProperties;
 
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(reportFile));
@@ -306,6 +308,15 @@ public class WebController {
             }
             model.addAttribute("listUsers", listUsers);
 
+            listAuthorizedUsers = sqlMapper.findAuthorizedUsers();
+            out.write("\n\nAuthorized Users Count");
+            if (listUsers != null) {
+                for (int i = 0; i < listAuthorizedUsers.size(); i++) {
+                    out.write(listAuthorizedUsers.get(i).printUsers());
+                }
+            }
+            model.addAttribute("listAuthorizedUsers", listAuthorizedUsers);
+
             listGroups = authorityMapper.findGroups();
             out.write("\n\nGroups Count");
             if (listUsers != null) {
@@ -344,6 +355,19 @@ public class WebController {
                 out.write("\n\nAlfresco Core Memory MB, Archive Core Memory MB, Total Solr Memory MB");
                 out.write("\n" + String.valueOf(alfrescoCoreMemory) + ", " + String.valueOf(archiveCoreMemory) + ", " + String.valueOf(totalMemory));
             }
+
+
+            //JMX Properties
+            List < JmxProperties > listJmxProperties = jmxPropertiesMapper.findJmxProperties();
+            out.write("\n\nJMX Properties set in DB");
+            out.write("\nProperty Name, Property Value");
+            if (listJmxProperties != null) {
+                for (int i = 0; i < listJmxProperties.size(); i++) {
+                    out.write(listJmxProperties.get(i).printJmxProperties());
+                }
+            }
+            model.addAttribute("listJmxProperties", listJmxProperties);
+
             out.close();
         } catch (IOException e) {
             System.out.println("Exception ");
@@ -553,11 +577,31 @@ public class WebController {
 
         model.addAttribute("listUsers", listUsers);
 
+        //Count authorized users
+        List< Authority > listAuthorizedUsers = sqlMapper.findAuthorizedUsers();
+
+        model.addAttribute("listAuthorizedUsers", listAuthorizedUsers);
+
         //Count groups
         List < Authority > listGroups = authorityMapper.findGroups();
 
         model.addAttribute("listGroups", listGroups);
 
+        addAdditionalParamsToModel(model);
+
+        return null;
+    }
+
+    @Autowired
+    private JmxPropertiesMapper jmxPropertiesMapper;
+
+    @RequestMapping("/jmxProperties")
+    public String jmxProperties(Model model) {
+
+        //JMX Properties
+        List < JmxProperties > listJmxProperties = jmxPropertiesMapper.findJmxProperties();
+
+        model.addAttribute("listJmxProperties", listJmxProperties);
         addAdditionalParamsToModel(model);
 
         return null;

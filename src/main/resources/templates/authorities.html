@@ -41,6 +41,32 @@
 	</div>
 	<!-- end of section -->
 
+	<!-- Authorized Users -->
+	<div class="panel panel-default">
+		<!-- Default panel contents -->
+		<div th:if="${not #lists.isEmpty(listAuthorizedUsers)}">
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th>Authorized Users Count</th>
+
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="authorizedUsers : ${listAuthorizedUsers}">
+					<td th:text="${authorizedUsers.authoritiesCount}"></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listAuthorizedUsers)}">
+		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+		No Results Found
+	</div>
+	<!-- End of section -->
+
 	<!-- Groups -->
 	<div class="panel panel-default">
 		<!-- Default panel contents -->

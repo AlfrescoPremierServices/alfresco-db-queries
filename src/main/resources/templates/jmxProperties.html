@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+	
+<head>
+    <title>JMX Properties</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="webjars/datatables/1.10.15/css/jquery.dataTables.min.css">
+</head>
+
+<body>
+<script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" class="init">
+        $(document).ready( function () {
+            $('table.noPaging').DataTable({
+             "paging": false,
+             "info": false,
+             "order": [0, 'desc'],
+            });
+        } );
+
+        $(document).ready( function () {
+            $('table.noPaging-noSearching').DataTable({
+             "paging": false,
+             "info": false,
+             "searching": false,
+             "order": [0, 'desc'],
+            });
+        } );
+
+	    $(document).ready( function () {
+            $('table.display').DataTable();
+        } );
+    </script>
+
+    <!-- Add navigation bar here -->
+	<div th:insert="navBar :: navBar"></div>
+    	
+	<!-- JMX Properties -->
+	<h1>JMX Properties set in DB</h1>
+	<div class="panel panel-default">
+        <!-- Default panel contents -->
+
+        <div th:if="${not #lists.isEmpty(listJmxProperties)}">
+			<table class="display" cellspacing="0" width="100%">
+	            <thead>
+	                <tr>
+						<th>Property Name</th>
+						<th>Property Value</th>
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <tr th:each="jmx : ${listJmxProperties}">
+						<td th:text="${jmx.propertyName}"></td>
+						<td th:text="${jmx.propertyValue}"></td>
+	                </tr>
+	            </tbody>
+	        </table>
+        </div>
+	</div>
+
+	<div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listJmxProperties)}">
+		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+		No Results Found
+	</div>
+	<!-- end of section -->
+
+ </body>
+
+</html>

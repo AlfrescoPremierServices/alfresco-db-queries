@@ -114,18 +114,18 @@
                 <tr>
                     <th>Table Name</th>
                     <th>Rows Count</th>
-                    <th>Total Space KB</th>
-                    <th>Used Space KB</th>
-                    <th>Unused Space KB</th>
+                    <th>Total Space MB</th>
+                    <th>Used Space MB</th>
+                    <th>Unused Space MB</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="rel : ${MSSqlListRelationInfos}">
                     <td th:text="${rel.TableName}"></td>
                     <td th:text="${rel.RowCounts}"></td>
-                    <td th:text="${rel.TotalSpaceKB}"></td>
-                    <td th:text="${rel.UsedSpaceKB}"></td>
-                    <td th:text="${rel.UnusedSpaceKB}"></td>
+                    <td th:text="${rel.TotalSpace}"></td>
+                    <td th:text="${rel.UsedSpace}"></td>
+                    <td th:text="${rel.UnusedSpace}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -722,6 +722,26 @@
     </div>
     <!-- end of section -->
 
+    <!-- Authorized Users -->
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div th:if="${not #lists.isEmpty(listAuthorizedUsers)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Authorized Users Count</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="authorizedUsers : ${listAuthorizedUsers}">
+                    <td th:text="${authorizedUsers.authoritiesCount}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <!-- Groups -->
     <div class="panel panel-default">
         <!-- Default panel contents -->
@@ -803,6 +823,38 @@
         No Results Found
     </div>
 
+    <!-- end of section -->
+
+
+    <hr>
+
+    <!-- JMX Properties -->
+    <h1>JMX Properties set in DB</h1>
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+
+        <div th:if="${not #lists.isEmpty(listJmxProperties)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Property Name</th>
+                    <th>Property Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="jmx : ${listJmxProperties}">
+                    <td th:text="${jmx.propertyName}"></td>
+                    <td th:text="${jmx.propertyValue}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listJmxProperties)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
     <!-- end of section -->
 
 </body>

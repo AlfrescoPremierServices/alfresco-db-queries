@@ -33,6 +33,9 @@ public class SqlMapperController {
     @Autowired
     private SolrMemoryMapper solrMemoryMapper;
 
+    @Autowired
+    private AuthorityMapper authorityMapper;
+
     public List findTablesInfo(){
         if (dbType.equalsIgnoreCase("postgres")){
             return dbSizeMapper.findTablesInfoPostgres();
@@ -162,4 +165,19 @@ public class SqlMapperController {
     public List solrMemory(){
         return solrMemoryMapper.solrMemory();
     }
+
+    public List findAuthorizedUsers(){
+        if (dbType.equalsIgnoreCase("postgres")){
+            return authorityMapper.findAuthorizedUsers();
+        } else if (dbType.equalsIgnoreCase("mysql")){
+            return authorityMapper.findAuthorizedUsers();
+        } else if (dbType.equalsIgnoreCase("oracle")){
+            return authorityMapper.findAuthorizedUsers();
+        } else if (dbType.equalsIgnoreCase("microsoft")){
+            return authorityMapper.findAuthorizedUsersMSSql();
+        }
+
+        return null;
+    }
+
 }
