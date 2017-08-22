@@ -5,11 +5,15 @@ import com.alfresco.support.alfrescodb.model.OracleRelationInfo;
 import com.alfresco.support.alfrescodb.model.RelationInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.beans.factory.annotation.Value;
+import org.apache.ibatis.annotations.Param;
+
 
 import java.util.List;
 
 @Mapper
 public interface DbSizeMapper {
+
     // Postgres Queries
     @Select("SELECT table_name as tableName, (total_bytes / 1024 / 1024) AS total, " +
             "row_estimate as rowEstimate , (index_bytes / 1024 / 1024) AS INDEX, (table_bytes / 1024 / 1024) AS TABLE " +
@@ -32,6 +36,7 @@ public interface DbSizeMapper {
             "FROM information_schema.TABLES " +
             "WHERE table_schema like '%' and TABLE_TYPE='BASE TABLE' ORDER BY data_length DESC")
     List<RelationInfo> findTablesInfoMysql();
+
 
     @Select("SELECT concat(Round(Sum(data_length + index_length) / 1024 / 1024, 1), ' MB') 'total'" +
             "FROM information_schema.tables")

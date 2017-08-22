@@ -44,22 +44,61 @@
 			<table class="table table-striped">
 				<thead>
 				<tr>
-					<th>Alfresco Core Memory MB</th>
-					<th>Archive Core Memory MB</th>
-					<th>Total Memory MB</th>
+					<th>Alfresco Core Data Structures (Gb)</th>
+					<th>Archive Core Data Structures (Gb)</th>
+					<th>Solr Data Structures Total (Gb)</th>
 				</tr>
 				</thead>
 				<tbody>
 				<tr>
 					<td th:text="${alfrescoCoreMemory}"></td>
 					<td th:text="${archiveCoreMemory}"></td>
-					<td th:text="${solrTotalMemory}"></td>
+					<td th:text="${solrDataStructuresTotalMemory}"></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div>
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th>Alfresco Core Caches (Gb)</th>
+					<th>Archive Core Caches (Gb)</th>
+					<th>Solr Caches Total (Gb)</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td th:text="${alfrescoSolrCachesMemory}"></td>
+					<td th:text="${archiveSolrCachesMemory}"></td>
+					<td th:text="${totalSolrCachesMemory}"></td>
 				</tr>
 				</tbody>
 			</table>
 		</div>
 	</div>
-	
+
+	<div>
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th>Solr Memory Requirements for 2 searches (Gb) = 2 * Data Structures + 2 * Caches</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td th:text="${totalSolrMemory}"></td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+	</div>
+
+	<div>The information for the Solr memory calculation comes from Alfresco documentation: <a href="http://docs.alfresco.com/5.2/concepts/solrnodes-memory.html">Memory Needed For Solr Nodes</a>
+        <p></p>
+        Please note there may be additional memory required for the Lucene Field Cache as shown in the diagram.
+    </div>
     <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(solrMemoryList)}">
 		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
 		No Results Found
