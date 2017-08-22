@@ -34,10 +34,10 @@ The steps to build the application are:
  - Unzip it
  - Rename folder to "alfresco-db-queries"
  - Adjust alfresco-db-queries/src/main/resources/application.properties file
-        Set database details
-        Set port for web server
+    - Set database details
+    - Set port for web server
+    - Adjust Solr cache values coming from solrcore.properties
  - Compile and build application
-
 
 Compile and build the application using Maven
 ```sh
