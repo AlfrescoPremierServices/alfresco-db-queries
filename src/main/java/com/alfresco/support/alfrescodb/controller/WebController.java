@@ -64,6 +64,9 @@ public class WebController {
     @Value("${archive.solr.pathCache.size}")
     private Long archiveSolrPathCacheSize;
 
+    @Value("${alf_auth_status}")
+    private Boolean alfAuthStatus;
+
     @RequestMapping("/")
     public String index(String name, Model model) {
         addAdditionalParamsToModel(model);
@@ -334,14 +337,16 @@ public class WebController {
             }
             model.addAttribute("listUsers", listUsers);
 
-            listAuthorizedUsers = sqlMapper.findAuthorizedUsers();
-            out.write("\n\nAuthorized Users Count");
-            if (listUsers != null) {
-                for (int i = 0; i < listAuthorizedUsers.size(); i++) {
-                    out.write(listAuthorizedUsers.get(i).printUsers());
+            if (alfAuthStatus == true) {
+                listAuthorizedUsers = sqlMapper.findAuthorizedUsers();
+                out.write("\n\nAuthorized Users Count");
+                if (listUsers != null) {
+                    for (int i = 0; i < listAuthorizedUsers.size(); i++) {
+                        out.write(listAuthorizedUsers.get(i).printUsers());
+                    }
                 }
+                model.addAttribute("listAuthorizedUsers", listAuthorizedUsers);
             }
-            model.addAttribute("listAuthorizedUsers", listAuthorizedUsers);
 
             listGroups = authorityMapper.findGroups();
             out.write("\n\nGroups Count");
@@ -626,10 +631,13 @@ public class WebController {
 
         model.addAttribute("listUsers", listUsers);
 
-        //Count authorized users
-        List< Authority > listAuthorizedUsers = sqlMapper.findAuthorizedUsers();
+        if (alfAuthStatus == true) {
+            //Count authorized users
+            List<Authority> listAuthorizedUsers = sqlMapper.findAuthorizedUsers();
 
-        model.addAttribute("listAuthorizedUsers", listAuthorizedUsers);
+            model.addAttribute("listAuthorizedUsers", listAuthorizedUsers);
+            model.addAttribute("alfAuthStatus", alfAuthStatus);
+        }
 
         //Count groups
         List < Authority > listGroups = authorityMapper.findGroups();

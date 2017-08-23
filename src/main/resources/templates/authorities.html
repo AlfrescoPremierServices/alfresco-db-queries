@@ -61,7 +61,7 @@
 		</div>
 	</div>
 
-	<div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listAuthorizedUsers)}">
+	<div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listAuthorizedUsers)} and ${alfAuthStatus} == true">
 		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
 		No Results Found
 	</div>
