@@ -354,13 +354,6 @@ public class WebController {
 
             // Solr memory
             List < SolrMemory > solrMemoryList = sqlMapper.solrMemory();
-            out.write("\n\nSolr Memory");
-            out.write("\nAlfresco Nodes, Archive Nodes, ACLs, ACL Transactions");
-            if (listUsers != null) {
-                for (int i = 0; i < solrMemoryList.size(); i++) {
-                    out.write(solrMemoryList.get(i).printSolrMemory());
-                }
-            }
             model.addAttribute("solrMemoryList", solrMemoryList);
 
             for (int i = 0; i < solrMemoryList.size(); i++) {
@@ -369,27 +362,47 @@ public class WebController {
                 Long transactions = Long.valueOf(solrMemoryList.get(i).getTransactions());
                 Long acls = Long.valueOf(solrMemoryList.get(i).getAcls());
                 Long aclTransactions = Long.valueOf(solrMemoryList.get(i).getAclTransactions());
-
                 Long alfrescoCoreMemory = (120*alfrescoNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
                 Long archiveCoreMemory = (120*archiveNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
                 Long totalDataStructuresMemory = alfrescoCoreMemory + archiveCoreMemory;
-
-                model.addAttribute("alfrescoCoreMemory", alfrescoCoreMemory);
-                model.addAttribute("archiveCoreMemory", archiveCoreMemory);
-                model.addAttribute("solrDataStructuresTotalMemory", totalDataStructuresMemory);
-
-                out.write("\n\nAlfresco Core Memory GB, Archive Core Memory GB, Total Solr Data Structures Memory GB");
-                out.write("\n" + String.valueOf(alfrescoCoreMemory) + ", " + String.valueOf(archiveCoreMemory) + ", " + String.valueOf(totalDataStructuresMemory));
-
-                Long alfrescoSolrCachesMemory = (alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (2*alfrescoNodes + transactions + acls + aclTransactions)/8;
-                Long archiveSolrCachesMemory = (archiveSolrFilterCacheSize + archiveSolrQueryResultCacheSize + archiveSolrAuthorityCacheSize + archiveSolrPathCacheSize) * (2*archiveNodes + transactions + acls + aclTransactions)/8;
+                Long alfrescoSolrCachesMemory = (alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (2*alfrescoNodes + transactions + acls + aclTransactions)/8/1024/1024/1024;
+                Long archiveSolrCachesMemory = 0L; // because we don't search on archive content
                 Long totalSolrCachesMemory = alfrescoSolrCachesMemory + archiveSolrCachesMemory;
                 Long totalSolrMemory = totalDataStructuresMemory + totalSolrCachesMemory;
 
+                model.addAttribute("alfrescoCoreMemory", alfrescoCoreMemory);
+                model.addAttribute("archiveCoreMemory", archiveCoreMemory);
+                model.addAttribute("alfrescoSolrQueryResultCacheSize", alfrescoSolrQueryResultCacheSize);
+                model.addAttribute("alfrescoSolrAuthorityCacheSize", alfrescoSolrAuthorityCacheSize);
+                model.addAttribute("alfrescoSolrPathCacheSize", alfrescoSolrPathCacheSize);
+                model.addAttribute("alfrescoSolrFilterCacheSize", alfrescoSolrFilterCacheSize);
+                model.addAttribute("archiveSolrQueryResultCacheSize", archiveSolrQueryResultCacheSize);
+                model.addAttribute("archiveSolrAuthorityCacheSize", archiveSolrAuthorityCacheSize);
+                model.addAttribute("archiveSolrPathCacheSize", archiveSolrPathCacheSize);
+                model.addAttribute("archiveSolrFilterCacheSize", archiveSolrFilterCacheSize);
+                model.addAttribute("solrDataStructuresTotalMemory", totalDataStructuresMemory);
                 model.addAttribute("alfrescoSolrCachesMemory", alfrescoSolrCachesMemory);
                 model.addAttribute("archiveSolrCachesMemory", archiveSolrCachesMemory);
                 model.addAttribute("totalSolrCachesMemory", totalSolrCachesMemory);
-                model.addAttribute("totalSolrMemory", totalSolrMemory);
+                model.addAttribute("totalSolrMemory", 2*totalSolrMemory);
+                model.addAttribute("alfrescoSolrFilterCacheSize", alfrescoSolrFilterCacheSize);
+
+                out.write("\n\nSolr Memory");
+                out.write("\nAlfresco Nodes, Archive Nodes, Transactions, ACLs, ACL Transactions");
+                out.write("\n" + String.valueOf(alfrescoNodes) + ", " + String.valueOf(archiveNodes) + ", " + String.valueOf(transactions) + ", " + String.valueOf(acls) + ", " + String.valueOf(aclTransactions));
+
+                out.write("\n\nAlfresco Core Query Result Cache Size, Alfresco Core Authority Cache Size, Alfresco Core Path Cache Size, Alfresco Core Filter Cache Size");
+                out.write("\n" + String.valueOf(archiveSolrQueryResultCacheSize) + ", " + String.valueOf(alfrescoSolrAuthorityCacheSize) + ", " + String.valueOf(alfrescoSolrPathCacheSize) + ", " + String.valueOf(alfrescoSolrFilterCacheSize));
+
+                out.write("\n\nArchive Core Query Result Cache Size, Archive Core Authority Cache Size, Archive Core Path Cache Size, Archive Core Filter Cache Size");
+                out.write("\n" + String.valueOf(archiveSolrQueryResultCacheSize) + ", " + String.valueOf(archiveSolrAuthorityCacheSize) + ", " + String.valueOf(archiveSolrPathCacheSize) + ", " + String.valueOf(archiveSolrFilterCacheSize));
+
+                out.write("\n\nAlfresco Core Data Structures Memory GB, Archive Core Data Structures Memory GB, Total Solr Data Structures Memory GB");
+                out.write("\n" + String.valueOf(alfrescoCoreMemory) + ", " + String.valueOf(archiveCoreMemory) + ", " + String.valueOf(totalDataStructuresMemory));
+                out.write("\n\nAlfresco Core Cache Memory GB, Archive Core Cache Memory GB, Total Solr Cache Memory GB");
+                out.write("\n" + String.valueOf(alfrescoSolrCachesMemory) + ", " + String.valueOf(archiveSolrCachesMemory) + ", " + String.valueOf(totalSolrCachesMemory));
+                out.write("\n\nSolr Required Memory GB (for 2 searches per core)");
+                out.write("\n" + String.valueOf(2*totalSolrMemory));
             }
 
 
@@ -654,31 +667,30 @@ public class WebController {
             Long transactions = Long.valueOf(solrMemoryList.get(i).getTransactions());
             Long acls = Long.valueOf(solrMemoryList.get(i).getAcls());
             Long aclTransactions = Long.valueOf(solrMemoryList.get(i).getAclTransactions());
-
-
-            alfrescoNodes= 100000000L;
-            archiveNodes=  10000000L;
-            transactions= 100000000L;
-            acls= 100000000L;
-            aclTransactions = 100000000L;
-
             Long alfrescoCoreMemory = (120*alfrescoNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
             Long archiveCoreMemory = (120*archiveNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
             Long totalDataStructuresMemory = alfrescoCoreMemory + archiveCoreMemory;
-
-            model.addAttribute("alfrescoCoreMemory", alfrescoCoreMemory);
-            model.addAttribute("archiveCoreMemory", archiveCoreMemory);
-            model.addAttribute("solrDataStructuresTotalMemory", totalDataStructuresMemory);
-
             Long alfrescoSolrCachesMemory = (alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (2*alfrescoNodes + transactions + acls + aclTransactions)/8/1024/1024/1024;
             Long archiveSolrCachesMemory = 0L; // because we don't search on archive content
             Long totalSolrCachesMemory = alfrescoSolrCachesMemory + archiveSolrCachesMemory;
             Long totalSolrMemory = totalDataStructuresMemory + totalSolrCachesMemory;
 
+            model.addAttribute("alfrescoCoreMemory", alfrescoCoreMemory);
+            model.addAttribute("archiveCoreMemory", archiveCoreMemory);
+            model.addAttribute("alfrescoSolrQueryResultCacheSize", alfrescoSolrQueryResultCacheSize);
+            model.addAttribute("alfrescoSolrAuthorityCacheSize", alfrescoSolrAuthorityCacheSize);
+            model.addAttribute("alfrescoSolrPathCacheSize", alfrescoSolrPathCacheSize);
+            model.addAttribute("alfrescoSolrFilterCacheSize", alfrescoSolrFilterCacheSize);
+            model.addAttribute("archiveSolrQueryResultCacheSize", archiveSolrQueryResultCacheSize);
+            model.addAttribute("archiveSolrAuthorityCacheSize", archiveSolrAuthorityCacheSize);
+            model.addAttribute("archiveSolrPathCacheSize", archiveSolrPathCacheSize);
+            model.addAttribute("archiveSolrFilterCacheSize", archiveSolrFilterCacheSize);
+            model.addAttribute("solrDataStructuresTotalMemory", totalDataStructuresMemory);
             model.addAttribute("alfrescoSolrCachesMemory", alfrescoSolrCachesMemory);
             model.addAttribute("archiveSolrCachesMemory", archiveSolrCachesMemory);
             model.addAttribute("totalSolrCachesMemory", totalSolrCachesMemory);
             model.addAttribute("totalSolrMemory", 2*totalSolrMemory);
+            model.addAttribute("alfrescoSolrFilterCacheSize", alfrescoSolrFilterCacheSize);
         }
 
         addAdditionalParamsToModel(model);

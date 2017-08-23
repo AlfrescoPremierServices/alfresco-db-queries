@@ -773,56 +773,150 @@
 
     <!-- Solr Memory -->
     <h1>Solr Memory</h1>
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <hr>
+        <div th:if="${not #lists.isEmpty(solrMemoryList)}">
+            <h2>Nodes and Transactions</h2>
 
-    <div th:if="${not #lists.isEmpty(solrMemoryList)}">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Alfresco Nodes</th>
-                <th>Archive Nodes</th>
-                <th>Transactions</th>
-                <th>ACLs</th>
-                <th>ACL Transactions</th>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Alfresco Nodes</th>
+                    <th>Archive Nodes</th>
+                    <th>Transactions</th>
+                    <th>ACLs</th>
+                    <th>ACL Transactions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="memory : ${solrMemoryList}">
+                    <td th:text="${memory.alfrescoNodes}"></td>
+                    <td th:text="${memory.archiveNodes}"></td>
+                    <td th:text="${memory.transactions}"></td>
+                    <td th:text="${memory.acls}"></td>
+                    <td th:text="${memory.aclTransactions}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <hr>
 
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="memory : ${solrMemoryList}">
-                <td th:text="${memory.alfrescoNodes}"></td>
-                <td th:text="${memory.archiveNodes}"></td>
-                <td th:text="${memory.transactions}"></td>
-                <td th:text="${memory.acls}"></td>
-                <td th:text="${memory.aclTransactions}"></td>
-            </tr>
-            </tbody>
-        </table>
+        <div>
+            <h2>Alfresco and Archive Cores Caches</h2>
+
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Alfresco Solr Filter Cache Size</th>
+                    <th>Alfresco Solr Query Result Cache Size</th>
+                    <th>Alfresco Solr Authority Cache Size</th>
+                    <th>Alfresco Solr Patch Cache Size</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${alfrescoSolrFilterCacheSize}"></td>
+                    <td th:text="${alfrescoSolrQueryResultCacheSize}"></td>
+                    <td th:text="${alfrescoSolrAuthorityCacheSize}"></td>
+                    <td th:text="${alfrescoSolrPathCacheSize}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Archive Solr Filter Cache Size</th>
+                    <th>Archive Solr Query Result Cache Size</th>
+                    <th>Archive Solr Authority Cache Size</th>
+                    <th>Archive Solr Patch Cache Size</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${archiveSolrFilterCacheSize}"></td>
+                    <td th:text="${archiveSolrQueryResultCacheSize}"></td>
+                    <td th:text="${archiveSolrAuthorityCacheSize}"></td>
+                    <td th:text="${archiveSolrPathCacheSize}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <hr>
+
+        <div>
+            <h2>Memory for Data Structures</h2>
+
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Alfresco Core Data Structures (Gb)</th>
+                    <th>Archive Core Data Structures (Gb)</th>
+                    <th>Solr Data Structures Total (Gb)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${alfrescoCoreMemory}"></td>
+                    <td th:text="${archiveCoreMemory}"></td>
+                    <td th:text="${solrDataStructuresTotalMemory}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <hr>
+
+        <div>
+            <h2>Memory for caches</h2>
+
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Alfresco Core Caches (Gb)</th>
+                    <th>Archive Core Caches (Gb)</th>
+                    <th>Solr Caches Total (Gb)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${alfrescoSolrCachesMemory}"></td>
+                    <td th:text="${archiveSolrCachesMemory}"></td>
+                    <td th:text="${totalSolrCachesMemory}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+    <hr>
 
     <div>
+        <h2>Solr Memory Required for 2 Searches per Core</h2>
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>Alfresco Core Memory MB</th>
-                <th>Archive Core Memory MB</th>
-                <th>Total Memory MB</th>
+                <th>Solr Memory Requirements (Gb) = 2 * Data Structures + 2 * Caches</th>
             </tr>
             </thead>
             <tbody>
             <tr>
-                <td th:text="${alfrescoCoreMemory}"></td>
-                <td th:text="${archiveCoreMemory}"></td>
-                <td th:text="${solrTotalMemory}"></td>
+                <td th:text="${totalSolrMemory}"></td>
             </tr>
             </tbody>
         </table>
     </div>
     </div>
 
+    <div>The information for the Solr memory calculation comes from Alfresco documentation: <a href="http://docs.alfresco.com/5.2/concepts/solrnodes-memory.html">Memory Needed For Solr Nodes</a>
+        <p></p>
+        Please note there may be additional memory required for the Lucene Field Cache as shown in the diagram.
+    </div>
     <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(solrMemoryList)}">
         <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
         No Results Found
     </div>
-
     <!-- end of section -->
 
 

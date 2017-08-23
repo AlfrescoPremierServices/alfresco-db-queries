@@ -16,9 +16,11 @@
     <div class="panel panel-default">
         <!-- Default panel contents -->
 		<h1>Solr Memory</h1>
-
+		<hr>
         <div th:if="${not #lists.isEmpty(solrMemoryList)}">
-	        <table class="table table-striped">
+			<h2>Nodes and Transactions</h2>
+
+			<table class="table table-striped">
 	            <thead>
 	                <tr>
 	                    <th>Alfresco Nodes</th>
@@ -39,8 +41,56 @@
 	            </tbody>
 	        </table>
         </div>
+		<hr>
 
 		<div>
+			<h2>Alfresco and Archive Cores Caches</h2>
+
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th>Alfresco Solr Filter Cache Size</th>
+					<th>Alfresco Solr Query Result Cache Size</th>
+					<th>Alfresco Solr Authority Cache Size</th>
+					<th>Alfresco Solr Patch Cache Size</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td th:text="${alfrescoSolrFilterCacheSize}"></td>
+					<td th:text="${alfrescoSolrQueryResultCacheSize}"></td>
+					<td th:text="${alfrescoSolrAuthorityCacheSize}"></td>
+					<td th:text="${alfrescoSolrPathCacheSize}"></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div>
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th>Archive Solr Filter Cache Size</th>
+					<th>Archive Solr Query Result Cache Size</th>
+					<th>Archive Solr Authority Cache Size</th>
+					<th>Archive Solr Patch Cache Size</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td th:text="${archiveSolrFilterCacheSize}"></td>
+					<td th:text="${archiveSolrQueryResultCacheSize}"></td>
+					<td th:text="${archiveSolrAuthorityCacheSize}"></td>
+					<td th:text="${archiveSolrPathCacheSize}"></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+		<hr>
+
+		<div>
+			<h2>Memory for Data Structures</h2>
+
 			<table class="table table-striped">
 				<thead>
 				<tr>
@@ -58,8 +108,11 @@
 				</tbody>
 			</table>
 		</div>
+		<hr>
 
 		<div>
+			<h2>Memory for caches</h2>
+
 			<table class="table table-striped">
 				<thead>
 				<tr>
@@ -78,12 +131,14 @@
 			</table>
 		</div>
 	</div>
+	<hr>
 
 	<div>
+		<h2>Solr Memory Required for 2 Searches per Core</h2>
 		<table class="table table-striped">
 			<thead>
 			<tr>
-				<th>Solr Memory Requirements for 2 searches (Gb) = 2 * Data Structures + 2 * Caches</th>
+				<th>Solr Memory Requirements (Gb) = 2 * Data Structures + 2 * Caches</th>
 			</tr>
 			</thead>
 			<tbody>
