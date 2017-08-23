@@ -37,6 +37,7 @@ The steps to build the application are:
     - Set database details
     - Set port for web server
     - Adjust Solr cache values coming from solrcore.properties
+    - Set alf_auth_status to false if table does not exists in your database
  - Compile and build application
 
 Compile and build the application using Maven
