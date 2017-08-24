@@ -370,7 +370,7 @@ public class WebController {
                 double archiveCoreMemory = (double)(120*archiveNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
                 double totalDataStructuresMemory = (double)alfrescoCoreMemory + archiveCoreMemory;
                 double alfrescoSolrCachesMemory = (double)(alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (double)(2*alfrescoNodes + transactions + acls + aclTransactions)/8/1024/1024/1024;
-                double archiveSolrCachesMemory = (double)0L; // because we don't search on archive content
+                double archiveSolrCachesMemory = (double)(alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (double)(2*archiveNodes + transactions + acls + aclTransactions)/8/1024/1024/1024;
                 double totalSolrCachesMemory = (double)alfrescoSolrCachesMemory + archiveSolrCachesMemory;
                 double totalSolrMemory = (double)totalDataStructuresMemory + totalSolrCachesMemory;
 
@@ -673,11 +673,12 @@ public class WebController {
             Long transactions = Long.valueOf(solrMemoryList.get(i).getTransactions());
             Long acls = Long.valueOf(solrMemoryList.get(i).getAcls());
             Long aclTransactions = Long.valueOf(solrMemoryList.get(i).getAclTransactions());
+
             double alfrescoCoreMemory = (double)(120*alfrescoNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
             double archiveCoreMemory = (double)(120*archiveNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
             double totalDataStructuresMemory = (double)alfrescoCoreMemory + archiveCoreMemory;
             double alfrescoSolrCachesMemory = (double)(alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (double)(2*alfrescoNodes + transactions + acls + aclTransactions)/8/1024/1024/1024;
-            double archiveSolrCachesMemory = (double)0L; // because we don't search on archive content
+            double archiveSolrCachesMemory = (double)(alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (double)(2*archiveNodes + transactions + acls + aclTransactions)/8/1024/1024/1024;
             double totalSolrCachesMemory = (double)alfrescoSolrCachesMemory + archiveSolrCachesMemory;
             double totalSolrMemory = (double)totalDataStructuresMemory + totalSolrCachesMemory;
 
