@@ -1,6 +1,6 @@
 # Alfresco Database Queries Report
 
-Alfresco Database Queries Report is a Spring-Boot application developed to run a set of pre-defined database queries against Alfresco Content Services application. Example of such queries are:
+Alfresco Database Queries Report is a Spring-Boot application developed to run a set of pre-defined database queries against Alfresco Content Services application. The following reports can be generated:
   - Identify Database Size
   - Identify Large Folders
   - Identify Large Transactions
@@ -10,15 +10,15 @@ Alfresco Database Queries Report is a Spring-Boot application developed to run a
   - List Site Activities
   - List Workflows and Tasks
   - Solr Memory Configuration
+  - JMX changes
   - Export Report
-  - etc
 
   Works with Postgres, MySQL, Oracle and MS-SQL databases.
 
 ### Technologies
 
 This project has been developed with a number of open source projects such as:
-  - Build using Maven
+  - Built using Maven
   - Developed using Spring-Boot (https://projects.spring.io/spring-boot/)
   - Using Thymeleaf server-side Java template engine for manipulating object on HTML pages (http://www.thymeleaf.org/)
   - Using Bootstrap for Front-End Web development (http://getbootstrap.com/)
@@ -40,25 +40,27 @@ The steps to build the application are:
     - Set alf_auth_status to false if table does not exists in your database
  - Compile and build application
 
+### Compiling and building the executable jar file
 Compile and build the application using Maven
 ```sh
 $ cd alfresco-db-queries
-$ mvn install:install-file -Dfile=<path to project>/alfresco-db-queries/lib/ojdbc6.jar -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.3 -Dpackaging=jar
+$ mvn install:install-file -Dfile=./lib/ojdbc6.jar -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.3 -Dpackaging=jar
 $ mvn compile install
 ```
 
-When providing the application to other parties make sure you provide both the jar file and the application.properties file.
+The generated jar file should be located in the target folder i.e. target/alfresco-db-0.0.1-SNAPSHOT.jar.
 
 ### Running the application
 
-The generated jar file should be located in the target folder i.e. target/alfresco-db-0.0.1-SNAPSHOT.jar.
-
-Copy the application.properties file to the same folder as the jar file and execute the jar file using:
+Copy the application.properties file to the same folder as the jar file and execute the jar file:
 
 ```sh
-$ java -jar target/alfresco-db-0.0.1-SNAPSHOT.jar
+$ cd target
+$ java -jar alfresco-db-0.0.1-SNAPSHOT.jar
 ```
-Finally connect to the running application on [http://localhost:8888](http://localhost:8888) or the port specified by "server.port" parameter. 
+Finally connect to the running application on [http://localhost:8888](http://localhost:8888) or the port specified by "server.port" parameter in application.properties. 
+
+**Note** : When providing the application to other parties make sure you provide both the jar file and the application.properties file.
 
 ### Todos
 
