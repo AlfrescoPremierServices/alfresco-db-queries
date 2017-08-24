@@ -73,7 +73,6 @@ public class WebController {
         return "index";
     }
 
-
     @Autowired
     private WorkflowMapper workflowMapper;
 
@@ -367,13 +366,13 @@ public class WebController {
                 Long transactions = Long.valueOf(solrMemoryList.get(i).getTransactions());
                 Long acls = Long.valueOf(solrMemoryList.get(i).getAcls());
                 Long aclTransactions = Long.valueOf(solrMemoryList.get(i).getAclTransactions());
-                Long alfrescoCoreMemory = (120*alfrescoNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
-                Long archiveCoreMemory = (120*archiveNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
-                Long totalDataStructuresMemory = alfrescoCoreMemory + archiveCoreMemory;
-                Long alfrescoSolrCachesMemory = (alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (2*alfrescoNodes + transactions + acls + aclTransactions)/8/1024/1024/1024;
-                Long archiveSolrCachesMemory = 0L; // because we don't search on archive content
-                Long totalSolrCachesMemory = alfrescoSolrCachesMemory + archiveSolrCachesMemory;
-                Long totalSolrMemory = totalDataStructuresMemory + totalSolrCachesMemory;
+                double alfrescoCoreMemory = (double)(120*alfrescoNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
+                double archiveCoreMemory = (double)(120*archiveNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
+                double totalDataStructuresMemory = (double)alfrescoCoreMemory + archiveCoreMemory;
+                double alfrescoSolrCachesMemory = (double)(alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (double)(2*alfrescoNodes + transactions + acls + aclTransactions)/8/1024/1024/1024;
+                double archiveSolrCachesMemory = (double)0L; // because we don't search on archive content
+                double totalSolrCachesMemory = (double)alfrescoSolrCachesMemory + archiveSolrCachesMemory;
+                double totalSolrMemory = (double)totalDataStructuresMemory + totalSolrCachesMemory;
 
                 model.addAttribute("alfrescoCoreMemory", alfrescoCoreMemory);
                 model.addAttribute("archiveCoreMemory", archiveCoreMemory);
@@ -409,7 +408,6 @@ public class WebController {
                 out.write("\n\nSolr Required Memory GB (for 2 searches per core)");
                 out.write("\n" + String.valueOf(2*totalSolrMemory));
             }
-
 
             //JMX Properties
             List < JmxProperties > listJmxProperties = jmxPropertiesMapper.findJmxProperties();
@@ -675,13 +673,13 @@ public class WebController {
             Long transactions = Long.valueOf(solrMemoryList.get(i).getTransactions());
             Long acls = Long.valueOf(solrMemoryList.get(i).getAcls());
             Long aclTransactions = Long.valueOf(solrMemoryList.get(i).getAclTransactions());
-            Long alfrescoCoreMemory = (120*alfrescoNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
-            Long archiveCoreMemory = (120*archiveNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
-            Long totalDataStructuresMemory = alfrescoCoreMemory + archiveCoreMemory;
-            Long alfrescoSolrCachesMemory = (alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (2*alfrescoNodes + transactions + acls + aclTransactions)/8/1024/1024/1024;
-            Long archiveSolrCachesMemory = 0L; // because we don't search on archive content
-            Long totalSolrCachesMemory = alfrescoSolrCachesMemory + archiveSolrCachesMemory;
-            Long totalSolrMemory = totalDataStructuresMemory + totalSolrCachesMemory;
+            double alfrescoCoreMemory = (double)(120*alfrescoNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
+            double archiveCoreMemory = (double)(120*archiveNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
+            double totalDataStructuresMemory = (double)alfrescoCoreMemory + archiveCoreMemory;
+            double alfrescoSolrCachesMemory = (double)(alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (double)(2*alfrescoNodes + transactions + acls + aclTransactions)/8/1024/1024/1024;
+            double archiveSolrCachesMemory = (double)0L; // because we don't search on archive content
+            double totalSolrCachesMemory = (double)alfrescoSolrCachesMemory + archiveSolrCachesMemory;
+            double totalSolrMemory = (double)totalDataStructuresMemory + totalSolrCachesMemory;
 
             model.addAttribute("alfrescoCoreMemory", alfrescoCoreMemory);
             model.addAttribute("archiveCoreMemory", archiveCoreMemory);

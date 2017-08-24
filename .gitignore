@@ -7,5 +7,6 @@
 /.mvn/
 /.metadata/
 alfresco-db.iml
-.log
-.csv
+*.log
+*.csv
+!/target/alfresco-db-0.0.1-SNAPSHOT.jar

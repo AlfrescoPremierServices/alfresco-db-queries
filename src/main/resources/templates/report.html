@@ -860,9 +860,9 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td th:text="${alfrescoCoreMemory}"></td>
-                    <td th:text="${archiveCoreMemory}"></td>
-                    <td th:text="${solrDataStructuresTotalMemory}"></td>
+                    <td th:text="${#numbers.formatDecimal(alfrescoCoreMemory, 1, 2)}"></td>
+                    <td th:text="${#numbers.formatDecimal(archiveCoreMemory, 1, 2)}"></td>
+                    <td th:text="${#numbers.formatDecimal(solrDataStructuresTotalMemory, 1, 2)}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -882,9 +882,9 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td th:text="${alfrescoSolrCachesMemory}"></td>
-                    <td th:text="${archiveSolrCachesMemory}"></td>
-                    <td th:text="${totalSolrCachesMemory}"></td>
+                    <td th:text="${#numbers.formatDecimal(alfrescoSolrCachesMemory, 1, 2)}"></td>
+                    <td th:text="${#numbers.formatDecimal(archiveSolrCachesMemory, 1, 2)}"></td>
+                    <td th:text="${#numbers.formatDecimal(totalSolrCachesMemory, 1, 2)}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -902,7 +902,7 @@
             </thead>
             <tbody>
             <tr>
-                <td th:text="${totalSolrMemory}"></td>
+                <td th:text="${#numbers.formatDecimal(totalSolrMemory, 1, 2)}"></td>
             </tr>
             </tbody>
         </table>
