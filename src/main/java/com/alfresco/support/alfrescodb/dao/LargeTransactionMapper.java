@@ -13,7 +13,6 @@ public interface LargeTransactionMapper {
             "FROM alf_transaction trx, alf_node an " +
             "WHERE an.transaction_id = trx.id " +
             "GROUP BY trx.id " +
-            "HAVING count(*) > #{size} " +
-            "ORDER BY nodes desc")
+            "HAVING count(*) > #{size} ")
     List<LargeTransaction> findBySize(@Param("size") int size);
 }

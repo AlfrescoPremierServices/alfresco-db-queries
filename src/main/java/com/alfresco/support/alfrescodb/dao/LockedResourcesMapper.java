@@ -13,7 +13,6 @@ public interface LockedResourcesMapper {
             "from alf_lock al, alf_lock_resource alr1, alf_lock_resource alr2, alf_namespace an " +
             "where alr1.id = al.shared_resource_id " +
             "and alr2.id = al.excl_resource_id " +
-            "and an.id = alr1.qname_ns_id " +
-            "order by al.id")
+            "and an.id = alr1.qname_ns_id ")
     List<LockedResources> findAll();
 }

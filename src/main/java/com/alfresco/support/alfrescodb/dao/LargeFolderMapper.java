@@ -18,8 +18,7 @@ public interface LargeFolderMapper {
             "props.qname_id IN (SELECT id FROM alf_qname WHERE local_name = 'name') and " +
             "qname.id = nodes.type_qname_id " +
             "GROUP BY nodeRef, nodeName, local_name " +
-            "HAVING count(*) > #{size} " +
-            "ORDER BY occurrences desc")
+            "HAVING count(*) > #{size} ")
     List<LargeFolder> findBySize(@Param("size") int size);
 
     // Oracle queries
@@ -32,8 +31,7 @@ public interface LargeFolderMapper {
             "props.qname_id IN (SELECT id FROM alf_qname WHERE local_name = 'name') and " +
             "qname.id = nodes.type_qname_id " +
             "GROUP BY (stores.protocol || '://' || stores.identifier || '/' || nodes.uuid), props.string_value, qname.local_name " +
-            "HAVING count(*) > #{size} " +
-            "ORDER BY occurrences desc")
+            "HAVING count(*) > #{size} ")
         List<LargeFolder> findBySizeOracle(@Param("size") int size);
 
     // MS SQL queries
@@ -42,7 +40,6 @@ public interface LargeFolderMapper {
             "FROM alf_node as nodes, alf_store as stores, alf_child_assoc as children, alf_node_properties as props, alf_qname as qname " +
             "WHERE children.parent_node_id=nodes.id and stores.id=nodes.store_id and props.node_id = nodes.id and " +
             "props.qname_id IN (SELECT id FROM alf_qname WHERE local_name = 'name') and qname.id = nodes.type_qname_id " +
-            "GROUP BY stores.protocol, stores.identifier, nodes.uuid, string_value, local_name HAVING count(*) > #{size} " +
-            "ORDER BY occurrences desc")
+            "GROUP BY stores.protocol, stores.identifier, nodes.uuid, string_value, local_name HAVING count(*) > #{size} ")
     List<LargeFolder> findBySizeMSSql(@Param("size") int size);
 }

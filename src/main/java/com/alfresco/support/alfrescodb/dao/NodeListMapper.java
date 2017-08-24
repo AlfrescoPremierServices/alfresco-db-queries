@@ -17,8 +17,7 @@ public interface NodeListMapper {
             "FROM alf_content_data  content, alf_content_url  contentUrl, alf_mimetype  mime\n" +
             "WHERE content.content_mimetype_id = mime.id \n" +
             "AND contentUrl.id = content.content_url_id\n" +
-            "GROUP BY mimetype_str\n" +
-            "ORDER BY occurrences DESC")
+            "GROUP BY mimetype_str")
     List<NodesList> findNodesSizeByMimeType();
 
     // Postgres queries
@@ -27,8 +26,7 @@ public interface NodeListMapper {
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
-            "GROUP BY nodes.type_qname_id, names.local_name, ns.uri " +
-            "ORDER BY occurrences DESC")
+            "GROUP BY nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypePostgres();
 
     @Select("SELECT (stores.protocol || concat('://' || stores.identifier)) as store, count(*) as occurrences " +
@@ -43,8 +41,7 @@ public interface NodeListMapper {
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
-            "GROUP BY nodes.type_qname_id, names.local_name, ns.uri " +
-            "ORDER BY occurrences DESC")
+            "GROUP BY nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypeMySQL();
 
     @Select("SELECT concat(stores.protocol, concat('://', stores.identifier)) as store, count(*) as occurrences " +
@@ -59,8 +56,7 @@ public interface NodeListMapper {
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
-            "GROUP BY nodes.type_qname_id, names.local_name, ns.uri " +
-            "ORDER BY occurrences DESC")
+            "GROUP BY nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypeOracle();
 
     @Select("SELECT (stores.protocol || ('://' || stores.identifier)) as store, count(*) as occurrences " +
@@ -79,8 +75,7 @@ public interface NodeListMapper {
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
-            "GROUP BY nodes.type_qname_id, names.local_name, ns.uri " +
-            "ORDER BY occurrences DESC")
+            "GROUP BY nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypeMSSql();
 
     @Select("SELECT concat(stores.protocol,  concat('://',  stores.identifier)) as store, count(*) as occurrences " +

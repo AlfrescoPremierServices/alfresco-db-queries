@@ -47,8 +47,7 @@ public interface DbSizeMapper {
             "from user_extents\n" +
             "where segment_name in (\n" +
             "     select table_name from all_tables)\n" +
-            "group by segment_name\n" +
-            "order by 1 desc")
+            "group by segment_name")
     List<OracleRelationInfo> findTablesInfoOracle();
 
     @Select("select sum(u.bytes)/1048576 SizeMB, u.segment_name indexName, i.table_name tableName\n" +
@@ -56,8 +55,7 @@ public interface DbSizeMapper {
             "join all_ind_columns i\n" +
             "     on u.segment_name = i.index_name\n" +
             "     and i.column_position = 1\n" +
-            "group by u.segment_name, i.table_name\n" +
-            "order by 1 desc")
+            "group by u.segment_name, i.table_name")
     List<OracleRelationInfo> findIndexesInfoOracle();
 
     // MS SQL Queries
@@ -82,9 +80,7 @@ public interface DbSizeMapper {
             "    AND t.is_ms_shipped = 0\n" +
             "    AND i.OBJECT_ID > 255 \n" +
             "GROUP BY \n" +
-            "    t.Name, s.Name, p.Rows\n" +
-            "ORDER BY \n" +
-            "    TotalSpace DESC")
+            "    t.Name, s.Name, p.Rows")
     List<MSSqlRelationInfo> findTablesInfoMSSql();
 
     @Select("SELECT\n" +
@@ -95,7 +91,6 @@ public interface DbSizeMapper {
             "FROM sys.indexes AS i\n" +
             "JOIN sys.partitions AS p ON p.OBJECT_ID = i.OBJECT_ID AND p.index_id = i.index_id\n" +
             "JOIN sys.allocation_units AS a ON a.container_id = p.partition_id\n" +
-            "GROUP BY i.OBJECT_ID,i.index_id,i.name\n" +
-            "ORDER BY IndexSize DESC")
+            "GROUP BY i.OBJECT_ID,i.index_id,i.name")
     List<MSSqlRelationInfo> findIndexesInfoMSSql();
 }
