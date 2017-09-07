@@ -62,6 +62,17 @@ Finally connect to the running application on [http://localhost:8888](http://loc
 
 **Note** : When providing the application to other parties make sure you provide both the jar file and the application.properties file.
 
+### Screenshots
+
+- Home Page
+
+![alt text](images/home.png)
+
+- Database Size Report
+
+![alt text](images/db-info.png)
+
+
 ### Todos
 
  - Write additional queries
