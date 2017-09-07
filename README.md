@@ -20,6 +20,7 @@ Alfresco Database Queries Report is a Spring-Boot application developed to run a
 This project has been developed with a number of open source projects such as:
   - Built using Maven
   - Developed using Spring-Boot (https://projects.spring.io/spring-boot/)
+  - Using mybatis for SQL mapping
   - Using Thymeleaf server-side Java template engine for manipulating object on HTML pages (http://www.thymeleaf.org/)
   - Using Bootstrap for Front-End Web development (http://getbootstrap.com/)
   - Datatables for table formatting (https://datatables.net/)
