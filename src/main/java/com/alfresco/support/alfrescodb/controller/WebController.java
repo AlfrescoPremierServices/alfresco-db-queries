@@ -86,6 +86,7 @@ public class WebController {
         List < ArchivedNodes > listArchivedNodes;
         List < NodesList > listNodesByMimeType;
         List < NodesList > listNodesByType;
+        List < NodesList > listNodesByTypeAndMonth;
         List < NodesList > listNodesByStore;
         List < LockedResources > listLockedResources;
         List < Authority > listUsers;
@@ -304,6 +305,17 @@ public class WebController {
                 }
             }
             model.addAttribute("listNodesByType", listNodesByType);
+
+            // List Nodes by Content Type
+            listNodesByType = sqlMapper.findNodesByContentTypeAndMonth();
+            out.write("\n\nNodes by Content Type Grouped by Month");
+            out.write("\nDate, Node Type, Nodes Count");
+            if (listNodesByType != null) {
+                for (int i = 0; i < listNodesByType.size(); i++) {
+                    out.write(listNodesByType.get(i).printNodesByTypeAndMonth());
+                }
+            }
+            model.addAttribute("listNodesByTypeAndMonth", listNodesByType);
 
             // List Nodes by Store
             listNodesByStore = sqlMapper.findNodesByStore();
@@ -585,6 +597,18 @@ public class WebController {
         List < NodesList > listNodesByType = sqlMapper.findNodesByContentType();
 
         model.addAttribute("listNodesByType", listNodesByType);
+
+        addAdditionalParamsToModel(model);
+
+        return null;
+    }
+
+    @RequestMapping("/listNodesByTypeAndMonth")
+    public String listNodesByTypeAndMonth(Model model) {
+        // Nodes by type and month
+        List < NodesList > listNodesByTypeAndMonth = sqlMapper.findNodesByContentTypeAndMonth();
+
+        model.addAttribute("listNodesByTypeAndMonth", listNodesByTypeAndMonth);
 
         addAdditionalParamsToModel(model);
 

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	
 <head>
-    <title>Sites Activities</title>
+    <title>Alfresco DB Report</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
 </head>
@@ -620,6 +620,39 @@
 
     <hr>
 
+    <!-- Nodes by type -->
+    <h1>Nodes by Content Type Grouped by Month</h1>
+    <div th:if="${listNodesByTypeAndMonth} != null">
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div th:if="${not #lists.isEmpty(listNodesByTypeAndMonth)}">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Node Type</th>
+                        <th>Nodes Count</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="nodes : ${listNodesByTypeAndMonth}">
+                        <td th:text="${nodes.date}"></td>
+                        <td th:text="${nodes.nodeType}"></td>
+                        <td th:text="${nodes.occurrences}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listNodesByTypeAndMonth)}">
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+            No Results Found
+        </div>
+    </div>
+    <!-- End of section -->
+
+    <hr>
     <!-- Nodes by store -->
     <h1>Nodes by Store</h1>
     <div th:if="${listNodesByStore} != null">

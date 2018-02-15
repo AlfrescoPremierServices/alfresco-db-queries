@@ -89,4 +89,12 @@ public interface NodeListMapper {
     @Select("SELECT (sum(content_size) / 1024 / 1024) diskSpace " +
             "FROM alf_content_url")
     List<NodesList> findNodesSizeMSSql();
+
+    @Select("SELECT substring(nodes.audit_created, 0, 8) as date, concat('{', ns.uri, '}', names.local_name) as nodeType, count(*)  as occurrences " +
+            "FROM alf_node nodes " +
+            "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
+            "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
+            "WHERE nodes.type_qname_id=names.id " +
+            "GROUP BY substring(nodes.audit_created, 0, 8), nodes.type_qname_id, names.local_name, ns.uri ")
+    List<NodesList> findNodesByContentTypeAndMonth();
 }

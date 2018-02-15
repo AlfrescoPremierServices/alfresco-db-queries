@@ -3,11 +3,20 @@ package com.alfresco.support.alfrescodb.model;
 public class NodesList {
     private int occurrences;
 
+    private String date;
     private String mimeType;
     private String nodeType;
     private String store;
     private long diskSpace;
     private int entries;
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+	
+	public String getDate(){
+		return this.date;
+	}
 
 	public void setMimeType(String mimeType) {
 		this.mimeType = mimeType;
@@ -55,6 +64,10 @@ public class NodesList {
 
 	public String printNodesByType() {
 		return String.format("\n%s, %s", nodeType, occurrences);
+	}
+
+	public String printNodesByTypeAndMonth() {
+		return String.format("\n%s, %s, %s", date, nodeType, occurrences);
 	}
 
 	public String printNodesByStore() {

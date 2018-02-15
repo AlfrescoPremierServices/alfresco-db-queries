@@ -1,10 +1,10 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-
+	
 <head>
-	<title>Nodes by Store</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <title>Node by Type and Month</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
 	<link rel="stylesheet" type="text/css" href="webjars/datatables/1.10.15/css/jquery.dataTables.min.css">
 </head>
 
@@ -14,46 +14,33 @@
 	<script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" class="init">
         $(document).ready( function () {
-            $('table.noPaging').DataTable({
-             "paging": false,
-             "info": false,
-             "order": [1, 'desc'],
+            $('table.display').DataTable({
+             "order": [0, 'desc'],
             });
-        } );
-
-        $(document).ready( function () {
-            $('table.noPaging-noSearching').DataTable({
-             "paging": false,
-             "info": false,
-             "searching": false,
-             "order": [1, 'desc'],
-            });
-        } );
-
-        $(document).ready( function () {
-            $('table.display').DataTable();
         } );
     </script>
 
     <!-- Add navigation bar here -->
 	<div th:insert="navBar :: navBar"></div>
 	    	
-	<!-- Nodes by store -->
-	<div class="panel-heading"><h1>Nodes by Store</h1></div>
-	<div th:if="${listNodesByStore} != null">
+	<!-- Nodes by type -->
+	<div class="panel-heading"><h1>Nodes by Content Type and Month</h1></div>
+	<div th:if="${listNodesByTypeAndMonth} != null">
 	    <div class="panel panel-default">
 	        <!-- Default panel contents -->
-	        <div th:if="${not #lists.isEmpty(listNodesByStore)}">
-                <table class="display noPaging-noSearching" cellspacing="0" width="100%">
+	        <div th:if="${not #lists.isEmpty(listNodesByTypeAndMonth)}">
+				<table class="display" cellspacing="0" width="100%">
 		            <thead>
 		                <tr>
-		                    <th>Store</th>
+		                	<th>Date</th>
+		                    <th>Node Type</th>
 		                    <th>Nodes Count</th>
 		                </tr>
 		            </thead>
 		            <tbody>
-		                <tr th:each="nodes : ${listNodesByStore}">
-		                    <td th:text="${nodes.store}"></td>
+		                <tr th:each="nodes : ${listNodesByTypeAndMonth}">
+		                    <td th:text="${nodes.date}"></td>
+		                    <td th:text="${nodes.nodeType}"></td>
 		                    <td th:text="${nodes.occurrences}"></td>
 		                </tr>
 		            </tbody>
@@ -61,7 +48,7 @@
 	        </div>
 		</div>
 		
-	    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listNodesByStore)}">
+	    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listNodesByTypeAndMonth)}">
 			<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
 			No Results Found
 		</div>

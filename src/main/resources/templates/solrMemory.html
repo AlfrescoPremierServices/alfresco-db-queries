@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Spring Boot Thymeleaf Hello World Example</title>
+    <title>Solr Memory</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
 </head>
@@ -150,10 +150,22 @@
 	</div>
 	</div>
 
-	<div>The information for the Solr memory calculation comes from Alfresco documentation: <a href="http://docs.alfresco.com/5.2/concepts/solrnodes-memory.html">Memory Needed For Solr Nodes</a>
-        <p></p>
-        Please note there may be additional memory required for the Lucene Field Cache as shown in the diagram.
+	<div>
+		The information for the Solr memory calculation comes from Alfresco documentation: <a href="http://docs.alfresco.com/5.2/concepts/solrnodes-memory.html">Memory Needed For Solr Nodes</a>
+	    
+	    <p></p>
+		Also the Solr memory requirement can increase exponentially depending on the search/sort being performed. The memory needed rapidly adds up in the following situations:
+		<ul>
+		  <li>Sorting a large result set</li>
+		  <li>Long running queries</li>
+		  <li>Queries with many terms</li>
+		  <li>Running multiple queries simultaneously</li>
+		</ul>
+	    
+	    <p></p>
+	    Please note there may be additional memory required for the Lucene Field Cache as shown in the diagram.
     </div>
+    
     <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(solrMemoryList)}">
 		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
 		No Results Found

@@ -120,6 +120,10 @@ public class SqlMapperController {
         return null;
     }
 
+    public List findNodesByContentTypeAndMonth(){
+        return nodeListMapper.findNodesByContentTypeAndMonth();
+    }
+
     public List findActivitiesByActivityType(){
         if (dbType.equalsIgnoreCase("postgres")){
             return activitiesFeedMapper.findActivitiesByActivityTypePostgres();
