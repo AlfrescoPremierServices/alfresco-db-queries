@@ -121,7 +121,17 @@ public class SqlMapperController {
     }
 
     public List findNodesByContentTypeAndMonth(){
-        return nodeListMapper.findNodesByContentTypeAndMonth();
+        if (dbType.equalsIgnoreCase("postgres")){
+            return nodeListMapper.findNodesByContentTypeAndMonthPostgres();
+        } else if (dbType.equalsIgnoreCase("mysql")){
+            return nodeListMapper.findNodesByContentTypeAndMonthMySQL();
+        } else if (dbType.equalsIgnoreCase("oracle")){
+            return nodeListMapper.findNodesByContentTypeAndMonthOracle();
+        } else if (dbType.equalsIgnoreCase("microsoft")){
+            return nodeListMapper.findNodesByContentTypeAndMonthMSSql();
+        }
+
+        return null;
     }
 
     public List findActivitiesByActivityType(){

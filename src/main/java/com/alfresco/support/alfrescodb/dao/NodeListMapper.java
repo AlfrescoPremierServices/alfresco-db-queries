@@ -37,6 +37,15 @@ public interface NodeListMapper {
             "GROUP BY stores.protocol, stores.identifier ")
     List<NodesList> findNodesByStorePostgres();
 
+
+    @Select("SELECT substring(nodes.audit_created, 0, 8) as createDate, ('{' || ns.uri || '}' || names.local_name) as nodeType, count(*)  as occurrences " +
+            "FROM alf_node nodes " +
+            "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
+            "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
+            "WHERE nodes.type_qname_id=names.id " +
+            "GROUP BY substring(nodes.audit_created, 0, 8), nodes.type_qname_id, names.local_name, ns.uri ")
+    List<NodesList> findNodesByContentTypeAndMonthPostgres();
+
     // MySQL queries
     @Select("SELECT concat('{', ns.uri, '}', names.local_name) as nodeType, count(*)  as occurrences " +
             "FROM alf_node nodes " +
@@ -51,6 +60,14 @@ public interface NodeListMapper {
             "WHERE stores.id=nodes.store_id " +
             "GROUP BY stores.protocol, stores.identifier ")
     List<NodesList> findNodesByStoreMySQL();
+
+    @Select("SELECT substring(nodes.audit_created, 0, 8) as createDate, concat('{', ns.uri, '}', names.local_name) as nodeType, count(*)  as occurrences " +
+            "FROM alf_node nodes " +
+            "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
+            "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
+            "WHERE nodes.type_qname_id=names.id " +
+            "GROUP BY substring(nodes.audit_created, 0, 8), nodes.type_qname_id, names.local_name, ns.uri ")
+    List<NodesList> findNodesByContentTypeAndMonthMySQL();
 
     // Oracle queries
     @Select("SELECT ('{' || ns.uri || '}' || names.local_name) as nodeType, count(*)  as occurrences " +
@@ -71,6 +88,14 @@ public interface NodeListMapper {
             "FROM alf_content_url")
     List<NodesList> findNodesSizeOracle();
 
+    @Select("SELECT substr(nodes.audit_created, 0, 7) as createDate, ('{' || ns.uri || '}' || names.local_name) as nodeType, count(*)  as occurrences " +
+            "FROM alf_node nodes " +
+            "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
+            "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
+            "WHERE nodes.type_qname_id=names.id " +
+            "GROUP BY substr(nodes.audit_created, 0, 7), nodes.type_qname_id, names.local_name, ns.uri ")
+    List<NodesList> findNodesByContentTypeAndMonthOracle();
+
     // MS SQL queries
     @Select("SELECT concat('{', ns.uri, '}', names.local_name) as nodeType, count(*)  as occurrences " +
             "FROM alf_node nodes " +
@@ -90,11 +115,11 @@ public interface NodeListMapper {
             "FROM alf_content_url")
     List<NodesList> findNodesSizeMSSql();
 
-    @Select("SELECT substring(nodes.audit_created, 0, 8) as date, concat('{', ns.uri, '}', names.local_name) as nodeType, count(*)  as occurrences " +
+    @Select("SELECT substring(nodes.audit_created, 0, 8) as createDate, concat('{', ns.uri, '}', names.local_name) as nodeType, count(*)  as occurrences " +
             "FROM alf_node nodes " +
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
             "GROUP BY substring(nodes.audit_created, 0, 8), nodes.type_qname_id, names.local_name, ns.uri ")
-    List<NodesList> findNodesByContentTypeAndMonth();
+    List<NodesList> findNodesByContentTypeAndMonthMSSql();
 }

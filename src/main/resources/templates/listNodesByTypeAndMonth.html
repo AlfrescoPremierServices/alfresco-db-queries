@@ -24,7 +24,7 @@
 	<div th:insert="navBar :: navBar"></div>
 	    	
 	<!-- Nodes by type -->
-	<div class="panel-heading"><h1>Nodes by Content Type and Month</h1></div>
+	<div class="panel-heading"><h1>Nodes by Content Type Grouped by Month</h1></div>
 	<div th:if="${listNodesByTypeAndMonth} != null">
 	    <div class="panel panel-default">
 	        <!-- Default panel contents -->
@@ -39,7 +39,7 @@
 		            </thead>
 		            <tbody>
 		                <tr th:each="nodes : ${listNodesByTypeAndMonth}">
-		                    <td th:text="${nodes.date}"></td>
+		                    <td th:text="${nodes.createDate}"></td>
 		                    <td th:text="${nodes.nodeType}"></td>
 		                    <td th:text="${nodes.occurrences}"></td>
 		                </tr>

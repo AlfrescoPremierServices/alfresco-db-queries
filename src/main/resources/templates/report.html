@@ -636,7 +636,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="nodes : ${listNodesByTypeAndMonth}">
-                        <td th:text="${nodes.date}"></td>
+                        <td th:text="${nodes.createDate}"></td>
                         <td th:text="${nodes.nodeType}"></td>
                         <td th:text="${nodes.occurrences}"></td>
                     </tr>
