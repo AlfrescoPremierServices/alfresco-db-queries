@@ -10,7 +10,12 @@ import java.util.List;
 public interface NodeListMapper {
 
     @Select("SELECT (sum(content_size) / 1024 / 1024) diskSpace " +
-            "FROM alf_content_url")
+            "FROM alf_content_data  content, alf_content_url  contentUrl, alf_mimetype  mime, alf_node nodes, alf_node_properties nodes_props \n" +
+            "WHERE content.content_mimetype_id = mime.id \n" +
+            "AND contentUrl.id = content.content_url_id \n" +
+            "AND nodes.id = nodes_props.node_id AND nodes_props.long_value = content.id \n" +
+            "AND nodes_props.qname_id in (select id from alf_qname where local_name = 'content') \n" +
+            "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore')")
     List<NodesList> findNodesSize();
 
     @Select("SELECT mimetype_str mimeType, count(*) occurrences, (sum(content_size) / 1024 / 1024) diskSpace \n" +
@@ -18,6 +23,7 @@ public interface NodeListMapper {
             "WHERE content.content_mimetype_id = mime.id \n" +
             "AND contentUrl.id = content.content_url_id \n" +
             "AND nodes.id = nodes_props.node_id AND nodes_props.long_value = content.id \n" +
+            "AND nodes_props.qname_id in (select id from alf_qname where local_name = 'content') \n" +
             "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') \n" +
             "GROUP BY mimetype_str")
     List<NodesList> findNodesSizeByMimeType();
