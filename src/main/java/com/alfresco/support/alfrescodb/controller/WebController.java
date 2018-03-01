@@ -222,9 +222,9 @@ public class WebController {
             List < Workflow > listOpenWorkflows = workflowMapper.openWorkflows();
             out.write("\n\nOpen Workflows");
             out.write("\nProcess Definition, No Occurrencies");
-            if (listWorkflows != null) {
-                for (int i = 0; i < listWorkflows.size(); i++) {
-                    out.write(listWorkflows.get(i).printProcesses());
+            if (listOpenWorkflows != null) {
+                for (int i = 0; i < listOpenWorkflows.size(); i++) {
+                    out.write(listOpenWorkflows.get(i).printProcesses());
                 }
             }
             model.addAttribute("listOpenWorkflows", listOpenWorkflows);
@@ -232,9 +232,9 @@ public class WebController {
             List < Workflow > listClosedWorkflows = workflowMapper.closedWorkflows();
             out.write("\n\nClosed Workflows");
             out.write("\nProcess Definition, No Occurrencies");
-            if (listWorkflows != null) {
-                for (int i = 0; i < listWorkflows.size(); i++) {
-                    out.write(listWorkflows.get(i).printProcesses());
+            if (listClosedWorkflows != null) {
+                for (int i = 0; i < listClosedWorkflows.size(); i++) {
+                    out.write(listClosedWorkflows.get(i).printProcesses());
                 }
             }
             model.addAttribute("listClosedWorkflows", listClosedWorkflows);
