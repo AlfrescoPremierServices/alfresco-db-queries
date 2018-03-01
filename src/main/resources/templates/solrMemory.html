@@ -16,7 +16,8 @@
     <div class="panel panel-default">
         <!-- Default panel contents -->
 		<h1>Solr Memory</h1>
-		<hr>
+
+		<hr style="height:3px;border:none;color:#333;background-color:#333;" />
         <div th:if="${not #lists.isEmpty(solrMemoryList)}">
 			<h2>Nodes and Transactions</h2>
 
@@ -41,8 +42,8 @@
 	            </tbody>
 	        </table>
         </div>
-		<hr>
 
+		<hr style="height:3px;border:none;color:#333;background-color:#333;" />
 		<div>
 			<h2>Alfresco and Archive Cores Caches</h2>
 
@@ -86,7 +87,7 @@
 				</tbody>
 			</table>
 		</div>
-		<hr>
+		<hr style="height:3px;border:none;color:#333;background-color:#333;" />
 
 		<div>
 			<h2>Memory for Data Structures</h2>
@@ -108,7 +109,7 @@
 				</tbody>
 			</table>
 		</div>
-		<hr>
+		<hr style="height:3px;border:none;color:#333;background-color:#333;" />
 
 		<div>
 			<h2>Memory for caches</h2>
@@ -131,7 +132,7 @@
 			</table>
 		</div>
 	</div>
-	<hr>
+	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
 
 	<div>
 		<h2>Solr Memory Required for 2 Searches per Core</h2>
@@ -170,6 +171,8 @@
 		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
 		No Results Found
 	</div>
+	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
+
  </body>
 
 </html>

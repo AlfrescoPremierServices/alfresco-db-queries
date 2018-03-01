@@ -51,6 +51,7 @@
         <!-- Default panel contents -->
         <h1>Database Information</h1>
 
+        <hr style="height:3px;border:none;color:#333;background-color:#333;" />
         <div th:if="${not #lists.isEmpty(listRelationInfos)}">
             <table class="display orderingPostgresMySql" cellspacing="0" width="100%">
 
@@ -76,6 +77,7 @@
         </div>
     </div>
 
+    <hr style="height:3px;border:none;color:#333;background-color:#333;" />
     <div class="panel panel-default">
         <!-- Default panel contents -->
         <div class="panel-heading">Database Size</div>
@@ -191,6 +193,7 @@
     <div class="panel panel-default panel-heading" th:if="${OracleSize} != null">
         <div th:insert="oracleSize :: oracleSize"></div>
     </div>
+    <hr style="height:3px;border:none;color:#333;background-color:#333;" />
 
  </body>
 
