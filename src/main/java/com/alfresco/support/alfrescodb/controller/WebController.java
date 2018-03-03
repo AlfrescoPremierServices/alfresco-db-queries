@@ -177,6 +177,13 @@ public class WebController {
             }
             model.addAttribute("listLargeTransactions", listLargeTransactions);
 
+            // Access Control List
+            String aclSize = sqlMapper.findAccessControlList();
+            out.write("\n\nAccess Control List Size");
+            out.write("\nSize");
+            out.write(aclSize);
+            model.addAttribute("aclSize", aclSize);
+
             // Activities
             listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
             out.write("\n\nActivities by Activity Type");
@@ -523,6 +530,16 @@ public class WebController {
         model.addAttribute("largeTransactionSize", largeTransactionSize);
         model.addAttribute("listLargeTransactions", listLargeTransactions);
         model.addAttribute("size", size);
+
+        addAdditionalParamsToModel(model);
+
+        return null;
+    }
+
+    @RequestMapping("/accessControlList")
+    public String accessControlList(Model model) {
+        String aclSize = sqlMapper.findAccessControlList();
+        model.addAttribute("aclSize", aclSize);
 
         addAdditionalParamsToModel(model);
 

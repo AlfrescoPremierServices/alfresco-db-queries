@@ -28,6 +28,9 @@ public class SqlMapperController {
     private ActivitiesFeedMapper activitiesFeedMapper;
 
     @Autowired
+    private AccessControlListMapper accessControlListMapper;
+
+    @Autowired
     private LargeFolderMapper largeFolderMapper;
 
     @Autowired
@@ -132,6 +135,10 @@ public class SqlMapperController {
         }
 
         return null;
+    }
+
+    public String findAccessControlList(){
+        return accessControlListMapper.findAccessControlList();
     }
 
     public List findActivitiesByActivityType(){
