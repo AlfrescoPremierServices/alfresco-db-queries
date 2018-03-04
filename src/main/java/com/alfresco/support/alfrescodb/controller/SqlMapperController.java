@@ -141,6 +141,10 @@ public class SqlMapperController {
         return accessControlListMapper.findAccessControlList();
     }
 
+    public List findAccessControlListEntries(){
+        return accessControlListMapper.findAccessControlListEntries();
+    }
+
     public List findActivitiesByActivityType(){
         if (dbType.equalsIgnoreCase("postgres")){
             return activitiesFeedMapper.findActivitiesByActivityTypePostgres();

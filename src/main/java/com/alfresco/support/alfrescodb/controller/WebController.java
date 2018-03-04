@@ -82,6 +82,7 @@ public class WebController {
         List < RelationInfo > listRelationInfos;
         List < LargeFolder > listLargeFolders;
         List < LargeTransaction > listLargeTransactions;
+        List < AccessControlList > listAccessControlListEntries;
         List < ActivitiesFeed > listActivitiesFeed;
         List < ArchivedNodes > listArchivedNodes;
         List < NodesList > listNodesByMimeType;
@@ -180,9 +181,28 @@ public class WebController {
             // Access Control List
             String aclSize = sqlMapper.findAccessControlList();
             out.write("\n\nAccess Control List Size");
-            out.write("\nSize");
-            out.write(aclSize);
+            out.write("\n" + aclSize);
             model.addAttribute("aclSize", aclSize);
+
+            listAccessControlListEntries = sqlMapper.findAccessControlListEntries();
+            Integer aceSize = 0;
+            for (int i = 0; i < listAccessControlListEntries.size(); i++) {
+                Integer count = Integer.valueOf(listAccessControlListEntries.get(i).getPermissionCount());
+                aceSize = aceSize + count;
+            }
+
+            out.write("\n\nAccess Control List Entries");
+            out.write("\nSize");
+            out.write("\n" + String.valueOf(aceSize));
+
+            out.write("\n\nACE Permission, Occurrences");
+            if (listAccessControlListEntries != null) {
+                for (int i = 0; i < listAccessControlListEntries.size(); i++) {
+                    out.write(listAccessControlListEntries.get(i).printAccessControlListEntries());
+                }
+            }
+            model.addAttribute("aceSize", aceSize);
+            model.addAttribute("listAccessControlListEntries", listAccessControlListEntries);
 
             // Activities
             listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
@@ -540,8 +560,17 @@ public class WebController {
     public String accessControlList(Model model) {
         String aclSize = sqlMapper.findAccessControlList();
         model.addAttribute("aclSize", aclSize);
-
         addAdditionalParamsToModel(model);
+
+        List < AccessControlList > listAccessControlListEntries = sqlMapper.findAccessControlListEntries();
+        model.addAttribute("listAccessControlListEntries", listAccessControlListEntries);
+
+        Integer aceSize = 0;
+        for (int i = 0; i < listAccessControlListEntries.size(); i++) {
+            Integer count = Integer.valueOf(listAccessControlListEntries.get(i).getPermissionCount());
+            aceSize = aceSize + count;
+        }
+        model.addAttribute("aceSize", aceSize);
 
         return null;
     }

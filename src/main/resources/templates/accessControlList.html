@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>DB Size</title>
+    <title>Access Control List</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="webjars/datatables/1.10.15/css/jquery.dataTables.min.css">
@@ -13,7 +13,13 @@
     <script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" class="init">
-	    $(document).ready( function () {
+        $(document).ready( function () {
+            $('table.accessControlListEntries').DataTable({
+                "order": [1, 'desc'],
+            });
+        } );
+
+        $(document).ready( function () {
             $('table.display').DataTable();
         } );
     </script>
@@ -33,7 +39,7 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>Size</th>
+                    <th>Number of ACLs</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -45,6 +51,55 @@
         </div>
     </div>
 
+    <hr style="height:3px;border:none;color:#333;background-color:#333;" />
+
+    <!-- Access Control List Entries -->
+    <h1>Access Control List Entries</h1>
+
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div th:if="${not #lists.isEmpty(listAccessControlListEntries)}">
+            <table class="table table-striped" cellspacing="0" width="100%">
+                <thead>
+                <tr>
+                    <th>Number of Permissions</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td th:text="${aceSize}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div th:if="${not #lists.isEmpty(listAccessControlListEntries)}">
+            <table class="display accessControlListEntries" cellspacing="0" width="100%">
+                <thead>
+                <tr>
+                    <th>Permission</th>
+                    <th>Count</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="accessControlListeEntry : ${listAccessControlListEntries}">
+                    <td th:text="${accessControlListeEntry.permission}"></td>
+                    <td th:text="${accessControlListeEntry.permissionCount}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listAccessControlListEntries)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
     <hr style="height:3px;border:none;color:#333;background-color:#333;" />
 
  </body>
