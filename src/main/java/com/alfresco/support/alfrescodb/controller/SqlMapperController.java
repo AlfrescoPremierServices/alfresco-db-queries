@@ -31,6 +31,9 @@ public class SqlMapperController {
     private AccessControlListMapper accessControlListMapper;
 
     @Autowired
+    private ContentModelPropertiesMapper contentModelPropertiesMapper;
+
+    @Autowired
     private LargeFolderMapper largeFolderMapper;
 
     @Autowired
@@ -143,6 +146,10 @@ public class SqlMapperController {
 
     public List findAccessControlListEntries(){
         return accessControlListMapper.findAccessControlListEntries();
+    }
+
+    public List findContentModelProperties(){
+        return contentModelPropertiesMapper.findContentModelProperties();
     }
 
     public List findActivitiesByActivityType(){

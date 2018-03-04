@@ -83,6 +83,7 @@ public class WebController {
         List < LargeFolder > listLargeFolders;
         List < LargeTransaction > listLargeTransactions;
         List < AccessControlList > listAccessControlListEntries;
+        List < ContentModelProperties > listContentModelProperties;
         List < ActivitiesFeed > listActivitiesFeed;
         List < ArchivedNodes > listArchivedNodes;
         List < NodesList > listNodesByMimeType;
@@ -203,6 +204,17 @@ public class WebController {
             }
             model.addAttribute("aceSize", aceSize);
             model.addAttribute("listAccessControlListEntries", listAccessControlListEntries);
+
+            // Content Model Properties List
+            listContentModelProperties = sqlMapper.findContentModelProperties();
+            out.write("\n\nContent Model Properties");
+            out.write("\nContent Model URI, Property");
+            if (listContentModelProperties != null) {
+                for (int i = 0; i < listContentModelProperties.size(); i++) {
+                    out.write(listContentModelProperties.get(i).printContentModelProperties());
+                }
+            }
+            model.addAttribute("listContentModelProperties", listContentModelProperties);
 
             // Activities
             listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
@@ -571,6 +583,16 @@ public class WebController {
             aceSize = aceSize + count;
         }
         model.addAttribute("aceSize", aceSize);
+
+        return null;
+    }
+
+    @RequestMapping("/contentModelProperties")
+    public String contentModelProperties(Model model) {
+        List < ContentModelProperties > listContentModelProperties = sqlMapper.findContentModelProperties();
+        model.addAttribute("listContentModelProperties", listContentModelProperties);
+
+        addAdditionalParamsToModel(model);
 
         return null;
     }

@@ -299,6 +299,36 @@
 
     <hr style="height:3px;border:none;color:#333;background-color:#333;" />
 
+    <!-- Content Model Properties -->
+    <h1>Properties by Content Model</h1>
+
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div th:if="${not #lists.isEmpty(listContentModelProperties)}">
+            <table class="table table-striped" cellspacing="0" width="100%">
+                <thead>
+                <tr>
+                    <th>Content Model URI</th>
+                    <th>Property</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="contentModel : ${listContentModelProperties}">
+                    <td th:text="${contentModel.model}"></td>
+                    <td th:text="${contentModel.property}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listContentModelProperties)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+
+    <hr style="height:3px;border:none;color:#333;background-color:#333;" />
+
     <!-- Activities grouped by activity type -->
     <h1>Activities Feed</h1>
     <div class="panel panel-default">
