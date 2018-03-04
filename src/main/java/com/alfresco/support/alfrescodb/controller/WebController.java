@@ -238,7 +238,7 @@ public class WebController {
             /* Workflows */
             listWorkflows = workflowMapper.findAll();
             out.write("\n\nAll Workflows Grouped by Process Definition and Task Name");
-            out.write("\nProcess Definition, Task Name, No Occurrencies");
+            out.write("\nProcess Definition, Task Name, No Occurrences");
             if (listWorkflows != null) {
                 for (int i = 0; i < listWorkflows.size(); i++) {
                     out.write(listWorkflows.get(i).printTasks());
@@ -248,7 +248,7 @@ public class WebController {
 
             List < Workflow > listOpenWorkflows = workflowMapper.openWorkflows();
             out.write("\n\nOpen Workflows");
-            out.write("\nProcess Definition, No Occurrencies");
+            out.write("\nProcess Definition, No Occurrences");
             if (listOpenWorkflows != null) {
                 for (int i = 0; i < listOpenWorkflows.size(); i++) {
                     out.write(listOpenWorkflows.get(i).printProcesses());
@@ -258,7 +258,7 @@ public class WebController {
 
             List < Workflow > listClosedWorkflows = workflowMapper.closedWorkflows();
             out.write("\n\nClosed Workflows");
-            out.write("\nProcess Definition, No Occurrencies");
+            out.write("\nProcess Definition, No Occurrences");
             if (listClosedWorkflows != null) {
                 for (int i = 0; i < listClosedWorkflows.size(); i++) {
                     out.write(listClosedWorkflows.get(i).printProcesses());
@@ -268,7 +268,7 @@ public class WebController {
 
             List < Workflow > listOpenTasks = workflowMapper.openTasks();
             out.write("\n\nOpen Tasks");
-            out.write("\nProcess Definition, Task Name, No Occurrencies");
+            out.write("\nProcess Definition, Task Name, No Occurrences");
             if (listOpenTasks != null) {
                 for (int i = 0; i < listOpenTasks.size(); i++) {
                     out.write(listOpenTasks.get(i).printTasks());
@@ -279,7 +279,7 @@ public class WebController {
 
             List < Workflow > listClosedTasks = workflowMapper.closedTasks();
             out.write("\n\nClosed Tasks");
-            out.write("\nProcess Definition, Task Name, No Occurrencies");
+            out.write("\nProcess Definition, Task Name, No Occurrences");
             if (listClosedTasks != null) {
                 for (int i = 0; i < listClosedTasks.size(); i++) {
                     out.write(listClosedTasks.get(i).printTasks());
