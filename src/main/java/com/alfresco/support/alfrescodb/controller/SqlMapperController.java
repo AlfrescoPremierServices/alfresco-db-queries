@@ -148,6 +148,10 @@ public class SqlMapperController {
         return accessControlListMapper.findAccessControlListEntries();
     }
 
+    public List findAccessControlListInheritance(){
+        return accessControlListMapper.findAccessControlListInheritance();
+    }
+
     public List findContentModelProperties(){
         return contentModelPropertiesMapper.findContentModelProperties();
     }

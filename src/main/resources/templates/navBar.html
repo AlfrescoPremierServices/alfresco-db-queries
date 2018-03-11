@@ -21,11 +21,16 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li><a href="/">Home</a></li>
-                    <li><a href="dbSize.html" >Database Size</a></li>                     
-                    <li><a href="largeFolders.html" th:href="@{/largeFolders(size=${largeFolderSize})}">Large Folders</a></li>
-                    <li><a href="largeTransactions.html" th:href="@{/largeTransactions(size=${largeTransactionSize})}">Large Transactions</a></li>
-                    <li><a href="contentModelProperties.html" >Content Model Properties</a></li>
+                    <li><a href="dbSize.html" >Database Size</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">List Nodes... <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="largeFolders.html" th:href="@{/largeFolders(size=${largeFolderSize})}">Large Folders</a></li>
+                            <li><a href="largeTransactions.html" th:href="@{/largeTransactions(size=${largeTransactionSize})}">Large Transactions</a></li>
+                        </ul>
+                    </li>
                     <li><a href="accessControlList.html" >ACLs</a></li>
+                    <li><a href="contentModelProperties.html" >Content Model Properties</a></li>
                     <li><a href="activitiesFeed.html" >Activities Feed</a></li>
                     <li><a href="workflows.html" >Workflows</a></li>
                     <li><a href="archivedNodes.html" >Archived Nodes</a></li>

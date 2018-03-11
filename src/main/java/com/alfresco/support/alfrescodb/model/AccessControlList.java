@@ -4,6 +4,7 @@ public class AccessControlList {
     private int occurrences;
 	private String permission;
 	private int permissionCount;
+	private Boolean inherits;
 
 	public void setOccurrences(int occurrences) {
 		this.occurrences = occurrences;
@@ -29,11 +30,23 @@ public class AccessControlList {
 		return this.permissionCount;
 	}
 
+	public void setInherits(Boolean inherits) {
+		this.inherits = inherits;
+	}
+
+	public Boolean getInherits(){
+		return this.inherits;
+	}
+
 	public String printAccessControlList() {
 		return String.format("\n%s", occurrences);
 	}
 
 	public String printAccessControlListEntries() {
 		return String.format("\n%s, %s", permission, permissionCount);
+	}
+
+	public String printAccessControlListInheritance() {
+		return String.format("\n%s, %s", inherits, occurrences);
 	}
 }

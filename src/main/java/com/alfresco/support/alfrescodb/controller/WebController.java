@@ -83,6 +83,7 @@ public class WebController {
         List < LargeFolder > listLargeFolders;
         List < LargeTransaction > listLargeTransactions;
         List < AccessControlList > listAccessControlListEntries;
+        List < AccessControlList > listAccessControlListInheritance;
         List < ContentModelProperties > listContentModelProperties;
         List < ActivitiesFeed > listActivitiesFeed;
         List < ArchivedNodes > listArchivedNodes;
@@ -205,6 +206,16 @@ public class WebController {
             model.addAttribute("aceSize", aceSize);
             model.addAttribute("listAccessControlListEntries", listAccessControlListEntries);
 
+            listAccessControlListInheritance = sqlMapper.findAccessControlListInheritance();
+            out.write("\n\nAccess Control List Inheritance (True/False)");
+            out.write("\nInheritance, Occurrences");
+            if (listAccessControlListInheritance != null) {
+                for (int i = 0; i < listAccessControlListInheritance.size(); i++) {
+                    out.write(listAccessControlListInheritance.get(i).printAccessControlListInheritance());
+                }
+            }
+            model.addAttribute("listAccessControlListInheritance", listAccessControlListInheritance);
+
             // Content Model Properties List
             listContentModelProperties = sqlMapper.findContentModelProperties();
             out.write("\n\nContent Model Properties");
@@ -322,7 +333,7 @@ public class WebController {
             // List Nodes by Mimetype
             listNodesByMimeType = sqlMapper.findNodesSizeByMimeType();
             out.write("\n\nNodes Disk Space by Mimetype");
-            out.write("\nMime Types, Nodes Count, Disk Space");
+            out.write("\nMime Types, Nodes Count, Disk Space MB");
             if (listNodesByMimeType != null) {
                 for (int i = 0; i < listNodesByMimeType.size(); i++) {
                     out.write(listNodesByMimeType.get(i).printNodesByMimeType());
@@ -583,6 +594,9 @@ public class WebController {
             aceSize = aceSize + count;
         }
         model.addAttribute("aceSize", aceSize);
+
+        List < AccessControlList > listAccessControlListInheritance = sqlMapper.findAccessControlListInheritance();
+        model.addAttribute("listAccessControlListInheritance", listAccessControlListInheritance);
 
         return null;
     }
