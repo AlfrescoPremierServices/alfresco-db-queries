@@ -14,7 +14,7 @@
     <script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" class="init">
         $(document).ready( function () {
-            $('table.accessControlListEntries').DataTable({
+            $('table.repartitionTable').DataTable({
                 "order": [1, 'desc'],
             });
         } );
@@ -48,6 +48,50 @@
                 </tr>
                 </tbody>
             </table>
+	<h2>ACLs repartition</h2>
+	    <table class="display repartitionTable">
+		<thead>
+		    <tr>
+			    <th>ACL id</th>
+			    <th>number of nodes</th>
+		    </tr>
+		</thead>
+		<tbody>
+                <tr th:each="nodesPerACLs: ${listNodesPerACLs}">
+                    <td th:text="${nodesPerACLs.aclId}"></td>
+                    <td th:text="${nodesPerACLs.numNodes}"></td>
+                </tr>
+		</tbody>
+	    </table>
+	     <h2>ACL Types</h2>
+	    <table class="display repartitionTable">
+		<thead>
+		    <tr>
+                <th>ACL types</th>
+			    <th>ACL number</th>
+		    </tr>
+		</thead>
+		<tbody>
+		<tr th:each="ACLType: ${listACLTypes}">
+                    <td th:text="${ACLType.aclType}"></td>
+                    <td th:text="${ACLType.typeCount}"></td>
+                </tr>
+		</tbody>
+	    </table>
+	<h2>Orphaned ACLs</h2>
+	    <table class="table" th:if="${not #lists.isEmpty(listOrphanedACLs)}">
+		<thead>
+		    <tr>
+			    <th>number of ACLs not linked to a node</th>
+		    </tr>
+		</thead>
+		<tbody>
+                <tr>
+                    <td th:text="${listOrphanedACLs.size()}"></td>
+                </tr>
+		</tbody>
+	    </table>
+	    <p th:if="${#lists.isEmpty(listOrphanedACLs)}">None Found</p>
         </div>
     </div>
 
@@ -71,6 +115,21 @@
                     </tr>
                 </tbody>
             </table>
+            <h2>ACL Height</h2>
+	        <table class="display repartitionTable">
+                <thead>
+                    <tr>
+                        <th>ACL ID</th>
+                        <th>Access Control Entries</th>
+                    </tr>
+                </thead>
+		        <tbody>
+		            <tr th:each="aclHeight : ${listAcesPerACLs}">
+		                <td th:text="${aclHeight.aclId}"> </td>
+		                <td th:text="${aclHeight.numAce}"> </td>
+		            </tr>
+		        </tbody>
+	        </table>
         </div>
     </div>
 
@@ -79,7 +138,7 @@
     <div class="panel panel-default">
         <!-- Default panel contents -->
         <div th:if="${not #lists.isEmpty(listAccessControlListEntries)}">
-            <table class="display accessControlListEntries" cellspacing="0" width="100%">
+            <table class="display repartitionTable" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>Permission</th>
@@ -87,9 +146,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="accessControlListeEntry : ${listAccessControlListEntries}">
-                    <td th:text="${accessControlListeEntry.permission}"></td>
-                    <td th:text="${accessControlListeEntry.permissionCount}"></td>
+                <tr th:each="accessControlListEntry : ${listAccessControlListEntries}">
+                    <td th:text="${accessControlListEntry.permission}"></td>
+                    <td th:text="${accessControlListEntry.permissionCount}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -100,6 +159,31 @@
         <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
         No Results Found
     </div>
+
+    <div class="panel panel-default">
+        <div th:if="${not #lists.isEmpty(listAuthoritiesAcls)}">
+            <table class="display repartitionTable">
+                <thead>
+                <tr>
+                    <th>Authoritiy</th>
+                    <th>Nulber of ACLs involved in</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="authority: ${listAuthoritiesAcls}">
+                    <td th:text="${authority.authorities}"></td>
+                    <td th:text="${authority.numAcls}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listAuthoritiesAcls)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+
     <hr style="height:3px;border:none;color:#333;background-color:#333;" />
 
     <!-- Access Control List Inheritance -->

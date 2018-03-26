@@ -152,6 +152,22 @@ public class SqlMapperController {
         return accessControlListMapper.findAccessControlListInheritance();
     }
 
+    public List findAclsRepartition(){
+        return accessControlListMapper.findAclsRepartition();
+    }
+
+    public List findOrphanedAcls(){
+        return accessControlListMapper.findOrphanedAcls();
+    }
+
+    public List findAclTypesRepartition(){
+        return accessControlListMapper.findAclTypesRepartition();
+    }
+
+    public List findAclsHeight(){ return accessControlListMapper.findAclsHeight(); }
+
+    public List findAuthoritiesAcls() { return accessControlListMapper.findAuthoritiesAcls(); }
+
     public List findContentModelProperties(){
         return contentModelPropertiesMapper.findContentModelProperties();
     }

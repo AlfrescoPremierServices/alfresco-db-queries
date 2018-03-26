@@ -9,7 +9,7 @@
 
 <body>
 	<script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
-	<script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- Add navigation bar here -->
 	<div th:insert="navBar :: navBar"></div>
 
@@ -246,6 +246,52 @@
                 </tr>
                 </tbody>
             </table>
+            <table class="table" >
+                <thead>
+                    <tr>
+                            <th>ACLs Repartition</th>
+                    </tr>
+                    <tr>
+                            <th>ACL id</th>
+                            <th>number of nodes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr th:each="nodesPerACLs: ${listNodesPerACLs}">
+                    <td th:text="${nodesPerACLs.aclId}"></td>
+                    <td th:text="${nodesPerACLs.numNodes}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <h2>ACL Types</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                            <th>ACL types repartition</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ACLType: ${listACLTypes}">
+                    <td th:text="${ACLType.aclType}"></td>
+                    <td th:text="${ACLType.typeCount}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </div>
+        <h2>Orphaned ACLs</h2>
+            <table class="table" th:if="${not #lists.isEmpty(listOrphanedACLs)}">
+                <thead>
+                    <tr>
+                            <th>number of ACLs not linked to a node</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${listOrphanedACLs.size()}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <p th:if="${#lists.isEmpty(listOrphanedACLs)}">None Found</p>
         </div>
     </div>
 
@@ -267,6 +313,21 @@
                 </tr>
                 </tbody>
             </table>
+            <h2>ACL Height</h2>
+	        <table class="table">
+                <thead>
+                    <tr>
+                        <th>ACL ID</th>
+                        <th>Access Control Entries</th>
+                    </tr>
+                </thead>
+		        <tbody>
+		            <tr th:each="aclHeight : ${listAcesPerACLs}">
+		                <td th:text="${aclHeight.aclId}"> </td>
+		                <td th:text="${aclHeight.numAce}"> </td>
+		            </tr>
+		        </tbody>
+	        </table>
         </div>
     </div>
 
@@ -293,6 +354,30 @@
     </div>
 
     <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listAccessControlListEntries)}">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+        No Results Found
+    </div>
+
+    <div class="panel panel-default">
+        <div th:if="${not #lists.isEmpty(listAuthoritiesAcls)}">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Authoritiy</th>
+                    <th>Nulber of ACLs involved in</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="authority: ${listAuthoritiesAcls}">
+                    <td th:text="${authority.authorities}"></td>
+                    <td th:text="${authority.numAcls}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listAuthoritiesAcls)}">
         <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
         No Results Found
     </div>

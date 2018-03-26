@@ -83,7 +83,12 @@ public class WebController {
         List < LargeFolder > listLargeFolders;
         List < LargeTransaction > listLargeTransactions;
         List < AccessControlList > listAccessControlListEntries;
+        List < AccessControlList > listNodesPerACLs;
+    	List < AccessControlList > listOrphanedACLs = sqlMapper.findOrphanedAcls();
+	    List < AccessControlList > listACLTypes = sqlMapper.findAclTypesRepartition();
+        List < AccessControlList > listAcesPerACLs = sqlMapper.findAclsHeight();
         List < AccessControlList > listAccessControlListInheritance;
+        List < AccessControlList > listAuthoritiesAcls = sqlMapper.findAuthoritiesAcls();
         List < ContentModelProperties > listContentModelProperties;
         List < ActivitiesFeed > listActivitiesFeed;
         List < ArchivedNodes > listArchivedNodes;
@@ -186,6 +191,27 @@ public class WebController {
             out.write("\n" + aclSize);
             model.addAttribute("aclSize", aclSize);
 
+            out.write("\n\nACLs repartition");
+            out.write("\n\nACL id, number of nodes");
+            listNodesPerACLs = sqlMapper.findAclsRepartition();
+            if (listNodesPerACLs != null) {
+		        for (int i = 0; i < listNodesPerACLs.size(); i++) {
+		            out.write(listNodesPerACLs.get(i).printAclsPerNodes());
+		        }
+            }
+	        model.addAttribute("listNodesPerACLs", listNodesPerACLs);
+	        model.addAttribute("listOrphanedACLs", listOrphanedACLs);
+	        model.addAttribute("listACLTypes", listACLTypes);
+            out.write("\n\nACLs Type repartition");
+            out.write("\n\nACL Type, number of ACLs of this type");
+	        for (int i = 0; i < listACLTypes.size(); i++) {
+	            out.write(listACLTypes.get(i).printAclsTypesRepartition());
+	        }
+	        out.write("\n\nOrphaned ACLs (count)");
+	        if (listOrphanedACLs.size() > 0) {
+		        out.write("\n" + listOrphanedACLs.size());
+	        }
+
             listAccessControlListEntries = sqlMapper.findAccessControlListEntries();
             Integer aceSize = 0;
             for (int i = 0; i < listAccessControlListEntries.size(); i++) {
@@ -197,15 +223,33 @@ public class WebController {
             out.write("\nSize");
             out.write("\n" + String.valueOf(aceSize));
 
+            out.write("\n\nACL Height");
+            out.write("\nACL ID, Number of ACEs");
+            if (listAcesPerACLs.size() > 0) {
+              for (int i = 0; i < listAcesPerACLs.size(); i++) {
+                out.write(listAcesPerACLs.get(i).printAcesPerAcls());
+              }
+            }
+
             out.write("\n\nACE Permission, Occurrences");
             if (listAccessControlListEntries != null) {
                 for (int i = 0; i < listAccessControlListEntries.size(); i++) {
                     out.write(listAccessControlListEntries.get(i).printAccessControlListEntries());
                 }
             }
+
             model.addAttribute("aceSize", aceSize);
+            model.addAttribute("listAcesPerACLs", listAcesPerACLs);
             model.addAttribute("listAccessControlListEntries", listAccessControlListEntries);
 
+            out.write("\n\nACL Authorities repartition");
+            out.write("\nAuthority, Number of ACLs");
+            if (listAuthoritiesAcls.size() > 0) {
+                for (int i = 0; i < listAuthoritiesAcls.size(); i++) {
+                    out.write(listAuthoritiesAcls.get(i).printAuthoritiesAcls());
+                }
+            }
+            model.addAttribute("listAuthoritiesAcls", listAuthoritiesAcls);
             listAccessControlListInheritance = sqlMapper.findAccessControlListInheritance();
             out.write("\n\nAccess Control List Inheritance (True/False)");
             out.write("\nInheritance, Occurrences");
@@ -597,6 +641,21 @@ public class WebController {
 
         List < AccessControlList > listAccessControlListInheritance = sqlMapper.findAccessControlListInheritance();
         model.addAttribute("listAccessControlListInheritance", listAccessControlListInheritance);
+
+        List < AccessControlList > listNodesPerACLs = sqlMapper.findAclsRepartition();
+        model.addAttribute("listNodesPerACLs", listNodesPerACLs);
+
+        List < AccessControlList > listAcesPerACLs = sqlMapper.findAclsHeight();
+        model.addAttribute("listAcesPerACLs", listAcesPerACLs);
+
+	    List < AccessControlList > listOrphanedACLs = sqlMapper.findOrphanedAcls();
+	    model.addAttribute("listOrphanedACLs", listOrphanedACLs);
+
+    	List <AccessControlList> listACLTypes = sqlMapper.findAclTypesRepartition();
+    	model.addAttribute("listACLTypes", listACLTypes);
+
+    	List <AccessControlList> listAuthoritiesAcls = sqlMapper.findAuthoritiesAcls();
+    	model.addAttribute("listAuthoritiesAcls", listAuthoritiesAcls);
 
         return null;
     }
