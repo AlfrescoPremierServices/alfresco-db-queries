@@ -4,11 +4,15 @@ Alfresco Database Queries Report is a Spring-Boot application developed to run a
   - Identify Database Size
   - Identify Large Folders
   - Identify Large Transactions
-  - List Nodes by MimeType and Disk Space
+  - Access Control Lists
+  - Content Model Properties
+  - List Nodes by MimeType and Disk Space (also by month)
   - List Nodes by Contet Store
   - List Nodes by Content Type
   - List Site Activities
   - List Workflows and Tasks
+  - Archived Nodes
+  - Authorities count
   - Solr Memory Configuration
   - JMX changes
   - Export Report

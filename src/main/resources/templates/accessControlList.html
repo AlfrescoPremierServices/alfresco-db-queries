@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="webjars/datatables/1.10.15/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 
 <body>
@@ -20,6 +21,14 @@
         } );
 
         $(document).ready( function () {
+            $('table.noPaging-noSearching').DataTable({
+                "paging": false,
+                "info": false,
+                "searching": false,
+            });
+        } );
+
+        $(document).ready( function () {
             $('table.display').DataTable();
         } );
     </script>
@@ -27,39 +36,34 @@
 	<!-- Add navigation bar here -->
 	<div th:insert="navBar :: navBar"></div>
 
-
-    <!-- ACLs -->
-    <div class="panel panel-default">
-        <!-- Default panel contents -->
-        <h1>Access Control List</h1>
-
-        <hr style="height:3px;border:none;color:#333;background-color:#333;" />
-        <div class="panel panel-default">
-            <!-- Default panel contents -->
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Number of ACLs</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td th:text="${aclSize}"></td>
-                </tr>
-                </tbody>
-            </table>
+    <div class="center panel panel-primary">
+        <div class="panel-heading">
+            <b>Access Control List</b>
         </div>
+
+        <table class="display noPaging-noSearching">
+            <thead>
+            <tr>
+                <th>Number of ACLs</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="${aclSize}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <p></p>
     </div>
 
-    <hr style="height:3px;border:none;color:#333;background-color:#333;" />
-
     <!-- Access Control List Entries -->
-    <h1>Access Control List Entries</h1>
+    <div class="center panel panel-primary">
+        <div class="panel-heading">
+            <b>Access Control List Entries</b>
+        </div>
 
-    <div class="panel panel-default">
-        <!-- Default panel contents -->
         <div th:if="${not #lists.isEmpty(listAccessControlListEntries)}">
-            <table class="table table-striped" cellspacing="0" width="100%">
+            <table class="display noPaging-noSearching" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>Number of Permissions</th>
@@ -71,13 +75,14 @@
                     </tr>
                 </tbody>
             </table>
+            <p></p>
         </div>
     </div>
 
-    <hr>
-
-    <div class="panel panel-default">
-        <!-- Default panel contents -->
+    <div class="center panel panel-primary">
+        <div class="panel-heading">
+            <b>Access Control List Etnries by Permission</b>
+        </div>
         <div th:if="${not #lists.isEmpty(listAccessControlListEntries)}">
             <table class="display accessControlListEntries" cellspacing="0" width="100%">
                 <thead>
@@ -96,19 +101,14 @@
         </div>
     </div>
 
-    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listAccessControlListEntries)}">
-        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-        No Results Found
-    </div>
-    <hr style="height:3px;border:none;color:#333;background-color:#333;" />
-
     <!-- Access Control List Inheritance -->
-    <h1>Access Control List Inheritance</h1>
+    <div class="center panel panel-primary">
+        <div class="panel-heading">
+            <b>Access Control List Inheritance</b>
+        </div>
 
-    <div class="panel panel-default">
-        <!-- Default panel contents -->
         <div th:if="${not #lists.isEmpty(listAccessControlListInheritance)}">
-            <table class="table table-striped" cellspacing="0" width="100%">
+            <table class="display noPaging-noSearching" cellspacing="0" width="100%">
                 <thead>
                     <tr>
                         <th>Inheritance (True/False)</th>
@@ -122,14 +122,9 @@
                     </tr>
                 </tbody>
             </table>
+            <p></p>
         </div>
     </div>
-
-    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listAccessControlListInheritance)}">
-        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-        No Results Found
-    </div>
-    <hr style="height:3px;border:none;color:#333;background-color:#333;" />
 
  </body>
 

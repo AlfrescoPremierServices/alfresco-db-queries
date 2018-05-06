@@ -1,4 +1,4 @@
-package com.alfresco.support.alfrescodb.controller;
+package com.alfresco.support.alfrescodb.controllers;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -20,6 +20,12 @@ import org.slf4j.LoggerFactory;
 public class WebController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    SqlMapperController sqlMapper;
+
     @Value("${largeFolderSize}")
     private Integer largeFolderSize;
 
@@ -28,12 +34,6 @@ public class WebController {
 
     @Value("${reportFile}")
     private String reportFile;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    SqlMapperController sqlMapper;
 
     @Value("${spring.datasource.platform}")
     private String dbType;
@@ -113,7 +113,6 @@ public class WebController {
                 for (int i = 0; i < listRelationInfos.size(); i++) {
                     out.write(listRelationInfos.get(i).printDbInfo());
                 }
-                model.addAttribute("listRelationInfos", listRelationInfos);
 
                 String dbSize = sqlMapper.findDbSize();
                 out.write("\n\nDatabase Size");
@@ -122,7 +121,6 @@ public class WebController {
                 model.addAttribute("dbSize", dbSize);
             } else if (dbType.equalsIgnoreCase("oracle")){
                 List<OracleRelationInfo> OracleListRelationInfos = sqlMapper.findTablesInfo();
-                model.addAttribute("OracleListRelationInfos", OracleListRelationInfos);
 
                 out.write("\nTables Size");
                 out.write("\nTable Name, Size MB");
@@ -131,7 +129,6 @@ public class WebController {
                 }
 
                 List<OracleRelationInfo> OracleListIndexesInfos = dbSizeMapper.findIndexesInfoOracle();
-                model.addAttribute("OracleListIndexesInfos", OracleListIndexesInfos);
 
                 out.write("\n\nIndexes Size");
                 out.write("\nTable Name, Index Name, Index Size MB");
@@ -140,7 +137,6 @@ public class WebController {
                 }
             } else if (dbType.equalsIgnoreCase("microsoft")) {
                 List<MSSqlRelationInfo> MSSqlListRelationInfos = sqlMapper.findTablesInfo();
-                model.addAttribute("MSSqlListRelationInfos", MSSqlListRelationInfos);
 
                 out.write("\nTables Size");
                 out.write("\nTable Name, Rows Count, Total Space KB, Used Space KB, Unused Space KB");
@@ -149,7 +145,6 @@ public class WebController {
                 }
 
                 List<MSSqlRelationInfo> MSSqlListIndexesInfos = dbSizeMapper.findIndexesInfoMSSql();
-                model.addAttribute("MSSqlListIndexesInfos", MSSqlListIndexesInfos);
 
                 out.write("\n\nIndexes Size");
                 out.write("\nTable Name, Index Name, Index Size KB");
@@ -167,7 +162,6 @@ public class WebController {
                     out.write(listLargeFolders.get(i).printLargeFolders());
                 }
             }
-            model.addAttribute("listLargeFolders", listLargeFolders);
 
             // Large Transactions
             listLargeTransactions = largeTransactionMapper.findBySize(largeTransactionSize);
@@ -178,7 +172,6 @@ public class WebController {
                     out.write(listLargeTransactions.get(i).printLargeTransactions());
                 }
             }
-            model.addAttribute("listLargeTransactions", listLargeTransactions);
 
             // Access Control List
             String aclSize = sqlMapper.findAccessControlList();
@@ -203,8 +196,6 @@ public class WebController {
                     out.write(listAccessControlListEntries.get(i).printAccessControlListEntries());
                 }
             }
-            model.addAttribute("aceSize", aceSize);
-            model.addAttribute("listAccessControlListEntries", listAccessControlListEntries);
 
             listAccessControlListInheritance = sqlMapper.findAccessControlListInheritance();
             out.write("\n\nAccess Control List Inheritance (True/False)");
@@ -214,7 +205,6 @@ public class WebController {
                     out.write(listAccessControlListInheritance.get(i).printAccessControlListInheritance());
                 }
             }
-            model.addAttribute("listAccessControlListInheritance", listAccessControlListInheritance);
 
             // Content Model Properties List
             listContentModelProperties = sqlMapper.findContentModelProperties();
@@ -225,7 +215,6 @@ public class WebController {
                     out.write(listContentModelProperties.get(i).printContentModelProperties());
                 }
             }
-            model.addAttribute("listContentModelProperties", listContentModelProperties);
 
             // Activities
             listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
@@ -236,7 +225,6 @@ public class WebController {
                     out.write(listActivitiesFeed.get(i).printActivitiesByActivityType());
                 }
             }
-            model.addAttribute("listActivitiesFeedByActivityType", listActivitiesFeed);
 
             listActivitiesFeed = sqlMapper.findActivitiesByUser();
             out.write("\n\nActivities by User");
@@ -246,7 +234,6 @@ public class WebController {
                     out.write(listActivitiesFeed.get(i).printActivitiesByUser());
                 }
             }
-            model.addAttribute("listActivitiesFeedByUser", listActivitiesFeed);
 
             listActivitiesFeed = sqlMapper.findActivitiesByApplicationInterface();
             out.write("\n\nActivities by Application Interface");
@@ -256,7 +243,6 @@ public class WebController {
                     out.write(listActivitiesFeed.get(i).printActivitiesByInterface());
                 }
             }
-            model.addAttribute("listActivitiesFeedByAppTool", listActivitiesFeed);
 
             /* Workflows */
             listWorkflows = workflowMapper.findAll();
@@ -267,7 +253,6 @@ public class WebController {
                     out.write(listWorkflows.get(i).printTasks());
                 }
             }
-            model.addAttribute("listWorkflows", listWorkflows);
 
             List < Workflow > listOpenWorkflows = workflowMapper.openWorkflows();
             out.write("\n\nOpen Workflows");
@@ -277,7 +262,6 @@ public class WebController {
                     out.write(listOpenWorkflows.get(i).printProcesses());
                 }
             }
-            model.addAttribute("listOpenWorkflows", listOpenWorkflows);
 
             List < Workflow > listClosedWorkflows = workflowMapper.closedWorkflows();
             out.write("\n\nClosed Workflows");
@@ -287,7 +271,6 @@ public class WebController {
                     out.write(listClosedWorkflows.get(i).printProcesses());
                 }
             }
-            model.addAttribute("listClosedWorkflows", listClosedWorkflows);
 
             List < Workflow > listOpenTasks = workflowMapper.openTasks();
             out.write("\n\nOpen Tasks");
@@ -297,8 +280,6 @@ public class WebController {
                     out.write(listOpenTasks.get(i).printTasks());
                 }
             }
-            model.addAttribute("listOpenTasks", listOpenTasks);
-
 
             List < Workflow > listClosedTasks = workflowMapper.closedTasks();
             out.write("\n\nClosed Tasks");
@@ -308,7 +289,6 @@ public class WebController {
                     out.write(listClosedTasks.get(i).printTasks());
                 }
             }
-            model.addAttribute("listClosedTasks", listClosedTasks);
 
             // Archived Nodes
             listArchivedNodes = archivedNodesMapper.findArchivedNodes();
@@ -318,7 +298,6 @@ public class WebController {
                     out.write(listArchivedNodes.get(i).printArchivedNodes());
                 }
             }
-            model.addAttribute("listArchivedNodes", listArchivedNodes);
 
             listArchivedNodes = archivedNodesMapper.findArchivedNodesByUser();
             out.write("\n\nArchived Nodes by User");
@@ -328,7 +307,6 @@ public class WebController {
                     out.write(listArchivedNodes.get(i).printArchivedNodesByUser());
                 }
             }
-            model.addAttribute("listArchivedNodesByUser", listArchivedNodes);
 
             // List Nodes by Mimetype
             listNodesByMimeType = sqlMapper.findNodesSizeByMimeType();
@@ -339,7 +317,6 @@ public class WebController {
                     out.write(listNodesByMimeType.get(i).printNodesByMimeType());
                 }
             }
-            model.addAttribute("listNodesByMimeType", listNodesByMimeType);
 
             // Nodes disk space
             List < NodesList > diskSpace = sqlMapper.findNodesSize();
@@ -354,7 +331,6 @@ public class WebController {
                     out.write(listNodesByType.get(i).printNodesByType());
                 }
             }
-            model.addAttribute("listNodesByType", listNodesByType);
 
             // List Nodes by Content Type
             listNodesByType = sqlMapper.findNodesByContentTypeAndMonth();
@@ -365,7 +341,6 @@ public class WebController {
                     out.write(listNodesByType.get(i).printNodesByTypeAndMonth());
                 }
             }
-            model.addAttribute("listNodesByTypeAndMonth", listNodesByType);
 
             // List Nodes by Store
             listNodesByStore = sqlMapper.findNodesByStore();
@@ -376,7 +351,6 @@ public class WebController {
                     out.write(listNodesByStore.get(i).printNodesByStore());
                 }
             }
-            model.addAttribute("listNodesByStore", listNodesByStore);
 
             // Resource Locking
             listLockedResources = lockedResourcesMapper.findAll();
@@ -385,7 +359,6 @@ public class WebController {
             for (int i = 0; i < listLockedResources.size(); i++) {
                 out.write(listLockedResources.get(i).findAll());
             }
-            model.addAttribute("listLockedResources", listLockedResources);
 
             // Authorities
             out.write("\n\nAuthorities");
@@ -396,7 +369,6 @@ public class WebController {
                     out.write(listUsers.get(i).printUsers());
                 }
             }
-            model.addAttribute("listUsers", listUsers);
 
             if (alfAuthStatus == true) {
                 listAuthorizedUsers = sqlMapper.findAuthorizedUsers();
@@ -416,11 +388,9 @@ public class WebController {
                     out.write(listUsers.get(i).printGroups());
                 }
             }
-            model.addAttribute("listGroups", listGroups);
 
             // Solr memory
             List < SolrMemory > solrMemoryList = sqlMapper.solrMemory();
-            model.addAttribute("solrMemoryList", solrMemoryList);
 
             for (int i = 0; i < solrMemoryList.size(); i++) {
                 Long alfrescoNodes = Long.valueOf(solrMemoryList.get(i).getAlfrescoNodes());
@@ -435,23 +405,6 @@ public class WebController {
                 double archiveSolrCachesMemory = (double)(alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (double)(2*archiveNodes + transactions + acls + aclTransactions)/8/1024/1024/1024;
                 double totalSolrCachesMemory = (double)alfrescoSolrCachesMemory + archiveSolrCachesMemory;
                 double totalSolrMemory = (double)totalDataStructuresMemory + totalSolrCachesMemory;
-
-                model.addAttribute("alfrescoCoreMemory", alfrescoCoreMemory);
-                model.addAttribute("archiveCoreMemory", archiveCoreMemory);
-                model.addAttribute("alfrescoSolrQueryResultCacheSize", alfrescoSolrQueryResultCacheSize);
-                model.addAttribute("alfrescoSolrAuthorityCacheSize", alfrescoSolrAuthorityCacheSize);
-                model.addAttribute("alfrescoSolrPathCacheSize", alfrescoSolrPathCacheSize);
-                model.addAttribute("alfrescoSolrFilterCacheSize", alfrescoSolrFilterCacheSize);
-                model.addAttribute("archiveSolrQueryResultCacheSize", archiveSolrQueryResultCacheSize);
-                model.addAttribute("archiveSolrAuthorityCacheSize", archiveSolrAuthorityCacheSize);
-                model.addAttribute("archiveSolrPathCacheSize", archiveSolrPathCacheSize);
-                model.addAttribute("archiveSolrFilterCacheSize", archiveSolrFilterCacheSize);
-                model.addAttribute("solrDataStructuresTotalMemory", totalDataStructuresMemory);
-                model.addAttribute("alfrescoSolrCachesMemory", alfrescoSolrCachesMemory);
-                model.addAttribute("archiveSolrCachesMemory", archiveSolrCachesMemory);
-                model.addAttribute("totalSolrCachesMemory", totalSolrCachesMemory);
-                model.addAttribute("totalSolrMemory", 2*totalSolrMemory);
-                model.addAttribute("alfrescoSolrFilterCacheSize", alfrescoSolrFilterCacheSize);
 
                 out.write("\n\nSolr Memory");
                 out.write("\nAlfresco Nodes, Archive Nodes, Transactions, ACLs, ACL Transactions");
@@ -480,7 +433,7 @@ public class WebController {
                     out.write(listJmxProperties.get(i).printJmxProperties());
                 }
             }
-            model.addAttribute("listJmxProperties", listJmxProperties);
+            model.addAttribute("reportFile", reportFile);
 
             out.close();
         } catch (IOException e) {

@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
 	<link rel="stylesheet" type="text/css" href="webjars/datatables/1.10.15/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 
 <body>
@@ -37,39 +38,43 @@
 
     <!-- Add navigation bar here -->
 	<div th:insert="navBar :: navBar"></div>
-	         
-    <div class="panel panel-default">
-        <!-- Default panel contents -->
-		<h1>Large Folders ( > <span th:text="${size}"></span> child nodes)</h1>
 
-		<hr style="height:3px;border:none;color:#333;background-color:#333;" />
-		<div th:if="${not #lists.isEmpty(listLargeFolders)}">
-			<table class="display noPaging-noSearching" cellspacing="0" width="100%">
-	            <thead>
-	                <tr>
-	                    <th>Name</th>
-	                    <th>Node Ref</th>	 
-	                    <th>Type</th>	 
-	                    <th>No. of Child Nodes</th>	                                       
-	                </tr>
-	            </thead>
-	            <tbody>
-	                <tr th:each="alf_node : ${listLargeFolders}">
-	                    <td th:text="${alf_node.nodeName}"></td>
-	                    <td th:text="${alf_node.nodeRef}"></td>
-	                    <td th:text="${alf_node.localName}"></td>
-	                    <td th:text="${alf_node.occurrences}"></td>
-	                </tr>
-	            </tbody>
-	        </table>
+    <div class="center panel panel-primary">
+        <div class="panel-heading">
+            <b>Large Folders ( > <span th:text="${size}"></span> nodes )</b>
         </div>
-	</div>
-	
-    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listLargeFolders)}">
-		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-		No Results Found
-	</div>
-	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
+
+	    <div th:if="${not #lists.isEmpty(listLargeFolders)}">
+
+			<table class="display noPaging-noSearching" cellspacing="0" width="100%">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Node Ref</th>
+						<th>Type</th>
+						<th>No. of Child Nodes</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="alf_node : ${listLargeFolders}">
+						<td th:text="${alf_node.nodeName}"></td>
+						<td th:text="${alf_node.nodeRef}"></td>
+						<td th:text="${alf_node.localName}"></td>
+						<td th:text="${alf_node.occurrences}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+        <div>
+            <p></p>
+            <div class="panel panel-default " th:if="${#lists.isEmpty(listLargeFolders)}">
+                <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+                No Results Found
+            </div>
+            <p></p>
+        </div>
+    </div>
 
  </body>
 

@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:width="http://www.w3.org/1999/xhtml">
 
 <head>
 	<title>Archived Nodes</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
-	<link rel="stylesheet" type="text/css" href="webjars/datatables/1.10.15/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="webjars/datatables/1.10.15/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 
 <body>
@@ -37,45 +38,49 @@
 	<div th:insert="navBar :: navBar"></div>
     	
 	<!-- Archived Nodes -->
-	<h1>Archived Nodes</h1>
-
-	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
-	<div class="panel panel-default">
-        <!-- Default panel contents -->
-        <div th:if="${not #lists.isEmpty(listArchivedNodes)}">
-	        <table class="table table-striped">
-	            <thead>
-	                <tr>
-	                    <th>Total Archived Nodes</th>
-	                </tr>
-	            </thead>
-	            <tbody>
-	                <tr th:each="archivedNodes : ${listArchivedNodes}">
-	                    <td th:text="${archivedNodes.nodes}"></td>
-	                </tr>
-	            </tbody>
-	        </table>
+	<div class="center panel panel-primary">
+		<div class="panel-heading">
+            <b>Archived Nodes</b>
         </div>
-	</div>
-	
-    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listArchivedNodes)}">
-		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-		No Results Found
-	</div>
-	<!-- End of section -->
-	
+
+            <div th:if="${not #lists.isEmpty(listArchivedNodes)}">
+                <table class="display noPaging-noSearching">
+                    <thead>
+                        <tr>
+                            <th>Total Archived Nodes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="archivedNodes : ${listArchivedNodes}">
+                            <td th:text="${archivedNodes.nodes}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p></p>
+            </div>
+
+
+            <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listArchivedNodes)}">
+                <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+                No Results Found
+            </div>
+        </div>
+    </div>
+    <!-- End of section -->
+
 	<!-- Archived nodes by user -->
-	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
-	<div class="panel panel-default">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Archived Nodes By User</div>
-        
+
+    <div class="center panel panel-primary">
+        <div class="panel-heading">
+            <b>Archived Nodes by User</b>
+        </div>
+
         <div th:if="${not #lists.isEmpty(listArchivedNodes)}">
             <table class="display" cellspacing="0" width="100%">
 	            <thead>
 	                <tr>
 	                    <th>Archived Nodes</th>
-	                    <th>By User</th>
+	                    <th>User</th>
 	                </tr>
 	            </thead>
 	            <tbody>
@@ -86,14 +91,15 @@
 	            </tbody>
 	        </table>
         </div>
-	</div>
+
 	
-    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listArchivedNodesByUser)}">
-		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-		No Results Found
-	</div>
+        <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listArchivedNodesByUser)}">
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+            No Results Found
+        </div>
+
+    </div>
 	<!-- End of section -->
-	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
 
  </body>
 

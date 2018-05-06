@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="webjars/datatables/1.10.15/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 
 <body>
@@ -39,11 +40,10 @@
 	<div th:insert="navBar :: navBar"></div>
     	
 	<!-- JMX Properties -->
-	<h1>JMX Properties set in DB</h1>
-
-	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
-	<div class="panel panel-default">
-        <!-- Default panel contents -->
+	<div class="center panel panel-primary">
+		<div class="panel-heading">
+				<b>JMX Properties set in DB</b>
+			</div>
 
         <div th:if="${not #lists.isEmpty(listJmxProperties)}">
 			<table class="display" cellspacing="0" width="100%">
@@ -61,14 +61,17 @@
 	            </tbody>
 	        </table>
         </div>
-	</div>
 
-	<div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listJmxProperties)}">
-		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-		No Results Found
+		<div>
+			<p></p>
+			<div class="panel panel-default " th:if="${#lists.isEmpty(listJmxProperties)}">
+				<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+				No Results Found
+			</div>
+			<p></p>
+		</div>
 	</div>
 	<!-- end of section -->
-	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
 
  </body>
 

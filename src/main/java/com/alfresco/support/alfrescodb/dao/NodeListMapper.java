@@ -67,12 +67,12 @@ public interface NodeListMapper {
             "GROUP BY stores.protocol, stores.identifier ")
     List<NodesList> findNodesByStoreMySQL();
 
-    @Select("SELECT substring(nodes.audit_created, 0, 8) as createDate, concat('{', ns.uri, '}', names.local_name) as nodeType, count(*)  as occurrences " +
+    @Select("SELECT substring(nodes.audit_created, 1, 10) as createDate, concat('{', ns.uri, '}', names.local_name) as nodeType, count(*)  as occurrences " +
             "FROM alf_node nodes " +
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
-            "GROUP BY substring(nodes.audit_created, 0, 8), nodes.type_qname_id, names.local_name, ns.uri ")
+            "GROUP BY substring(nodes.audit_created, 1, 10), nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypeAndMonthMySQL();
 
     // Oracle queries

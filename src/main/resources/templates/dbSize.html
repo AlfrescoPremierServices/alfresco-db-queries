@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="webjars/datatables/1.10.15/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 
 <body>
@@ -37,6 +38,14 @@
             });
         } );
 
+        $(document).ready( function () {
+            $('table.noPaging-noSearching').DataTable({
+                "paging": false,
+                "info": false,
+                "searching": false,
+            });
+        } );
+
 	    $(document).ready( function () {
             $('table.display').DataTable();
         } );
@@ -47,12 +56,13 @@
 
 
     <!-- Database Info -->
-    <div class="panel panel-default">
-        <!-- Default panel contents -->
-        <h1>Database Information</h1>
+    <div th:if="${not #lists.isEmpty(listRelationInfos)}">
 
-        <hr style="height:3px;border:none;color:#333;background-color:#333;" />
-        <div th:if="${not #lists.isEmpty(listRelationInfos)}">
+        <div class="center panel panel-primary">
+            <div class="panel-heading">
+                <b>Database Information</b>
+            </div>
+
             <table class="display orderingPostgresMySql" cellspacing="0" width="100%">
 
                 <thead>
@@ -77,12 +87,14 @@
         </div>
     </div>
 
-    <hr style="height:3px;border:none;color:#333;background-color:#333;" />
-    <div class="panel panel-default">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Database Size</div>
-        <div th:if="${not #lists.isEmpty(listRelationInfos)}">
-            <table class="table table-striped">
+    <div th:if="${not #lists.isEmpty(listRelationInfos)}">
+
+        <div class="center panel panel-primary">
+            <div class="panel-heading">
+                <b>Database Size</b>
+            </div>
+
+            <table class="display noPaging-noSearching">
                 <thead>
                 <tr>
                     <th>Size</th>
@@ -94,13 +106,17 @@
                 </tr>
                 </tbody>
             </table>
+            </p>
         </div>
     </div>
 
     <!--Oracle -->
     <div th:if="${not #lists.isEmpty(OracleListRelationInfos)}">
-        <div class="panel panel-default">
-            <div class="panel-heading">Tables Sizing</div>
+        <div class="center panel panel-primary">
+            <div class="panel-heading">
+                <b>Tables Size</b>
+            </div>
+
             <table class="display orderingTablesOracle" cellspacing="0" width="100%">
                 <thead>
                 <tr>
@@ -119,8 +135,11 @@
     </div>
 
     <div th:if="${not #lists.isEmpty(OracleListIndexesInfos)}">
-        <div class="panel panel-default">
-            <div class="panel-heading">Indexes Sizing</div>
+        <div class="center panel panel-primary">
+            <div class="panel-heading">
+                <b>Indexes Size</b>
+            </div>
+
             <table class="display orderingIndexesOracle" cellspacing="0" width="100%">
                 <thead>
                 <tr>
@@ -143,8 +162,11 @@
 
     <!--MS SQL -->
     <div th:if="${not #lists.isEmpty(MSSqlListRelationInfos)}">
-        <div class="panel panel-default">
-            <div class="panel-heading">Tables Sizing</div>
+        <div class="center panel panel-primary">
+            <div class="panel-heading">
+                <b>Tables Size</b>
+            </div>
+
             <table class="display orderingMsSql" cellspacing="0" width="100%">
                 <thead>
                 <tr>
@@ -169,8 +191,11 @@
     </div>
 
     <div th:if="${not #lists.isEmpty(MSSqlListIndexesInfos)}">
-        <div class="panel panel-default">
-            <div class="panel-heading">Indexes Sizing</div>
+        <div class="center panel panel-primary">
+            <div class="panel-heading">
+                <b>Indexes Size</b>
+            </div>
+
             <table class="display orderingMsSql" cellspacing="0" width="100%">
                 <thead>
                 <tr>
@@ -189,11 +214,6 @@
             </table>
         </div>
     </div>
-
-    <div class="panel panel-default panel-heading" th:if="${OracleSize} != null">
-        <div th:insert="oracleSize :: oracleSize"></div>
-    </div>
-    <hr style="height:3px;border:none;color:#333;background-color:#333;" />
 
  </body>
 

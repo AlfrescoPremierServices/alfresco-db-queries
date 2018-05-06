@@ -6,6 +6,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
 	<link rel="stylesheet" type="text/css" href="webjars/datatables/1.10.15/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 
 <body>
@@ -37,109 +38,118 @@
 	<div th:insert="navBar :: navBar"></div>
     	
 	<!-- Activities grouped by activity type -->
-	<h1>Activities Feed</h1>
 
-	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
-	<div class="panel panel-default">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Sites Activities By Activity Type</div>
-        
+    <div class="center panel panel-primary">
+        <div class="panel-heading">
+            <b>Site Activities by Activity Type</b>
+        </div>
+
         <div th:if="${not #lists.isEmpty(listActivitiesFeedByActivityType)}">
             <table class="display" cellspacing="0" width="100%">
-	            <thead>
-	                <tr>
-	                    <th>Date</th>
-	                    <th>Site Network</th>	 
-	                    <th>Activity Type</th>	
-	                    <th>Count</th> 
-	                </tr>
-	            </thead>
-	            <tbody>
-	                <tr th:each="activityFeed : ${listActivitiesFeedByActivityType}">
-	                    <td th:text="${activityFeed.postDate}"></td>
-	                    <td th:text="${activityFeed.siteNetwork}"></td>
-	                    <td th:text="${activityFeed.activityType}"></td>
-	                    <td th:text="${activityFeed.occurrences}"></td>
-	                </tr>
-	            </tbody>
-	        </table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Site Network</th>
+                        <th>Activity Type</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="activityFeed : ${listActivitiesFeedByActivityType}">
+                        <td th:text="${activityFeed.postDate}"></td>
+                        <td th:text="${activityFeed.siteNetwork}"></td>
+                        <td th:text="${activityFeed.activityType}"></td>
+                        <td th:text="${activityFeed.occurrences}"></td>
+                    </tr>
+                </tbody>
+		    </table>
+	    </div>
+
+        <div>
+            <p></p>
+            <div class="panel panel-default " th:if="${#lists.isEmpty(listActivitiesFeedByActivityType)}">
+                <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+                No Results Found
+            </div>
+            <p></p>
         </div>
-	</div>
-	
-    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listActivitiesFeedByActivityType)}">
-		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-		No Results Found
-	</div>
+    </div>
 	<!-- End of section -->
 	
 	<!-- Activities grouped by user -->
-	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
-	<div class="panel panel-default">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Sites Activities By User</div>
-        
+    <div class="center panel panel-primary">
+        <div class="panel-heading">
+            <b>Site Activities by Activity User</b>
+        </div>
+
         <div th:if="${not #lists.isEmpty(listActivitiesFeedByUser)}">
             <table class="display" cellspacing="0" width="100%">
-	            <thead>
-	                <tr>
-	                    <th>Date</th>
-	                    <th>Site Network</th>	 
-	                    <th>User Id</th>	
-	                    <th>Count</th> 
-	                </tr>
-	            </thead>
-	            <tbody>
-	                <tr th:each="activityFeed : ${listActivitiesFeedByUser}">
-	                    <td th:text="${activityFeed.postDate}"></td>
-	                    <td th:text="${activityFeed.siteNetwork}"></td>
-	                    <td th:text="${activityFeed.feedUserId}"></td>
-	                    <td th:text="${activityFeed.occurrences}"></td>
-	                </tr>
-	            </tbody>
-	        </table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Site Network</th>
+                        <th>User Id</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="activityFeed : ${listActivitiesFeedByUser}">
+                        <td th:text="${activityFeed.postDate}"></td>
+                        <td th:text="${activityFeed.siteNetwork}"></td>
+                        <td th:text="${activityFeed.feedUserId}"></td>
+                        <td th:text="${activityFeed.occurrences}"></td>
+                    </tr>
+                </tbody>
+            </table>
+	    </div>
+
+        <div>
+            <p></p>
+            <div class="panel panel-default " th:if="${#lists.isEmpty(listActivitiesFeedByUser)}">
+                <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+                No Results Found
+            </div>
+            <p></p>
         </div>
-	</div>
-	
-	<div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listActivitiesFeedByUser)}">
-		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-		No Results Found
-	</div>
+    </div>
 	<!-- End of section -->
 	
 	<!-- Activities grouped by app tool -->
-	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
-	<div class="panel panel-default">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Sites Activities By Application Interface</div>
-        
+    <div class="center panel panel-primary">
+        <div class="panel-heading">
+            <b>SSite Activities by Application Interface</b>
+        </div>
+
         <div th:if="${not #lists.isEmpty(listActivitiesFeedByAppTool)}">
             <table class="display" cellspacing="0" width="100%">
-	            <thead>
-	                <tr>
-	                    <th>Date</th>
-	                    <th>Site Network</th>	 
-	                    <th>Application Interface</th>	
-	                    <th>Count</th> 
-	                </tr>
-	            </thead>
-	            <tbody>
-	                <tr th:each="activityFeed : ${listActivitiesFeedByAppTool}">
-	                    <td th:text="${activityFeed.postDate}"></td>
-	                    <td th:text="${activityFeed.siteNetwork}"></td>
-	                    <td th:text="${activityFeed.appTool}"></td>
-	                    <td th:text="${activityFeed.occurrences}"></td>
-	                </tr>
-	            </tbody>
-	        </table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Site Network</th>
+                        <th>Application Interface</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="activityFeed : ${listActivitiesFeedByAppTool}">
+                        <td th:text="${activityFeed.postDate}"></td>
+                        <td th:text="${activityFeed.siteNetwork}"></td>
+                        <td th:text="${activityFeed.appTool}"></td>
+                        <td th:text="${activityFeed.occurrences}"></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-	</div>
-	
-    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listActivitiesFeedByAppTool)}">
-		<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-		No Results Found
-	</div>
-	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
 
+        <div>
+            <p></p>
+            <div class="panel panel-default " th:if="${#lists.isEmpty(listActivitiesFeedByAppTool)}">
+                <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
+                No Results Found
+            </div>
+            <p></p>
+        </div>
+    </div>
  </body>
 
 </html>

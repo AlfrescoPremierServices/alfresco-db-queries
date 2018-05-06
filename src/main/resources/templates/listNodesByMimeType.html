@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
 	<link rel="stylesheet" type="text/css" href="webjars/datatables/1.10.15/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 
 <body>
@@ -14,9 +15,21 @@
 	<script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" class="init">
         $(document).ready( function () {
-            $('table.display').DataTable({
+            $('table.nodesByMimeType').DataTable({
              "order": [2, 'desc'],
             });
+        } );
+
+        $(document).ready( function () {
+            $('table.noPaging-noSearching').DataTable({
+                "paging": false,
+                "info": false,
+                "searching": false,
+            });
+        } );
+
+        $(document).ready( function () {
+            $('table.display').DataTable();
         } );
     </script>
 
@@ -24,56 +37,55 @@
 	<div th:insert="navBar :: navBar"></div>
 	    	
 	<!-- Nodes by mimetype -->
-	<div class="panel-heading"><h1>Nodes by MimeType</h1></div>
 
-	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
 	<div th:if="${listNodesByMimeType} != null">
-	    <div class="panel panel-default">
+        <div class="center panel panel-primary">
+            <div class="panel-heading">
+                <b>Nodes by MimeType</b>
+            </div>
+
 	        <!-- Default panel contents -->
 	        <div th:if="${not #lists.isEmpty(listNodesByMimeType)}">
-				<div>
-					<table class="display" cellspacing="0" width="100%">
-			            <thead>
-			                <tr>
-			                    <th>MimeType</th>
-			                    <th>Nodes Count</th>
-			                    <th>Disk Space MB</th>
-			                </tr>
-			            </thead>
-			            <tbody>
-			                <tr th:each="nodes : ${listNodesByMimeType}">
-			                    <td th:text="${nodes.mimeType}"></td>
-			                    <td th:text="${nodes.occurrences}"></td>
-			                    <td th:text="${nodes.diskSpace}"></td>
-			                </tr>
-			            </tbody>
-			        </table>
-		        </div>
-				<hr style="height:3px;border:none;color:#333;background-color:#333;" />
-	        	<div>
-			        <table class="table table-striped">
-			            <thead>
-			                <tr>
-			                    <th>Total Disk Space MB</th>
-			                </tr>
-			            </thead>
-			            <tbody>
-			                <tr th:each="nodes : ${totalDiskSpace}">
-			                    <td th:text="${nodes.diskSpace}"></td>
-			                </tr>
-			            </tbody>
-			        </table>
-				</div>
-	        </div>
-		</div>
-		
-	    <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listNodesByMimeType)}">
-			<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-			No Results Found
-		</div>
-	</div>
+                <table class="display nodesByMimeType" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>MimeType</th>
+                            <th>Nodes Count</th>
+                            <th>Disk Space MB</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="nodes : ${listNodesByMimeType}">
+                            <td th:text="${nodes.mimeType}"></td>
+                            <td th:text="${nodes.occurrences}"></td>
+                            <td th:text="${nodes.diskSpace}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="center panel panel-primary">
+            <div class="panel-heading">
+                <b>Nodes by MimeType</b>
+            </div>
+
+            <table class="display noPaging-noSearching">
+                <thead>
+                    <tr>
+                        <th>Total Disk Space MB</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="nodes : ${totalDiskSpace}">
+                        <td th:text="${nodes.diskSpace}"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p></p>
+        </div>
+    </div>
 	<!-- End of section -->
-	<hr style="height:3px;border:none;color:#333;background-color:#333;" />
 
  </body>
 
