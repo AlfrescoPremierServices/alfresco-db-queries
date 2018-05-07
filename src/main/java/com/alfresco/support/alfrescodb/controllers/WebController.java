@@ -89,14 +89,14 @@ public class WebController {
         List < ArchivedNodes > listArchivedNodes;
         List < NodesList > listNodesByMimeType;
         List < NodesList > listNodesByType;
-        List < NodesList > listNodesByTypeAndMonth;
         List < NodesList > listNodesByStore;
         List < LockedResources > listLockedResources;
         List < Authority > listUsers;
         List < Authority > listAuthorizedUsers;
         List < Authority > listGroups;
         List < Workflow > listWorkflows;
-        List < JmxProperties > jmxProperties;
+        List < JmxProperties > listJmxProperties;
+        List < AppliedPatches > listAppliedPatches;
 
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(reportFile));
@@ -383,9 +383,9 @@ public class WebController {
 
             listGroups = authorityMapper.findGroups();
             out.write("\n\nGroups Count");
-            if (listUsers != null) {
-                for (int i = 0; i < listUsers.size(); i++) {
-                    out.write(listUsers.get(i).printGroups());
+            if (listGroups != null) {
+                for (int i = 0; i < listGroups.size(); i++) {
+                    out.write(listGroups.get(i).printGroups());
                 }
             }
 
@@ -425,7 +425,7 @@ public class WebController {
             }
 
             //JMX Properties
-            List < JmxProperties > listJmxProperties = jmxPropertiesMapper.findJmxProperties();
+            listJmxProperties = jmxPropertiesMapper.findJmxProperties();
             out.write("\n\nJMX Properties set in DB");
             out.write("\nProperty Name, Property Value");
             if (listJmxProperties != null) {
@@ -433,8 +433,18 @@ public class WebController {
                     out.write(listJmxProperties.get(i).printJmxProperties());
                 }
             }
-            model.addAttribute("reportFile", reportFile);
 
+            // Applied Patches
+            listAppliedPatches = sqlMapper.findAppliedPatches();
+            out.write("\n\nApplied Patches");
+            out.write("\nId, Applied to Schema, Applied on Date, Applied to Server, Was Executed, Succeeded, Report");
+            if (listAppliedPatches != null) {
+                for (int i = 0; i < listAppliedPatches.size(); i++) {
+                    out.write(listAppliedPatches.get(i).printAppliedPatches());
+                }
+            }
+
+            model.addAttribute("reportFile", reportFile);
             out.close();
         } catch (IOException e) {
             System.out.println("Exception ");
@@ -464,6 +474,18 @@ public class WebController {
         // Count closed tasks
         List < Workflow > listClosedTasks = workflowMapper.closedTasks();
         model.addAttribute("listClosedTasks", listClosedTasks);
+
+        addAdditionalParamsToModel(model);
+
+        return null;
+    }
+
+    @RequestMapping("/appliedPatches")
+    public String appliedPatches(Model model) {
+
+        // Count workflows by process def and task name
+        List < AppliedPatches > listAppliedPatches = sqlMapper.findAppliedPatches();
+        model.addAttribute("listAppliedPatches", listAppliedPatches);
 
         addAdditionalParamsToModel(model);
 

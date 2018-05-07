@@ -37,6 +37,9 @@ public class SqlMapperController {
     @Autowired
     private AuthorityMapper authorityMapper;
 
+    @Autowired
+    private AppliedPatchesMapper appliedPatchesMapper;
+
     public List findTablesInfo(){
         if (dbType.equalsIgnoreCase("postgres")){
             return dbSizeMapper.findTablesInfoPostgres();
@@ -210,5 +213,11 @@ public class SqlMapperController {
 
         return null;
     }
+
+    //Applied Patches
+    public List findAppliedPatches(){
+        return appliedPatchesMapper.findAppliedPatches();
+    }
+
 
 }
