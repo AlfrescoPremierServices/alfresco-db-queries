@@ -51,7 +51,7 @@ public interface NodeListMapper {
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
             "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
-            "GROUP BY substring(nodes.audit_created, 0, 8), nodes.type_qname_id, names.local_name, ns.uri ")
+            "GROUP BY substring(nodes.audit_created, 0, 8), nodes.type_qname_id, names.local_name, ns.uri")
     List<NodesList> findNodesByContentTypeAndMonthPostgres();
 
     // MySQL queries
@@ -76,7 +76,7 @@ public interface NodeListMapper {
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
             "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
-            "GROUP BY substring(nodes.audit_created, 1, 7), nodes.type_qname_id, names.local_name, ns.uri ")
+            "GROUP BY substring(nodes.audit_created, 1, 7), nodes.type_qname_id, names.local_name, ns.uri")
     List<NodesList> findNodesByContentTypeAndMonthMySQL();
 
     // Oracle queries
