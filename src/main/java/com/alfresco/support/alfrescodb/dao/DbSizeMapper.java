@@ -43,54 +43,54 @@ public interface DbSizeMapper {
     String findDbSizeMysql();
 
     // Oracle Queries
-    @Select("select sum(bytes)/1048576 SizeMB, segment_name tableName\n" +
-            "from user_extents\n" +
-            "where segment_name in (\n" +
-            "     select table_name from all_tables)\n" +
+    @Select("select sum(bytes)/1048576 SizeMB, segment_name tableName" +
+            "from user_extents" +
+            "where segment_name in (" +
+            "     select table_name from all_tables)" +
             "group by segment_name")
     List<OracleRelationInfo> findTablesInfoOracle();
 
-    @Select("select sum(u.bytes)/1048576 SizeMB, u.segment_name indexName, i.table_name tableName\n" +
-            "from user_extents u\n" +
-            "join all_ind_columns i\n" +
-            "     on u.segment_name = i.index_name\n" +
-            "     and i.column_position = 1\n" +
+    @Select("select sum(u.bytes)/1048576 SizeMB, u.segment_name indexName, i.table_name tableName" +
+            "from user_extents u" +
+            "join all_ind_columns i" +
+            "     on u.segment_name = i.index_name" +
+            "     and i.column_position = 1" +
             "group by u.segment_name, i.table_name")
     List<OracleRelationInfo> findIndexesInfoOracle();
 
     // MS SQL Queries
-    @Select("SELECT \n" +
-            "    t.NAME AS TableName,\n" +
-            "    p.rows AS RowCounts,\n" +
-            "    (SUM(a.total_pages) * 8 / 1024) AS TotalSpace, \n" +
-            "    (SUM(a.used_pages) * 8 / 1024) AS UsedSpace, \n" +
-            "    ((SUM(a.total_pages) - SUM(a.used_pages)) * 8 / 1024) AS UnusedSpace\n" +
-            "FROM \n" +
-            "    sys.tables t\n" +
-            "INNER JOIN \n" +
-            "    sys.schemas s ON s.schema_id = t.schema_id\n" +
-            "INNER JOIN      \n" +
-            "    sys.indexes i ON t.OBJECT_ID = i.object_id\n" +
-            "INNER JOIN \n" +
-            "    sys.partitions p ON i.object_id = p.OBJECT_ID AND i.index_id = p.index_id\n" +
-            "INNER JOIN \n" +
-            "    sys.allocation_units a ON p.partition_id = a.container_id\n" +
-            "WHERE \n" +
-            "    t.NAME NOT LIKE 'dt%'    -- filter out system tables for diagramming\n" +
-            "    AND t.is_ms_shipped = 0\n" +
-            "    AND i.OBJECT_ID > 255 \n" +
-            "GROUP BY \n" +
+    @Select("SELECT " +
+            "    t.NAME AS TableName," +
+            "    p.rows AS RowCounts," +
+            "    (SUM(a.total_pages) * 8 / 1024) AS TotalSpace, " +
+            "    (SUM(a.used_pages) * 8 / 1024) AS UsedSpace, " +
+            "    ((SUM(a.total_pages) - SUM(a.used_pages)) * 8 / 1024) AS UnusedSpace" +
+            "FROM " +
+            "    sys.tables t" +
+            "INNER JOIN " +
+            "    sys.schemas s ON s.schema_id = t.schema_id" +
+            "INNER JOIN      " +
+            "    sys.indexes i ON t.OBJECT_ID = i.object_id" +
+            "INNER JOIN " +
+            "    sys.partitions p ON i.object_id = p.OBJECT_ID AND i.index_id = p.index_id" +
+            "INNER JOIN " +
+            "    sys.allocation_units a ON p.partition_id = a.container_id" +
+            "WHERE " +
+            "    t.NAME NOT LIKE 'dt%'    -- filter out system tables for diagramming" +
+            "    AND t.is_ms_shipped = 0" +
+            "    AND i.OBJECT_ID > 255 " +
+            "GROUP BY " +
             "    t.Name, s.Name, p.Rows")
     List<MSSqlRelationInfo> findTablesInfoMSSql();
 
-    @Select("SELECT\n" +
-            "OBJECT_NAME(i.OBJECT_ID) AS TableName,\n" +
-            "i.name AS IndexName,\n" +
-            "i.index_id AS IndexID,\n" +
-            "(8 * SUM(a.used_pages) / 1024) AS 'IndexSize'\n" +
-            "FROM sys.indexes AS i\n" +
-            "JOIN sys.partitions AS p ON p.OBJECT_ID = i.OBJECT_ID AND p.index_id = i.index_id\n" +
-            "JOIN sys.allocation_units AS a ON a.container_id = p.partition_id\n" +
+    @Select("SELECT" +
+            "OBJECT_NAME(i.OBJECT_ID) AS TableName," +
+            "i.name AS IndexName," +
+            "i.index_id AS IndexID," +
+            "(8 * SUM(a.used_pages) / 1024) AS 'IndexSize'" +
+            "FROM sys.indexes AS i" +
+            "JOIN sys.partitions AS p ON p.OBJECT_ID = i.OBJECT_ID AND p.index_id = i.index_id" +
+            "JOIN sys.allocation_units AS a ON a.container_id = p.partition_id" +
             "GROUP BY i.OBJECT_ID,i.index_id,i.name")
     List<MSSqlRelationInfo> findIndexesInfoMSSql();
 }

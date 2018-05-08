@@ -9,11 +9,11 @@ import java.util.List;
 
 @Mapper
 public interface SolrMemoryMapper {
-    @Select("select * from\n" +
-            "(select count( * ) alfrescoNodes from alf_node where store_id = (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore')) N1 ,\n" +
-            "(select count( * ) archiveNodes from alf_node where store_id = (select id from alf_store where protocol = 'archive' and identifier = 'SpacesStore')) N2 ,\n" +
-            "(select count( * ) transactions from alf_transaction ) T,\n" +
-            "(select count( * ) acls from alf_access_control_list ) A,\n" +
+    @Select("select * from" +
+            "(select count( * ) alfrescoNodes from alf_node where store_id = (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore')) N1 ," +
+            "(select count( * ) archiveNodes from alf_node where store_id = (select id from alf_store where protocol = 'archive' and identifier = 'SpacesStore')) N2 ," +
+            "(select count( * ) transactions from alf_transaction ) T," +
+            "(select count( * ) acls from alf_access_control_list ) A," +
             "(select count( * ) aclTransactions from alf_acl_change_set) X")
     List<SolrMemory> solrMemory();
 }

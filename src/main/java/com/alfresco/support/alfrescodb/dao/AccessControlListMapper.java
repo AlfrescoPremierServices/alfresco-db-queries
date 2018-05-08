@@ -12,14 +12,14 @@ public interface AccessControlListMapper {
     @Select("select count(*) occurences from alf_access_control_list")
     String findAccessControlList();
 
-    @Select({"select ap.name permission, count(*) permissionCount \n" +
-            "from alf_access_control_entry aace, alf_permission ap \n" +
-            "where ap.id = aace.permission_id \n" +
+    @Select({"select ap.name permission, count(*) permissionCount " +
+            "from alf_access_control_entry aace, alf_permission ap " +
+            "where ap.id = aace.permission_id " +
             "group by ap.name"})
     List<AccessControlList> findAccessControlListEntries();
 
-    @Select({"select inherits, count(*) occurrences \n" +
-            "from alf_access_control_list \n" +
+    @Select({"select inherits, count(*) occurrences " +
+            "from alf_access_control_list " +
             "group by inherits"})
     List<AccessControlList> findAccessControlListInheritance();
 }

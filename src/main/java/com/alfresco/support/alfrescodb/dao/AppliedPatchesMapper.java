@@ -10,6 +10,6 @@ import java.util.List;
 public interface AppliedPatchesMapper {
     @Select("SELECT id, applied_to_schema appliedToSchema, applied_on_date appliedOnDate, applied_to_server appliedToServer,\n " +
             "was_executed wasExecuted, succeeded, report\n " +
-            "FROM alfresco.alf_applied_patch")
+            "FROM alf_applied_patch")
     List<AppliedPatches> findAppliedPatches();
 }

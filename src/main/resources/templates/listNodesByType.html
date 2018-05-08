@@ -40,11 +40,11 @@
 	<div th:if="${listNodesByType} != null">
         <div class="center panel panel-primary">
             <div class="panel-heading">
-                <b>Nodes by Content Type</b>
+                <b>Nodes Created Grouped by Content Type</b>
             </div>
 
 	        <div th:if="${not #lists.isEmpty(listNodesByType)}">
-				<table class="nodesByType" cellspacing="0" width="100%">
+				<table class="display nodesByType" cellspacing="0" width="100%">
 		            <thead>
 		                <tr>
 		                    <th>Node Type</th>

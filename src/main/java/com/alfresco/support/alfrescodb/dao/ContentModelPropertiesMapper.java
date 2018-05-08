@@ -9,9 +9,9 @@ import java.util.List;
 
 @Mapper
 public interface ContentModelPropertiesMapper {
-    @Select({"select an.uri model, local_name property \n" +
-            "from alf_qname aq, alf_namespace an \n" +
-            "where an.id = aq.ns_id \n" +
+    @Select({"select an.uri model, local_name property " +
+            "from alf_qname aq, alf_namespace an " +
+            "where an.id = aq.ns_id " +
             "order by an.uri, aq.local_name"})
     List<ContentModelProperties> findContentModelProperties();
 }

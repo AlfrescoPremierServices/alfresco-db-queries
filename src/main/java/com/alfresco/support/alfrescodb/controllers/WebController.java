@@ -78,7 +78,6 @@ public class WebController {
 
     @RequestMapping("/report")
     public void report(Model model) {
-
         List < RelationInfo > listRelationInfos;
         List < LargeFolder > listLargeFolders;
         List < LargeTransaction > listLargeTransactions;

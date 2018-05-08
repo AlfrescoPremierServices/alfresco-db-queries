@@ -10,21 +10,21 @@ import java.util.List;
 public interface NodeListMapper {
 
     @Select("SELECT (sum(content_size) / 1024 / 1024) diskSpace " +
-            "FROM alf_content_data  content, alf_content_url  contentUrl, alf_mimetype  mime, alf_node nodes, alf_node_properties nodes_props \n" +
-            "WHERE content.content_mimetype_id = mime.id \n" +
-            "AND contentUrl.id = content.content_url_id \n" +
-            "AND nodes.id = nodes_props.node_id AND nodes_props.long_value = content.id \n" +
-            "AND nodes_props.qname_id in (select id from alf_qname where local_name = 'content') \n" +
+            "FROM alf_content_data  content, alf_content_url  contentUrl, alf_mimetype  mime, alf_node nodes, alf_node_properties nodes_props " +
+            "WHERE content.content_mimetype_id = mime.id " +
+            "AND contentUrl.id = content.content_url_id " +
+            "AND nodes.id = nodes_props.node_id AND nodes_props.long_value = content.id " +
+            "AND nodes_props.qname_id in (select id from alf_qname where local_name = 'content') " +
             "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore')")
     List<NodesList> findNodesSize();
 
-    @Select("SELECT mimetype_str mimeType, count(*) occurrences, (sum(content_size) / 1024 / 1024) diskSpace \n" +
-            "FROM alf_content_data  content, alf_content_url  contentUrl, alf_mimetype  mime, alf_node nodes, alf_node_properties nodes_props \n" +
-            "WHERE content.content_mimetype_id = mime.id \n" +
-            "AND contentUrl.id = content.content_url_id \n" +
-            "AND nodes.id = nodes_props.node_id AND nodes_props.long_value = content.id \n" +
-            "AND nodes_props.qname_id in (select id from alf_qname where local_name = 'content') \n" +
-            "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') \n" +
+    @Select("SELECT mimetype_str mimeType, count(*) occurrences, (sum(content_size) / 1024 / 1024) diskSpace " +
+            "FROM alf_content_data  content, alf_content_url  contentUrl, alf_mimetype  mime, alf_node nodes, alf_node_properties nodes_props " +
+            "WHERE content.content_mimetype_id = mime.id " +
+            "AND contentUrl.id = content.content_url_id " +
+            "AND nodes.id = nodes_props.node_id AND nodes_props.long_value = content.id " +
+            "AND nodes_props.qname_id in (select id from alf_qname where local_name = 'content') " +
+            "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
             "GROUP BY mimetype_str")
     List<NodesList> findNodesSizeByMimeType();
 
@@ -34,6 +34,7 @@ public interface NodeListMapper {
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
+            "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
             "GROUP BY nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypePostgres();
 
@@ -49,6 +50,7 @@ public interface NodeListMapper {
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
+            "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
             "GROUP BY substring(nodes.audit_created, 0, 8), nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypeAndMonthPostgres();
 
@@ -58,6 +60,7 @@ public interface NodeListMapper {
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
+            "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
             "GROUP BY nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypeMySQL();
 
@@ -72,6 +75,7 @@ public interface NodeListMapper {
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
+            "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
             "GROUP BY substring(nodes.audit_created, 1, 7), nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypeAndMonthMySQL();
 
@@ -81,6 +85,7 @@ public interface NodeListMapper {
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
+            "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
             "GROUP BY nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypeOracle();
 
@@ -99,6 +104,7 @@ public interface NodeListMapper {
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
+            "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
             "GROUP BY substr(nodes.audit_created, 0, 7), nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypeAndMonthOracle();
 
@@ -108,6 +114,7 @@ public interface NodeListMapper {
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
+            "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
             "GROUP BY nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypeMSSql();
 
@@ -126,6 +133,7 @@ public interface NodeListMapper {
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
             "WHERE nodes.type_qname_id=names.id " +
+            "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
             "GROUP BY substring(nodes.audit_created, 0, 8), nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypeAndMonthMSSql();
 }

@@ -8,8 +8,8 @@ import java.util.List;
 
 @Mapper
 public interface AuthorityMapper {
-    @Select("select count(*) as authoritiesCount from alf_node_properties \n" +
-            "where node_id in (select id from alf_node where type_qname_id in (select id from alf_qname where local_name = 'person')) \n" +
+    @Select("select count(*) as authoritiesCount from alf_node_properties " +
+            "where node_id in (select id from alf_node where type_qname_id in (select id from alf_qname where local_name = 'person')) " +
             "and qname_id in (select id from alf_qname where local_name ='userName')" )
     List<Authority> findUsers();
 

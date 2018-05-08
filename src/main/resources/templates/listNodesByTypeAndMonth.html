@@ -15,6 +15,12 @@
 	<script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" class="init">
         $(document).ready( function () {
+            $('table.nodesByType').DataTable({
+                "order": [0, 'desc'],
+            });
+        } );
+
+        $(document).ready( function () {
             $('table.noPaging-noSearching').DataTable({
                 "paging": false,
                 "info": false,
@@ -34,10 +40,10 @@
 	<div th:if="${listNodesByTypeAndMonth} != null">
         <div class="center panel panel-primary">
             <div class="panel-heading">
-                <b>Nodes by Content Type Grouped by Month</b>
+                <b>Nodes Created Grouped by Content Type and Creation Date</b>
             </div>
 	        <div th:if="${not #lists.isEmpty(listNodesByTypeAndMonth)}">
-				<table class="display" cellspacing="0" width="100%">
+				<table class="display nodesByType" cellspacing="0" width="100%">
 		            <thead>
 		                <tr>
 		                	<th>Date</th>
