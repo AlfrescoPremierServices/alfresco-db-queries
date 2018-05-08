@@ -65,28 +65,6 @@
             </div>
         </div>
 
-        <div class="center panel panel-primary">
-            <div class="panel-heading">
-                <b>Nodes Created Grouped by MimeType</b>
-            </div>
-
-            <table class="display noPaging-noSearching">
-                <thead>
-                    <tr>
-                        <th>Total Disk Space MB</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="nodes : ${totalDiskSpace}">
-                        <td th:text="${nodes.diskSpace}"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <p></p>
-        </div>
-    </div>
-	<!-- End of section -->
-
  </body>
 
 </html>

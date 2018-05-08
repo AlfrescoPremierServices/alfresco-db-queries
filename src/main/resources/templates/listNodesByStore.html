@@ -24,10 +24,9 @@
 
         $(document).ready( function () {
             $('table.noPaging-noSearching').DataTable({
-             "paging": false,
-             "info": false,
-             "searching": false,
-             "order": [1, 'desc'],
+                "paging": false,
+                "info": false,
+                "searching": false,
             });
         } );
 
@@ -68,6 +67,29 @@
 			<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
 			No Results Found
 		</div>
+	</div>
+	<!-- End of section -->
+
+	<!-- Size of content -->
+	<div class="center panel panel-primary">
+		<div class="panel-heading">
+			<b>Nodes Disk Space</b>
+		</div>
+
+		<table class="display noPaging-noSearching">
+			<thead>
+			<tr>
+				<th>Total Disk Space MB</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="nodes : ${totalDiskSpace}">
+				<td th:text="${nodes.diskSpace}"></td>
+			</tr>
+			</tbody>
+		</table>
+		<p></p>
+	</div>
 	</div>
 	<!-- End of section -->
 

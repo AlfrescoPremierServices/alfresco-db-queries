@@ -633,12 +633,6 @@ public class WebController {
 
     @RequestMapping("/listNodesByMimeType")
     public void nodesByMimeType(Model model) {
-
-        // Nodes disk space
-        List < NodesList > diskSpace = sqlMapper.findNodesSize();
-
-        model.addAttribute("totalDiskSpace", diskSpace);
-
         // Nodes by mime type
         List < NodesList > listNodesByMimeType = sqlMapper.findNodesSizeByMimeType();
 
@@ -673,6 +667,10 @@ public class WebController {
 
     @RequestMapping("/listNodesByStore")
     public String nodesByStore(Model model) {
+        // Nodes disk space
+        List < NodesList > diskSpace = sqlMapper.findNodesSize();
+
+        model.addAttribute("totalDiskSpace", diskSpace);
         // Nodes by store
         List < NodesList > listNodesByStore = sqlMapper.findNodesByStore();
 
