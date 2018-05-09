@@ -46,6 +46,9 @@ The steps to build the application are:
  - Compile and build application
 
 ### Compiling and building the executable jar file
+
+**Note** : There is an executable jar file available in the target directory in case you want to use that one.
+
 Compile and build the application using Maven
 ```sh
 $ cd alfresco-db-queries
