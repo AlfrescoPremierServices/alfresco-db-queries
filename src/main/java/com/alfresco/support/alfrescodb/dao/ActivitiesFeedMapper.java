@@ -50,21 +50,21 @@ public interface ActivitiesFeedMapper {
             "group by post_date, site_network, app_tool")
     List<ActivitiesFeed> findActivitiesByApplicationInterfaceMySQL();
 
-    @Select("select count(*) as occurrences, substr(post_date, 1, 10) as postDate, site_network as siteNetwork, activity_type as activityType" +
+    @Select("select count(*) as occurrences, substr(post_date, 1, 10) as postDate, site_network as siteNetwork, activity_type as activityType " +
             "from alf_activity_feed" +
             "where feed_user_id != '@@NULL@@'" +
             "and feed_user_id = post_user_id" +
             "group by post_date, site_network, activity_type")
     List<ActivitiesFeed> findActivitiesByActivityTypeOracle();
 
-    @Select("select count(*) as occurrences, substr(post_date, 1, 10) as postDate, site_network as siteNetwork, feed_user_id as feedUserId" +
+    @Select("select count(*) as occurrences, substr(post_date, 1, 10) as postDate, site_network as siteNetwork, feed_user_id as feedUserId " +
             "from alf_activity_feed" +
             "where feed_user_id != '@@NULL@@'" +
             "and feed_user_id = post_user_id" +
             "group by post_date, site_network, feed_user_id")
     List<ActivitiesFeed> findActivitiesByUserOracle();
 
-    @Select("select count(*) as occurrences, substr(post_date, 1, 10) as postDate, site_network as siteNetwork, app_tool as appTool" +
+    @Select("select count(*) as occurrences, substr(post_date, 1, 10) as postDate, site_network as siteNetwork, app_tool as appTool " +
             "from alf_activity_feed" +
             "where feed_user_id != '@@NULL@@'" +
             "and feed_user_id = post_user_id" +

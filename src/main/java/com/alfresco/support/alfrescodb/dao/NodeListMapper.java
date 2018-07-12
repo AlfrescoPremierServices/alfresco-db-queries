@@ -128,7 +128,7 @@ public interface NodeListMapper {
             "FROM alf_content_url")
     List<NodesList> findNodesSizeMSSql();
 
-    @Select("SELECT substring(nodes.audit_created, 0, 8) as createDate, concat('{', ns.uri, '}', names.local_name) as nodeType, count(*)  as occurrences " +
+    @Select("SELECT substring(nodes.audit_created, 0, 8) as createDate, concat('{', ns.uri, '}', names.local_name) as nodeType, count(*) as occurrences " +
             "FROM alf_node nodes " +
             "JOIN alf_qname names  ON (nodes.type_qname_id = names.id) " +
             "JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
