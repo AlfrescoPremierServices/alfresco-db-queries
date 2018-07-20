@@ -17,6 +17,9 @@ public interface AuthorityMapper {
     List<Authority> findAuthorizedUsers();
 
     @Select("select count(*) as authoritiesCount from alf_auth_status where authorized = 1")
+    List<Authority> findAuthorizedUsersOracle();
+
+    @Select("select count(*) as authoritiesCount from alf_auth_status where authorized = 1")
     List<Authority> findAuthorizedUsersMSSql();
 
     @Select("select count(*) as authoritiesCount from alf_node_properties where qname_id in (select id from alf_qname where local_name = 'authorityName')")

@@ -206,7 +206,7 @@ public class SqlMapperController {
         } else if (dbType.equalsIgnoreCase("mysql")){
             return authorityMapper.findAuthorizedUsers();
         } else if (dbType.equalsIgnoreCase("oracle")){
-            return authorityMapper.findAuthorizedUsers();
+            return authorityMapper.findAuthorizedUsersOracle();
         } else if (dbType.equalsIgnoreCase("microsoft")){
             return authorityMapper.findAuthorizedUsersMSSql();
         }
