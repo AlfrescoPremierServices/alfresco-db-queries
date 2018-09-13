@@ -83,9 +83,9 @@ public class WebController {
         List < LargeFolder > listLargeFolders;
         List < LargeTransaction > listLargeTransactions;
         List < AccessControlList > listAccessControlListEntries;
-        List < AccessControlList > listNodesPerACLs;
+        List < AccessControlList > listNodesPerACLs = sqlMapper.findAclsRepartition();
     	List < AccessControlList > listOrphanedACLs = sqlMapper.findOrphanedAcls();
-	    List < AccessControlList > listACLTypes = sqlMapper.findAclTypesRepartition();
+	List < AccessControlList > listACLTypes = sqlMapper.findAclTypesRepartition();
         List < AccessControlList > listAcesPerACLs = sqlMapper.findAclsHeight();
         List < AccessControlList > listAccessControlListInheritance;
         List < AccessControlList > listAuthoritiesAcls = sqlMapper.findAuthoritiesAcls();
@@ -193,7 +193,6 @@ public class WebController {
 
             out.write("\n\nACLs repartition");
             out.write("\n\nACL id, number of nodes");
-            listNodesPerACLs = sqlMapper.findAclsRepartition();
             if (listNodesPerACLs != null) {
 		        for (int i = 0; i < listNodesPerACLs.size(); i++) {
 		            out.write(listNodesPerACLs.get(i).printAclsPerNodes());

@@ -23,11 +23,9 @@ public interface AccessControlListMapper {
             "group by inherits"})
     List<AccessControlList> findAccessControlListInheritance();
 
-    @Select({"SELECT an.acl_id AS aclId, count(*) AS numNodes FROM \n" +
-            "public.alf_node an INNER JOIN alf_access_control_list \n" +
-            "aacl ON aacl.id=an.acl_id INNER JOIN alf_acl_member \n" +
-            "aam ON aam.acl_id=aacl.id GROUP BY an.acl_id ORDER BY \n" +
-            "numNodes DESC LIMIT 100"})
+    @Select({"SELECT acl_id AS aclId, count(*) AS numNodes \n" +
+            "FROM alf_node \n" +
+            "GROUP BY acl_id ORDER BY numNodes DESC LIMIT 100"})
     List<AccessControlList> findAclsRepartition();
 
     @Select({"SELECT * from alf_access_control_list aacl \n" +
