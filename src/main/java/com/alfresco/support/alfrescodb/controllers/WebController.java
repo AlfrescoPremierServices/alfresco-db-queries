@@ -82,7 +82,6 @@ public class WebController {
         List < LargeFolder > listLargeFolders;
         List < LargeTransaction > listLargeTransactions;
         List < AccessControlList > listAccessControlListEntries;
-        List < AccessControlList > listAccessControlListInheritance;
         List < AccessControlList > aclTypeRepartition;
         List < AccessControlList > aclNodeRepartition;
         List < AccessControlList > aceAuthorities;
@@ -228,15 +227,6 @@ public class WebController {
                for (int i = 0; i < aceAuthorities.size(); i++) {
                    out.write(aceAuthorities.get(i).printAuthorityAce());
                }
-            }
-
-            listAccessControlListInheritance = sqlMapper.findAccessControlListInheritance();
-            out.write("\n\nAccess Control List Inheritance (True/False)");
-            out.write("\nInheritance, Occurrences");
-            if (listAccessControlListInheritance != null) {
-                for (int i = 0; i < listAccessControlListInheritance.size(); i++) {
-                    out.write(listAccessControlListInheritance.get(i).printAccessControlListInheritance());
-                }
             }
 
             // Content Model Properties List
@@ -607,9 +597,6 @@ public class WebController {
             aceSize = aceSize + count;
         }
         model.addAttribute("aceSize", aceSize);
-
-        List < AccessControlList > listAccessControlListInheritance = sqlMapper.findAccessControlListInheritance();
-        model.addAttribute("listAccessControlListInheritance", listAccessControlListInheritance);
 
         List < AccessControlList > listACEAuthorities = sqlMapper.findACEAuthorities();
         model.addAttribute("listACEAuthorities", listACEAuthorities);

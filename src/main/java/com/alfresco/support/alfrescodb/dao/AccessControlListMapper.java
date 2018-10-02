@@ -19,11 +19,6 @@ public interface AccessControlListMapper {
             "group by ap.name"})
     List<AccessControlList> findAccessControlListEntries();
 
-    @Select({"select inherits, count(*) occurrences " +
-            "from alf_access_control_list " +
-            "group by inherits"})
-    List<AccessControlList> findAccessControlListInheritance();
-
     @Select({"SELECT acl_id aclid, count(*) numNodes " +
             "FROM alf_node " +
             "GROUP BY acl_id ORDER BY numNodes DESC LIMIT 10"})

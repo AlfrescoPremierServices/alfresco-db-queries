@@ -146,10 +146,6 @@ public class SqlMapperController {
         return accessControlListMapper.findAccessControlListEntries();
     }
 
-    public List findAccessControlListInheritance(){
-        return accessControlListMapper.findAccessControlListInheritance();
-    }
-
     public List findACLNodeRepartition() {
         return accessControlListMapper.findACLNodeRepartition();
     }

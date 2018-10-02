@@ -93,27 +93,7 @@
                 <b>Access Control Entries - </b>Number of ACEs: [[${aceSize}]]
             </pi>
         </div>
-
-        <div th:if="${not #lists.isEmpty(listAccessControlListEntries)}">
-            <!-- <table class="display noPaging-noSearching" cellspacing="0" width="100%">
-                <thead>
-                <tr>
-                    <th>Number of Permissions</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td th:text="${aceSize}"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <p></p>
-        </div>
-
-        <div class="panel-heading">
-            <b>Involved Authorities</b>
-        </div> -->
-
+        <div>
         <table class="display">
             <thead>
             <tr>
@@ -130,18 +110,16 @@
                 <td th:text="${aceAuthority.numAces}"></td>
             </tr>
             </tbody>
-        <!-- </table>
+        </table>
+        </div>
         <p></p>
 
-    </div>
-
-    <div class="center panel panel-primary">
-        <div class="panel-heading">
-            <b>Access Control List Entries by Permission</b>
-        </div>
         <div th:if="${not #lists.isEmpty(listAccessControlListEntries)}">
-            <table class="display accessControlListEntries" cellspacing="0" width="100%"> -->
+            <table class="display accessControlListEntries" cellspacing="0" width="100%">
                 <thead>
+                <tr>
+                    <th colspan="2">ACEs by Permission</th>
+                </tr>
                 <tr>
                     <th>Permission</th>
                     <th>Count</th>
@@ -157,30 +135,6 @@
         </div>
     </div>
 
-    <!-- Access Control List Inheritance -->
-    <div class="center panel panel-primary">
-        <div class="panel-heading">
-            <b>Access Control List Inheritance</b>
-        </div>
-
-        <div th:if="${not #lists.isEmpty(listAccessControlListInheritance)}">
-            <table class="display noPaging-noSearching" cellspacing="0" width="100%">
-                <thead>
-                    <tr>
-                        <th>Inheritance (True/False)</th>
-                        <th>Count</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="accessControlListeInheritance : ${listAccessControlListInheritance}">
-                        <td th:text="${accessControlListeInheritance.inherits}"></td>
-                        <td th:text="${accessControlListeInheritance.occurrences}"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <p></p>
-        </div>
-    </div>
 
  </body>
 
