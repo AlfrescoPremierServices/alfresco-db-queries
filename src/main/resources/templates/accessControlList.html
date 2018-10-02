@@ -38,32 +38,64 @@
 
     <div class="center panel panel-primary">
         <div class="panel-heading">
-            <b>Access Control List</b>
+            <p th:inline="text">
+                <b>Access Control List - </b>Number of ACEs: <b>[[${aclSize}]]</b> ([[${orphanedAcls}]] orphans ACLs)}
+            </p>
         </div>
 
         <table class="display noPaging-noSearching">
             <thead>
             <tr>
-                <th>Number of ACLs</th>
+                <th colspan="2">Node repartition</th>
+            </tr>
+            <tr>
+                <th>ACL ID</th>
+                <th>Attached nodes</th>
             </tr>
             </thead>
             <tbody>
+            <tr th:each="aclidNode : ${aclNodeRepartition}">
+                <td th:text="${aclidNode.aclid}"></td>
+                <td th:text="${aclidNode.numNodes}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <p></p>
+
+        <div class="panel-heading">
+            <b>Acl types & inheritance</b>
+            </p>
+        </div>
+
+        <table class="display noPaging-noSearching">
+            <thead>
             <tr>
-                <td th:text="${aclSize}"></td>
+                <td>ACL type</td>
+                <td>inherited (true / false)</td>
+                <td>Count</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="aclTypeRepartition : ${listAclTypeRepartition}">
+                <td th:text="${aclTypeRepartition.aclType}"></td>
+                <td th:text="${aclTypeRepartition.inherits}"></td>
+                <td th:text="${aclTypeRepartition.occurrences}"></td>
             </tr>
             </tbody>
         </table>
         <p></p>
     </div>
 
-    <!-- Access Control List Entries -->
+    <!-- Access Control Entries -->
     <div class="center panel panel-primary">
         <div class="panel-heading">
-            <b>Access Control List Entries</b>
+            <p th:inline="text">
+                <b>Access Control Entries - </b>Number of ACEs: [[${aceSize}]]
+            </pi>
         </div>
 
         <div th:if="${not #lists.isEmpty(listAccessControlListEntries)}">
-            <table class="display noPaging-noSearching" cellspacing="0" width="100%">
+            <!-- <table class="display noPaging-noSearching" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>Number of Permissions</th>
@@ -77,14 +109,38 @@
             </table>
             <p></p>
         </div>
+
+        <div class="panel-heading">
+            <b>Involved Authorities</b>
+        </div> -->
+
+        <table class="display">
+            <thead>
+            <tr>
+                <th colspan="2">Involved authorities</th>
+            </tr>
+            <tr>
+                <th>Authority hash</th>
+                <th>number of ACEs linked</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="aceAuthority: ${listACEAuthorities}">
+                <td th:text="${aceAuthority.authorityHash}"></td>
+                <td th:text="${aceAuthority.numAces}"></td>
+            </tr>
+            </tbody>
+        <!-- </table>
+        <p></p>
+
     </div>
 
     <div class="center panel panel-primary">
         <div class="panel-heading">
-            <b>Access Control List Etnries by Permission</b>
+            <b>Access Control List Entries by Permission</b>
         </div>
         <div th:if="${not #lists.isEmpty(listAccessControlListEntries)}">
-            <table class="display accessControlListEntries" cellspacing="0" width="100%">
+            <table class="display accessControlListEntries" cellspacing="0" width="100%"> -->
                 <thead>
                 <tr>
                     <th>Permission</th>

@@ -5,6 +5,7 @@ import com.alfresco.support.alfrescodb.model.ActivitiesFeed;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import javax.websocket.server.ServerEndpoint;
 import java.util.List;
 
 @Mapper
@@ -22,4 +23,40 @@ public interface AccessControlListMapper {
             "from alf_access_control_list " +
             "group by inherits"})
     List<AccessControlList> findAccessControlListInheritance();
+
+    @Select({"SELECT acl_id aclid, count(*) numNodes " +
+            "FROM alf_node " +
+            "GROUP BY acl_id ORDER BY numNodes DESC LIMIT 10"})
+    List<AccessControlList> findACLNodeRepartition();
+
+    @Select({"SELECT md5(aa.authority) AS authorityHash, count(*) AS numAces " +
+            "FROM alf_access_control_entry ace " +
+            "JOIN alf_authority aa ON aa.id=ace.authority_id " +
+            "GROUP BY authorityHash HAVING count(*) > 0"})
+    List<AccessControlList> findACEAuthorities();
+
+    @Select({"SELECT count(*) occurrences from alf_access_control_list aacl "  +
+            "LEFT OUTER JOIN alf_node an ON an.acl_id=aacl.id " +
+            "WHERE aacl.id IS NULL"})
+    String findOrphanedAcls();
+
+   @Select({"SELECT CASE type WHEN 0 THEN 'OLD' " +
+       "WHEN 1 THEN 'DEFINING' " +
+       "WHEN 2 THEN 'SHARED' " +
+       "WHEN 3 THEN  'FIXED' " +
+       "WHEN 4 THEN 'GLOBAL' " +
+       "WHEN 5 THEN 'LAYERED' " +
+        "ELSE 'UNKNOWN' " +
+        "END as aclType, inherits, count(*) as occurrences " +
+    "FROM alf_access_control_list " +
+    "GROUP BY type, inherits"
+    })
+    List<AccessControlList> findAclTypesRepartition();
+
+    @Select({"SELECT acm.acl_id as aclId, count(*) as numAce FROM \n" +
+             "alf_acl_member acm INNER JOIN alf_access_control_list \n" +
+             "aacl ON aacl.id=acm.acl_id AND aacl.type=1 \n" +
+             "GROUP BY acm.acl_id"})
+    List<AccessControlList> findAclsHeight();
+
 }
