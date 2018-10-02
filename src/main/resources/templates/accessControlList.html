@@ -133,6 +133,26 @@
                 </tbody>
             </table>
         </div>
+
+        <div>
+            <table class="display">
+                <thead>
+                <tr>
+                    <th colspan="2">ACEs per ACL</th>
+                </tr>
+                <tr>
+                    <th>ACL ID</th>
+                    <th>ACE count</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="aclHeight : ${listAclsHeight}">
+                    <td th:text="${aclHeight.aclid}"></td>
+                    <td th:text="${aclHeight.numAces}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
 

@@ -48,7 +48,7 @@ public interface AccessControlListMapper {
     })
     List<AccessControlList> findAclTypesRepartition();
 
-    @Select({"SELECT acm.acl_id as aclId, count(*) as numAce FROM \n" +
+    @Select({"SELECT acm.acl_id as aclid, count(*) as numAces FROM \n" +
              "alf_acl_member acm INNER JOIN alf_access_control_list \n" +
              "aacl ON aacl.id=acm.acl_id AND aacl.type=1 \n" +
              "GROUP BY acm.acl_id"})

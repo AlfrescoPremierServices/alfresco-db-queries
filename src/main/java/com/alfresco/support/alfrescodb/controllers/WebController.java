@@ -84,6 +84,7 @@ public class WebController {
         List < AccessControlList > listAccessControlListEntries;
         List < AccessControlList > aclTypeRepartition;
         List < AccessControlList > aclNodeRepartition;
+        List < AccessControlList > aclsHeight;
         List < AccessControlList > aceAuthorities;
         List < ContentModelProperties > listContentModelProperties;
         List < ActivitiesFeed > listActivitiesFeed;
@@ -209,7 +210,14 @@ public class WebController {
                 }
             }
 
-        out.write("\n\nAccess Control List Entries");
+            aclsHeight = sqlMapper.findAclsHeight();
+            out.write("\n\nNumber of ACEs in ACLs");
+            out.write("\nACL ID, ACE count");
+            for (int i = 0; i < aclsHeight.size(); i++) {
+                out.write(aclsHeight.get(i).printAclHeight());
+            }
+
+            out.write("\n\nAccess Control List Entries");
             out.write("\nSize");
             out.write("\n" + String.valueOf(aceSize));
 
@@ -603,6 +611,9 @@ public class WebController {
 
         List < AccessControlList > listAclTypeRepartition = sqlMapper.findAclTypeRepartition();
         model.addAttribute("listAclTypeRepartition", listAclTypeRepartition);
+
+        List < AccessControlList > listAclsHeight = sqlMapper.findAclsHeight();
+        model.addAttribute("listAclsHeight", listAclsHeight);
 
         addAdditionalParamsToModel(model);
 

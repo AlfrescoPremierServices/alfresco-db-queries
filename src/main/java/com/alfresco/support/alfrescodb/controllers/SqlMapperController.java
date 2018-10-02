@@ -162,6 +162,10 @@ public class SqlMapperController {
         return accessControlListMapper.findAclTypesRepartition();
     }
 
+    public List findAclsHeight() {
+        return accessControlListMapper.findAclsHeight();
+    }
+
     public List findContentModelProperties(){
         return contentModelPropertiesMapper.findContentModelProperties();
     }

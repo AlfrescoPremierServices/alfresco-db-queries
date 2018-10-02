@@ -80,7 +80,7 @@ public class AccessControlList {
 		return numAces;
 		}
 
-	public void setNumAces(int numAcls)
+	public void setNumAces(int numAces)
 		{
 		this.numAces = numAces;
 		}
@@ -112,5 +112,8 @@ public class AccessControlList {
 		{
 		return String.format("\n%s, %s, %s", aclType, inherits, occurrences);
 		}
-
+	public String printAclHeight()
+		{
+		return String.format("\n%s, %s", aclid, numAces);
+		}
 }
