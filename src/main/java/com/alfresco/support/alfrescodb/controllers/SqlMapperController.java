@@ -50,7 +50,6 @@ public class SqlMapperController {
         } else if (dbType.equalsIgnoreCase("oracle")){
             return dbSizeMapper.findTablesInfoOracle();
         }
-
         return null;
     }
 
@@ -60,7 +59,6 @@ public class SqlMapperController {
         } else if (dbType.equalsIgnoreCase("mysql")){
             return dbSizeMapper.findDbSizeMysql();
         }
-
         return null;
     }
 
@@ -74,7 +72,6 @@ public class SqlMapperController {
         } else if (dbType.equalsIgnoreCase("microsoft")){
             return nodeListMapper.findNodesSizeMSSql();
         }
-
         return null;
     }
 
@@ -92,7 +89,6 @@ public class SqlMapperController {
         } else if (dbType.equalsIgnoreCase("microsoft")){
             return nodeListMapper.findNodesByStoreMSSql();
         }
-
         return null;
     }
 
@@ -106,7 +102,6 @@ public class SqlMapperController {
         } else if (dbType.equalsIgnoreCase("microsoft")){
             return largeFolderMapper.findBySizeMSSql(largeFolderSize);
         }
-
         return null;
     }
 
@@ -120,7 +115,6 @@ public class SqlMapperController {
         } else if (dbType.equalsIgnoreCase("microsoft")){
             return nodeListMapper.findNodesByContentTypeMSSql();
         }
-
         return null;
     }
 
@@ -134,7 +128,6 @@ public class SqlMapperController {
         } else if (dbType.equalsIgnoreCase("microsoft")){
             return nodeListMapper.findNodesByContentTypeAndMonthMSSql();
         }
-
         return null;
     }
 
@@ -147,7 +140,11 @@ public class SqlMapperController {
     }
 
     public List findACLNodeRepartition() {
-        return accessControlListMapper.findACLNodeRepartition();
+        if (dbType.equalsIgnoreCase("oracle")){
+            return accessControlListMapper.findACLNodeRepartitionOracle();
+	} else if (dbType.equalsIgnoreCase("microsoft")){
+            return accessControlListMapper.findACLNodeRepartitionMSSql();
+	} else return accessControlListMapper.findACLNodeRepartition();
     }
 
     public List findACEAuthorities() {
@@ -180,7 +177,6 @@ public class SqlMapperController {
         } else if (dbType.equalsIgnoreCase("microsoft")){
             return activitiesFeedMapper.findActivitiesByActivityTypeMSSql();
         }
-
         return null;
     }
 
@@ -194,7 +190,6 @@ public class SqlMapperController {
         } else if (dbType.equalsIgnoreCase("microsoft")){
             return activitiesFeedMapper.findActivitiesByUserMSSql();
         }
-
         return null;
     }
 
@@ -208,7 +203,6 @@ public class SqlMapperController {
         } else if (dbType.equalsIgnoreCase("microsoft")){
             return activitiesFeedMapper.findActivitiesByApplicationInterfaceMSSql();
         }
-
         return null;
     }
 
@@ -226,7 +220,6 @@ public class SqlMapperController {
         } else if (dbType.equalsIgnoreCase("microsoft")){
             return authorityMapper.findAuthorizedUsersMSSql();
         }
-
         return null;
     }
 
