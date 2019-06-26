@@ -148,7 +148,11 @@ public class SqlMapperController {
     }
 
     public List findACEAuthorities() {
-        return accessControlListMapper.findACEAuthorities();
+        if (dbType.equalsIgnoreCase("oracle")){
+            return accessControlListMapper.findACEAuthoritiesOracle();
+	} else if (dbType.equalsIgnoreCase("microsoft")){
+            return accessControlListMapper.findACEAuthoritiesMSSql();
+	} else return accessControlListMapper.findACEAuthorities();
     }
 
     public String findOrphanedAcls() {
