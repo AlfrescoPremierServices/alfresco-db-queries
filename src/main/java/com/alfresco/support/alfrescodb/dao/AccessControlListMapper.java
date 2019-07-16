@@ -24,11 +24,34 @@ public interface AccessControlListMapper {
             "GROUP BY acl_id ORDER BY numNodes DESC LIMIT 10"})
     List<AccessControlList> findACLNodeRepartition();
 
+    @Select({"SELECT * FROM (SELECT acl_id aclid, count(*) numNodes " +
+            "FROM alf_node " +
+            "GROUP BY acl_id ORDER BY numNodes DESC) " +
+            "WHERE ROWNUM <= 10"})
+    List<AccessControlList> findACLNodeRepartitionOracle();
+
+    @Select({"SELECT TOP 10 acl_id aclid, count(*) numNodes " +
+            "FROM alf_node " +
+            "GROUP BY acl_id ORDER BY numNodes DESC"})
+    List<AccessControlList> findACLNodeRepartitionMSSql();
+
     @Select({"SELECT md5(aa.authority) AS authorityHash, count(*) AS numAces " +
             "FROM alf_access_control_entry ace " +
             "JOIN alf_authority aa ON aa.id=ace.authority_id " +
             "GROUP BY authorityHash HAVING count(*) > 0"})
     List<AccessControlList> findACEAuthorities();
+
+    @Select({"SELECT 'xxx' AS authorityHash, count(*) AS numAces " +
+            "FROM alf_access_control_entry ace " +
+            "JOIN alf_authority aa ON aa.id=ace.authority_id " +
+            "GROUP BY aa.authority HAVING count(*) > 0"})
+    List<AccessControlList> findACEAuthoritiesOracle();
+
+    @Select({"SELECT CONVERT(VARCHAR(32), HashBytes('MD5', aa.authority), 2) AS authorityHash, count(*) AS numAces " +
+            "FROM alf_access_control_entry ace " +
+            "JOIN alf_authority aa ON aa.id=ace.authority_id " +
+            "GROUP BY aa.authority HAVING count(*) > 0"})
+    List<AccessControlList> findACEAuthoritiesMSSql();
 
     @Select({"SELECT count(*) occurrences from alf_access_control_list aacl "  +
             "LEFT OUTER JOIN alf_node an ON an.acl_id=aacl.id " +

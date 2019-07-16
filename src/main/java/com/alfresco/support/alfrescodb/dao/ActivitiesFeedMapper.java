@@ -51,47 +51,47 @@ public interface ActivitiesFeedMapper {
     List<ActivitiesFeed> findActivitiesByApplicationInterfaceMySQL();
 
     @Select("select count(*) as occurrences, substr(post_date, 1, 10) as postDate, site_network as siteNetwork, activity_type as activityType " +
-            "from alf_activity_feed" +
-            "where feed_user_id != '@@NULL@@'" +
-            "and feed_user_id = post_user_id" +
+            "from alf_activity_feed " +
+            "where feed_user_id != '@@NULL@@' " +
+            "and feed_user_id = post_user_id " +
             "group by post_date, site_network, activity_type")
     List<ActivitiesFeed> findActivitiesByActivityTypeOracle();
 
     @Select("select count(*) as occurrences, substr(post_date, 1, 10) as postDate, site_network as siteNetwork, feed_user_id as feedUserId " +
-            "from alf_activity_feed" +
-            "where feed_user_id != '@@NULL@@'" +
-            "and feed_user_id = post_user_id" +
+            "from alf_activity_feed " +
+            "where feed_user_id != '@@NULL@@' " +
+            "and feed_user_id = post_user_id " +
             "group by post_date, site_network, feed_user_id")
     List<ActivitiesFeed> findActivitiesByUserOracle();
 
     @Select("select count(*) as occurrences, substr(post_date, 1, 10) as postDate, site_network as siteNetwork, app_tool as appTool " +
-            "from alf_activity_feed" +
-            "where feed_user_id != '@@NULL@@'" +
-            "and feed_user_id = post_user_id" +
+            "from alf_activity_feed " +
+            "where feed_user_id != '@@NULL@@' " +
+            "and feed_user_id = post_user_id " +
             "group by post_date, site_network, app_tool")
     List<ActivitiesFeed> findActivitiesByApplicationInterfaceOracle();
 
     @Select("select count(*) as occurrences, substring(CONVERT(VARCHAR(11), post_date), 1, 11) as postDate, " +
-            "site_network as siteNetwork, activity_type as activityType" +
-            "from alf_activity_feed" +
-            "where feed_user_id != '@@NULL@@'" +
-            "and feed_user_id = post_user_id" +
+            "site_network as siteNetwork, activity_type as activityType " +
+            "from alf_activity_feed " +
+            "where feed_user_id != '@@NULL@@' " +
+            "and feed_user_id = post_user_id " +
             "group by post_date, site_network, activity_type")
     List<ActivitiesFeed> findActivitiesByActivityTypeMSSql();
 
     @Select("select count(*) as occurrences, substring(CONVERT(VARCHAR(11), post_date), 1, 11) as postDate, " +
-            "site_network as siteNetwork, feed_user_id as feedUserId" +
-            "from alf_activity_feed" +
-            "where feed_user_id != '@@NULL@@'" +
-            "and feed_user_id = post_user_id" +
+            "site_network as siteNetwork, feed_user_id as feedUserId " +
+            "from alf_activity_feed " +
+            "where feed_user_id != '@@NULL@@' " +
+            "and feed_user_id = post_user_id " +
             "group by post_date, site_network, feed_user_id")
     List<ActivitiesFeed> findActivitiesByUserMSSql();
 
     @Select("select count(*) as occurrences, substring(CONVERT(VARCHAR(11), post_date), 1, 11) as postDate, " +
-            "site_network as siteNetwork, app_tool as appTool" +
-            "from alf_activity_feed" +
-            "where feed_user_id != '@@NULL@@'" +
-            "and feed_user_id = post_user_id" +
+            "site_network as siteNetwork, app_tool as appTool " +
+            "from alf_activity_feed " +
+            "where feed_user_id != '@@NULL@@' " +
+            "and feed_user_id = post_user_id " +
             "group by post_date, site_network, app_tool")
     List<ActivitiesFeed> findActivitiesByApplicationInterfaceMSSql();
 }
