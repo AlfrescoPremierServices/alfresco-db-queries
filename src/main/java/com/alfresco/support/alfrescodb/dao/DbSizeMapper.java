@@ -22,8 +22,7 @@ public interface DbSizeMapper {
             "c.reltuples AS row_estimate, pg_total_relation_size(c.oid) AS total_bytes, " +
             "pg_indexes_size(c.oid) AS index_bytes, pg_total_relation_size(reltoastrelid) AS toast_bytes " +
             "FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = c.relnamespace " +
-            "WHERE relkind = 'r') a) a " +
-            "where table_schema = 'public' order by total_bytes desc")
+            "WHERE relkind = 'r') a) a order by total_bytes desc")
     List<RelationInfo> findTablesInfoPostgres();
 
     @Select("SELECT pg_catalog.pg_size_pretty(pg_catalog.pg_database_size(current_database()));")
