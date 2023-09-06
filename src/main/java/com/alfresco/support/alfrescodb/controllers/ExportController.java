@@ -125,6 +125,137 @@ public class ExportController {
     private List<JmxProperties> listJmxProperties;
     private List<AppliedPatches> listAppliedPatches;
 
+    public void exportReport(Model model) {
+        try {
+            BufferedWriter out;
+            if (multiReportFile) {
+                reportFile = reportFile.substring(0, reportFile.length()-4); //removing .csv
+                out = this.prepareOutputFile(reportFile + "_DBSize.csv");
+            } else {
+                out = this.prepareOutputFile(reportFile);
+            }
+            // DB Size
+            this.writeDBTableSize(out);
+            // Large folders
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_LargeFolder.csv");
+            }
+            this.writeLargeFolder(out);
+            // Large Transactions
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_LargeTransaction.csv");
+            }
+            this.writeLargeTransaction(out);
+            // Access Control List
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_AccessControlList.csv");
+            }
+            this.writeLargeACL(out);
+            // Content Model Properties List
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_ContentModelProperties.csv");
+            }
+            this.writeContentModelProps(out);
+            // Activities
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_Activities.csv");
+            }
+            this.writeActivities(out);
+            /* Workflows */
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_Workflows.csv");
+            }
+            this.writeWorkflows(out);
+            // Archived Nodes
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_ArchivedNodes.csv");
+            }
+            this.writeArchivedNodes(out);
+            // List Nodes by Mimetype
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_NodesByMimetype.csv");
+            }
+            this.writeNodesByMimetype(out);
+            // Nodes disk space -- commented out as it's not actually printing on file
+            //if (multiReportFile) {
+            //    out.close();
+            //    out = this.prepareOutputFile(reportFile + "_NodesDiskSpace.csv");
+            //}
+            // this.writeNodesDiskSpace(out);
+            // List Nodes by Content Type
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_NodesByContentType.csv");
+            }
+            this.writeNodesByContentType(out);
+            // List Nodes by Content Type per month
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_NodesByContentTypeAndMonth.csv");
+            }
+            this.writeNodesByContentTypeAndMonth(out);
+            // List Nodes by Store
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_NodesByStore.csv");
+            }
+            this.writeNodesByStore(out);
+            // Resource Locking
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_ResourceLocking.csv");
+            }
+            this.writeResouceLocking(out);
+            // Authorities
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_Authorities.csv");
+            }
+            this.writeAuthorities(out);
+            // Solr memory
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_SolrMemory.csv");
+            }
+            this.writeSolrMemory(out);
+            // JMX Properties
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_JMXProperties.csv");
+            }
+            this.writeJmxProps(out);
+            // Applied Patches
+            if (multiReportFile) {
+                out.close();
+                out = this.prepareOutputFile(reportFile + "_AppliedPatches.csv");
+            }
+            this.writeAppliedPatches(out);
+
+            model.addAttribute("reportFile", reportFile);
+            out.close();
+        } catch (IOException e) {
+            System.out.println("Exception ");
+            e.printStackTrace();
+        }
+    }
+
+    private BufferedWriter prepareOutputFile(String name) throws IOException {
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(reportFile));
+            return out;
+        } catch (IOException ioex) {
+            throw new IOException("Exception creating output file: " + name, ioex);
+        }
+    }
+
     /** This is the only method that actually write to the file provided */
     private void writeLine(BufferedWriter out, String str) {
         try {
@@ -539,54 +670,6 @@ public class ExportController {
             for (int i = 0; i < listAppliedPatches.size(); i++) {
                 this.writeLine(out, listAppliedPatches.get(i).printAppliedPatches());
             }
-        }
-    }
-
-    public void exportReport(Model model) {
-        try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(reportFile));
-            // DB Size
-            this.writeDBTableSize(out);
-            // Large folders
-            this.writeLargeFolder(out);
-            // Large Transactions
-            this.writeLargeTransaction(out);
-            // Access Control List
-            this.writeLargeACL(out);
-            // Content Model Properties List
-            this.writeContentModelProps(out);
-            // Activities
-            this.writeActivities(out);
-            /* Workflows */
-            this.writeWorkflows(out);
-            // Archived Nodes
-            this.writeArchivedNodes(out);
-            // List Nodes by Mimetype
-            this.writeNodesByMimetype(out);
-            // Nodes disk space -- commented out as it's not actually printing on file
-            // this.writeNodesDiskSpace(out);
-            // List Nodes by Content Type
-            this.writeNodesByContentType(out);
-            // List Nodes by Content Type per month
-            this.writeNodesByContentTypeAndMonth(out);
-            // List Nodes by Store
-            this.writeNodesByStore(out);
-            // Resource Locking
-            this.writeResouceLocking(out);
-            // Authorities
-            this.writeAuthorities(out);
-            // Solr memory
-            this.writeSolrMemory(out);
-            // JMX Properties
-            this.writeJmxProps(out);
-            // Applied Patches
-            this.writeAppliedPatches(out);
-
-            model.addAttribute("reportFile", reportFile);
-            out.close();
-        } catch (IOException e) {
-            System.out.println("Exception ");
-            e.printStackTrace();
         }
     }
 
