@@ -65,6 +65,9 @@ public class ExportController {
     @Value("${reportFile}")
     private String reportFile;
 
+    @Value("${reportSplit}")
+    private boolean multiReportFile;
+
     @Value("${spring.datasource.platform}")
     private String dbType;
 
@@ -100,427 +103,490 @@ public class ExportController {
     @Value("${alf_auth_status}")
     private Boolean alfAuthStatus;
 
-    List<RelationInfo> listRelationInfos;
-    List<LargeFolder> listLargeFolders;
-    List<LargeTransaction> listLargeTransactions;
-    List<AccessControlList> listAccessControlListEntries;
-    List<AccessControlList> aclTypeRepartition;
-    List<AccessControlList> aclNodeRepartition;
-    List<AccessControlList> aclsHeight;
-    List<AccessControlList> aceAuthorities;
-    List<ContentModelProperties> listContentModelProperties;
-    List<ActivitiesFeed> listActivitiesFeed;
-    List<ArchivedNodes> listArchivedNodes;
-    List<NodesList> listNodesByMimeType;
-    List<NodesList> listNodesByType;
-    List<NodesList> listNodesByStore;
-    List<LockedResources> listLockedResources;
-    List<Authority> listUsers;
-    List<Authority> listAuthorizedUsers;
-    List<Authority> listGroups;
-    List<Workflow> listWorkflows;
-    List<JmxProperties> listJmxProperties;
-    List<AppliedPatches> listAppliedPatches;
+    private List<RelationInfo> listRelationInfos;
+    private List<LargeFolder> listLargeFolders;
+    private List<LargeTransaction> listLargeTransactions;
+    private List<AccessControlList> listAccessControlListEntries;
+    private List<AccessControlList> aclTypeRepartition;
+    private List<AccessControlList> aclNodeRepartition;
+    private List<AccessControlList> aclsHeight;
+    private List<AccessControlList> aceAuthorities;
+    private List<ContentModelProperties> listContentModelProperties;
+    private List<ActivitiesFeed> listActivitiesFeed;
+    private List<ArchivedNodes> listArchivedNodes;
+    private List<NodesList> listNodesByMimeType;
+    private List<NodesList> listNodesByType;
+    private List<NodesList> listNodesByStore;
+    private List<LockedResources> listLockedResources;
+    private List<Authority> listUsers;
+    private List<Authority> listAuthorizedUsers;
+    private List<Authority> listGroups;
+    private List<Workflow> listWorkflows;
+    private List<JmxProperties> listJmxProperties;
+    private List<AppliedPatches> listAppliedPatches;
+
+    /** This is the only method that actually write to the file provided */
+    private void writeLine(BufferedWriter out, String str) {
+        try {
+            out.write(str);
+        } catch (IOException ioex) {
+            System.out.println("Exception while writing to file");
+            ioex.printStackTrace()
+        }
+    }
+
+    private void writeDBTableSize(BufferedWriter out) {
+        // Database Size
+        listRelationInfos = sqlMapper.findTablesInfo();
+
+        if (dbType.equalsIgnoreCase("mysql") || dbType.equalsIgnoreCase("postgres")) {
+            this.writeLine(out, "\nTable Name, Total Size, Row Estimate, Table Size, Index Size");
+
+            for (int i = 0; i < listRelationInfos.size(); i++) {
+                this.writeLine(out, listRelationInfos.get(i).printDbInfo());
+            }
+
+            String dbSize = sqlMapper.findDbSize();
+            this.writeLine(out, "\n\nDatabase Size");
+            this.writeLine(out, "\nSize");
+            this.writeLine(out, dbSize);
+
+        } else if (dbType.equalsIgnoreCase("oracle")) {
+            List<OracleRelationInfo> OracleListRelationInfos = sqlMapper.findTablesInfo();
+
+            this.writeLine(out, "\nTables Size");
+            this.writeLine(out, "\nTable Name, Size MB");
+            for (int i = 0; i < OracleListRelationInfos.size(); i++) {
+                this.writeLine(out, OracleListRelationInfos.get(i).printTableInfo());
+            }
+
+            List<OracleRelationInfo> OracleListIndexesInfos = dbSizeMapper.findIndexesInfoOracle();
+
+            this.writeLine(out, "\n\nIndexes Size");
+            this.writeLine(out, "\nTable Name, Index Name, Index Size MB");
+            for (int i = 0; i < OracleListIndexesInfos.size(); i++) {
+                this.writeLine(out, OracleListIndexesInfos.get(i).printIndexInfo());
+            }
+        } else if (dbType.equalsIgnoreCase("microsoft")) {
+            List<MSSqlRelationInfo> MSSqlListRelationInfos = sqlMapper.findTablesInfo();
+
+            this.writeLine(out, "\nTables Size");
+            this.writeLine(out, "\nTable Name, Rows Count, Total Space KB, Used Space KB, Unused Space KB");
+            for (int i = 0; i < listRelationInfos.size(); i++) {
+                this.writeLine(out, MSSqlListRelationInfos.get(i).printTableInfo());
+            }
+
+            List<MSSqlRelationInfo> MSSqlListIndexesInfos = dbSizeMapper.findIndexesInfoMSSql();
+
+            this.writeLine(out, "\n\nIndexes Size");
+            this.writeLine(out, "\nTable Name, Index Name, Index Size KB");
+            for (int i = 0; i < MSSqlListIndexesInfos.size(); i++) {
+                this.writeLine(out, MSSqlListIndexesInfos.get(i).printIndexInfo());
+            }
+        }
+    }
+
+    private void writeLargeFolder(BufferedWriter out) {
+        listLargeFolders = sqlMapper.findLargeFolders();
+        this.writeLine(out, "\n\nLarge Folders");
+        this.writeLine(out, "\nFolder Name, Node Reference, Type, No. of Child Nodes");
+        if (listLargeFolders != null) {
+            for (int i = 0; i < listLargeFolders.size(); i++) {
+                this.writeLine(out, listLargeFolders.get(i).printLargeFolders());
+            }
+        }
+    }
+
+    private void writeLargeTransaction(BufferedWriter out) {
+        listLargeTransactions = largeTransactionMapper.findBySize(largeTransactionSize);
+        this.writeLine(out, "\n\nLarge Transactions");
+        this.writeLine(out, "\nTransaction Id, Nodes Count");
+        if (listLargeTransactions != null) {
+            for (int i = 0; i < listLargeTransactions.size(); i++) {
+                this.writeLine(out, listLargeTransactions.get(i).printLargeTransactions());
+            }
+        }
+    }
+
+    private void writeLargeACL(BufferedWriter out) {
+        String aclSize = sqlMapper.findAccessControlList();
+        this.writeLine(out, "\n\nAccess Control List Size");
+        this.writeLine(out, "\n" + aclSize);
+
+        listAccessControlListEntries = sqlMapper.findAccessControlListEntries();
+        Integer aceSize = 0;
+        for (int i = 0; i < listAccessControlListEntries.size(); i++) {
+            Integer count = Integer.valueOf(listAccessControlListEntries.get(i).getPermissionCount());
+            aceSize = aceSize + count;
+        }
+
+        String orphanedAcls = sqlMapper.findOrphanedAcls();
+        this.writeLine(out, "\n\nOrphaned ACLs");
+        this.writeLine(out, "\n" + orphanedAcls);
+
+        aclNodeRepartition = sqlMapper.findACLNodeRepartition();
+        this.writeLine(out, "\n\nNodes Repartition");
+        this.writeLine(out, "\nACL ID, Nodes");
+        if (aclNodeRepartition != null) {
+            for (int i = 0; i < aclNodeRepartition.size(); i++) {
+                this.writeLine(out, aclNodeRepartition.get(i).printAclNode());
+            }
+        }
+
+        aclTypeRepartition = sqlMapper.findAclTypeRepartition();
+        this.writeLine(out, "\n\nType repartition");
+        this.writeLine(out, "\nACL type, Count");
+        if (aclTypeRepartition != null) {
+            for (int i = 0; i < aclTypeRepartition.size(); i++) {
+                this.writeLine(out, aclTypeRepartition.get(i).printAclType());
+            }
+        }
+
+        aclsHeight = sqlMapper.findAclsHeight();
+        this.writeLine(out, "\n\nNumber of ACEs in ACLs");
+        this.writeLine(out, "\nACL ID, ACE count");
+        for (int i = 0; i < aclsHeight.size(); i++) {
+            this.writeLine(out, aclsHeight.get(i).printAclHeight());
+        }
+
+        this.writeLine(out, "\n\nAccess Control List Entries");
+        this.writeLine(out, "\nSize");
+        this.writeLine(out, "\n" + String.valueOf(aceSize));
+
+        this.writeLine(out, "\n\nACE Permission, Occurrences");
+        if (listAccessControlListEntries != null) {
+            for (int i = 0; i < listAccessControlListEntries.size(); i++) {
+                this.writeLine(out, listAccessControlListEntries.get(i).printAccessControlListEntries());
+            }
+        }
+
+        aceAuthorities = sqlMapper.findACEAuthorities();
+        this.writeLine(out, "\n\nAuthorities & ACEs");
+        this.writeLine(out, "\nAuthority hash, ACEs");
+        if (aceAuthorities != null) {
+            for (int i = 0; i < aceAuthorities.size(); i++) {
+                this.writeLine(out, aceAuthorities.get(i).printAuthorityAce());
+            }
+        }
+    }
+
+    private void writeContentModelProps(BufferedWriter out) {
+        listContentModelProperties = sqlMapper.findContentModelProperties();
+        this.writeLine(out, "\n\nContent Model Properties");
+        this.writeLine(out, "\nContent Model URI, Property");
+        if (listContentModelProperties != null) {
+            for (int i = 0; i < listContentModelProperties.size(); i++) {
+                this.writeLine(out, listContentModelProperties.get(i).printContentModelProperties());
+            }
+        }
+    }
+
+    private void writeActivities(BufferedWriter out) {
+        listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
+        this.writeLine(out, "\n\nActivities by Activity Type");
+        this.writeLine(out, "\nDate, Site Network, Activity Type, Activities Count");
+        if (listActivitiesFeed != null) {
+            for (int i = 0; i < listActivitiesFeed.size(); i++) {
+                this.writeLine(out, listActivitiesFeed.get(i).printActivitiesByActivityType());
+            }
+        }
+
+        listActivitiesFeed = sqlMapper.findActivitiesByUser();
+        this.writeLine(out, "\n\nActivities by User");
+        this.writeLine(out, "\nDate, Site Network, User Id, Activities Count");
+        if (listActivitiesFeed != null) {
+            for (int i = 0; i < listActivitiesFeed.size(); i++) {
+                this.writeLine(out, listActivitiesFeed.get(i).printActivitiesByUser());
+            }
+        }
+
+        listActivitiesFeed = sqlMapper.findActivitiesByApplicationInterface();
+        this.writeLine(out, "\n\nActivities by Application Interface");
+        this.writeLine(out, "\nDate, Site Network, Application Interface, Activities Count");
+        if (listActivitiesFeed != null) {
+            for (int i = 0; i < listActivitiesFeed.size(); i++) {
+                this.writeLine(out, listActivitiesFeed.get(i).printActivitiesByInterface());
+            }
+        }
+    }
+
+    private void writeWorkflows(BufferedWriter out) {
+        listWorkflows = workflowMapper.findAll();
+        this.writeLine(out, "\n\nAll Workflows Grouped by Process Definition and Task Name");
+        this.writeLine(out, "\nProcess Definition, Task Name, No Occurrences");
+        if (listWorkflows != null) {
+            for (int i = 0; i < listWorkflows.size(); i++) {
+                this.writeLine(out, listWorkflows.get(i).printTasks());
+            }
+        }
+
+        List<Workflow> listOpenWorkflows = workflowMapper.openWorkflows();
+        this.writeLine(out, "\n\nOpen Workflows");
+        this.writeLine(out, "\nProcess Definition, No Occurrences");
+        if (listOpenWorkflows != null) {
+            for (int i = 0; i < listOpenWorkflows.size(); i++) {
+                this.writeLine(out, listOpenWorkflows.get(i).printProcesses());
+            }
+        }
+
+        List<Workflow> listClosedWorkflows = workflowMapper.closedWorkflows();
+        this.writeLine(out, "\n\nClosed Workflows");
+        this.writeLine(out, "\nProcess Definition, No Occurrences");
+        if (listClosedWorkflows != null) {
+            for (int i = 0; i < listClosedWorkflows.size(); i++) {
+                this.writeLine(out, listClosedWorkflows.get(i).printProcesses());
+            }
+        }
+
+        List<Workflow> listOpenTasks = workflowMapper.openTasks();
+        this.writeLine(out, "\n\nOpen Tasks");
+        this.writeLine(out, "\nProcess Definition, Task Name, No Occurrences");
+        if (listOpenTasks != null) {
+            for (int i = 0; i < listOpenTasks.size(); i++) {
+                this.writeLine(out, listOpenTasks.get(i).printTasks());
+            }
+        }
+
+        List<Workflow> listClosedTasks = workflowMapper.closedTasks();
+        this.writeLine(out, "\n\nClosed Tasks");
+        this.writeLine(out, "\nProcess Definition, Task Name, No Occurrences");
+        if (listClosedTasks != null) {
+            for (int i = 0; i < listClosedTasks.size(); i++) {
+                this.writeLine(out, listClosedTasks.get(i).printTasks());
+            }
+        }
+    }
+
+    private void writeArchivedNodes(BufferedWriter out) {
+        listArchivedNodes = archivedNodesMapper.findArchivedNodes();
+        this.writeLine(out, "\n\nAll Archived Nodes");
+        if (listArchivedNodes != null) {
+            for (int i = 0; i < listArchivedNodes.size(); i++) {
+                this.writeLine(out, listArchivedNodes.get(i).printArchivedNodes());
+            }
+        }
+
+        listArchivedNodes = archivedNodesMapper.findArchivedNodesByUser();
+        this.writeLine(out, "\n\nArchived Nodes by User");
+        this.writeLine(out, "\nArchived Nodes, User");
+        if (listArchivedNodes != null) {
+            for (int i = 0; i < listArchivedNodes.size(); i++) {
+                this.writeLine(out, listArchivedNodes.get(i).printArchivedNodesByUser());
+            }
+        }
+    }
+
+    private void writeNodesByMimetype(BufferedWriter out) {
+        listNodesByMimeType = sqlMapper.findNodesSizeByMimeType();
+        this.writeLine(out, "\n\nNodes Disk Space by Mimetype");
+        this.writeLine(out, "\nMime Types, Nodes Count, Disk Space MB");
+        if (listNodesByMimeType != null) {
+            for (int i = 0; i < listNodesByMimeType.size(); i++) {
+                this.writeLine(out, listNodesByMimeType.get(i).printNodesByMimeType());
+            }
+        }
+    }
+
+    private void writeNodesDiskSpace(BufferedWriter out) {
+        // List<NodesList> diskSpace = sqlMapper.findNodesSize();
+        // model.addAttribute("totalDiskSpace", diskSpace);
+    }
+
+    private void writeNodesByContentType(BufferedWriter out) {
+        listNodesByType = sqlMapper.findNodesByContentType();
+        this.writeLine(out, "\nNode Type, Nodes Count");
+        if (listNodesByType != null) {
+            for (int i = 0; i < listNodesByType.size(); i++) {
+                this.writeLine(out, listNodesByType.get(i).printNodesByType());
+            }
+        }
+    }
+
+    private void writeNodesByContentTypeAndMonth(BufferedWriter out) {
+        listNodesByType = sqlMapper.findNodesByContentTypeAndMonth();
+        this.writeLine(out, "\n\nNodes by Content Type Grouped by Month");
+        this.writeLine(out, "\nDate, Node Type, Nodes Count");
+        if (listNodesByType != null) {
+            for (int i = 0; i < listNodesByType.size(); i++) {
+                this.writeLine(out, listNodesByType.get(i).printNodesByTypeAndMonth());
+            }
+        }
+    }
+
+    private void writeNodesByStore(BufferedWriter out) {
+        listNodesByStore = sqlMapper.findNodesByStore();
+        this.writeLine(out, "\n\nNodes by Store");
+        this.writeLine(out, "\nStore, Nodes Count");
+        if (listNodesByStore != null) {
+            for (int i = 0; i < listNodesByStore.size(); i++) {
+                this.writeLine(out, listNodesByStore.get(i).printNodesByStore());
+            }
+        }
+    }
+
+    private void writeResouceLocking(BufferedWriter out) {
+        listLockedResources = lockedResourcesMapper.findAll();
+        this.writeLine(out, "\n\nResource Locking");
+        this.writeLine(out, "\nIde, Lock Token, Start Time, Expiry Time, Shared Resource, Exclusive Resource, URI");
+        for (int i = 0; i < listLockedResources.size(); i++) {
+            this.writeLine(out, listLockedResources.get(i).findAll());
+        }
+    }
+
+    private void writeAuthorities(BufferedWriter out) {
+        this.writeLine(out, "\n\nAuthorities");
+        listUsers = authorityMapper.findUsers();
+        this.writeLine(out, "\nUsers Count");
+        if (listUsers != null) {
+            for (int i = 0; i < listUsers.size(); i++) {
+                this.writeLine(out, listUsers.get(i).printUsers());
+            }
+        }
+
+        if (alfAuthStatus == true) {
+            listAuthorizedUsers = sqlMapper.findAuthorizedUsers();
+            this.writeLine(out, "\n\nAuthorized Users Count");
+            if (listUsers != null) {
+                for (int i = 0; i < listAuthorizedUsers.size(); i++) {
+                    this.writeLine(out, listAuthorizedUsers.get(i).printUsers());
+                }
+            }
+            // model.addAttribute("listAuthorizedUsers", listAuthorizedUsers);
+        }
+
+        listGroups = authorityMapper.findGroups();
+        this.writeLine(out, "\n\nGroups Count");
+        if (listGroups != null) {
+            for (int i = 0; i < listGroups.size(); i++) {
+                this.writeLine(out, listGroups.get(i).printGroups());
+            }
+        }
+    }
+
+    private void writeSolrMemory(BufferedWriter out) {
+        List<SolrMemory> solrMemoryList = sqlMapper.solrMemory();
+
+        for (int i = 0; i < solrMemoryList.size(); i++) {
+            Long alfrescoNodes = Long.valueOf(solrMemoryList.get(i).getAlfrescoNodes());
+            Long archiveNodes = Long.valueOf(solrMemoryList.get(i).getArchiveNodes());
+            Long transactions = Long.valueOf(solrMemoryList.get(i).getTransactions());
+            Long acls = Long.valueOf(solrMemoryList.get(i).getAcls());
+            Long aclTransactions = Long.valueOf(solrMemoryList.get(i).getAclTransactions());
+            double alfrescoCoreMemory = (double) (120 * alfrescoNodes
+                    + 32 * (transactions + acls + aclTransactions)) / 1024 / 1024 / 1024;
+            double archiveCoreMemory = (double) (120 * archiveNodes + 32 * (transactions + acls + aclTransactions))
+                    / 1024 / 1024 / 1024;
+            double totalDataStructuresMemory = (double) alfrescoCoreMemory + archiveCoreMemory;
+            double alfrescoSolrCachesMemory = (double) (alfrescoSolrFilterCacheSize
+                    + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize)
+                    * (double) (2 * alfrescoNodes + transactions + acls + aclTransactions) / 8 / 1024 / 1024 / 1024;
+            double archiveSolrCachesMemory = (double) (alfrescoSolrFilterCacheSize
+                    + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize)
+                    * (double) (2 * archiveNodes + transactions + acls + aclTransactions) / 8 / 1024 / 1024 / 1024;
+            double totalSolrCachesMemory = (double) alfrescoSolrCachesMemory + archiveSolrCachesMemory;
+            double totalSolrMemory = (double) totalDataStructuresMemory + totalSolrCachesMemory;
+
+            this.writeLine(out, "\n\nSolr Memory");
+            this.writeLine(out, "\nAlfresco Nodes, Archive Nodes, Transactions, ACLs, ACL Transactions");
+            this.writeLine(out, "\n" + String.valueOf(alfrescoNodes) + ", " + String.valueOf(archiveNodes) + ", "
+                    + String.valueOf(transactions) + ", " + String.valueOf(acls) + ", "
+                    + String.valueOf(aclTransactions));
+
+            this.writeLine(out,
+                    "\n\nAlfresco Core Query Result Cache Size, Alfresco Core Authority Cache Size, Alfresco Core Path Cache Size, Alfresco Core Filter Cache Size");
+            this.writeLine(out, "\n" + String.valueOf(archiveSolrQueryResultCacheSize) + ", "
+                    + String.valueOf(alfrescoSolrAuthorityCacheSize) + ", "
+                    + String.valueOf(alfrescoSolrPathCacheSize) + ", "
+                    + String.valueOf(alfrescoSolrFilterCacheSize));
+
+            this.writeLine(out,
+                    "\n\nArchive Core Query Result Cache Size, Archive Core Authority Cache Size, Archive Core Path Cache Size, Archive Core Filter Cache Size");
+            this.writeLine(out, "\n" + String.valueOf(archiveSolrQueryResultCacheSize) + ", "
+                    + String.valueOf(archiveSolrAuthorityCacheSize) + ", "
+                    + String.valueOf(archiveSolrPathCacheSize) + ", " + String.valueOf(archiveSolrFilterCacheSize));
+
+            this.writeLine(out,
+                    "\n\nAlfresco Core Data Structures Memory GB, Archive Core Data Structures Memory GB, Total Solr Data Structures Memory GB");
+            this.writeLine(out,
+                    "\n" + String.valueOf(alfrescoCoreMemory) + ", " + String.valueOf(archiveCoreMemory) + ", "
+                            + String.valueOf(totalDataStructuresMemory));
+            this.writeLine(out,
+                    "\n\nAlfresco Core Cache Memory GB, Archive Core Cache Memory GB, Total Solr Cache Memory GB");
+            this.writeLine(out, "\n" + String.valueOf(alfrescoSolrCachesMemory) + ", "
+                    + String.valueOf(archiveSolrCachesMemory) + ", " + String.valueOf(totalSolrCachesMemory));
+            this.writeLine(out, "\n\nSolr Required Memory GB (for 2 searches per core)");
+            this.writeLine(out, "\n" + String.valueOf(2 * totalSolrMemory));
+        }
+    }
+
+    private void writeJmxProps(BufferedWriter out) {
+        listJmxProperties = jmxPropertiesMapper.findJmxProperties();
+        this.writeLine(out, "\n\nJMX Properties set in DB");
+        this.writeLine(out, "\nProperty Name, Property Value");
+        if (listJmxProperties != null) {
+            for (int i = 0; i < listJmxProperties.size(); i++) {
+                this.writeLine(out, listJmxProperties.get(i).printJmxProperties());
+            }
+        }
+    }
+
+    private void writeAppliedPatches(BufferedWriter out) {
+        listAppliedPatches = sqlMapper.findAppliedPatches();
+        this.writeLine(out, "\n\nApplied Patches");
+        this.writeLine(out,
+                "\nId, Applied to Schema, Applied on Date, Applied to Server, Was Executed, Succeeded, Report");
+        if (listAppliedPatches != null) {
+            for (int i = 0; i < listAppliedPatches.size(); i++) {
+                this.writeLine(out, listAppliedPatches.get(i).printAppliedPatches());
+            }
+        }
+    }
 
     public void exportReport(Model model) {
-
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(reportFile));
-
-            // Database Size
-            listRelationInfos = sqlMapper.findTablesInfo();
-            out.write("Database Tables Information");
-
-            if (dbType.equalsIgnoreCase("mysql") || dbType.equalsIgnoreCase("postgres")) {
-                out.write("\nTable Name, Total Size, Row Estimate, Table Size, Index Size");
-
-                for (int i = 0; i < listRelationInfos.size(); i++) {
-                    out.write(listRelationInfos.get(i).printDbInfo());
-                }
-
-                String dbSize = sqlMapper.findDbSize();
-                out.write("\n\nDatabase Size");
-                out.write("\nSize");
-                out.write(dbSize);
-                model.addAttribute("dbSize", dbSize);
-            } else if (dbType.equalsIgnoreCase("oracle")) {
-                List<OracleRelationInfo> OracleListRelationInfos = sqlMapper.findTablesInfo();
-
-                out.write("\nTables Size");
-                out.write("\nTable Name, Size MB");
-                for (int i = 0; i < OracleListRelationInfos.size(); i++) {
-                    out.write(OracleListRelationInfos.get(i).printTableInfo());
-                }
-
-                List<OracleRelationInfo> OracleListIndexesInfos = dbSizeMapper.findIndexesInfoOracle();
-
-                out.write("\n\nIndexes Size");
-                out.write("\nTable Name, Index Name, Index Size MB");
-                for (int i = 0; i < OracleListIndexesInfos.size(); i++) {
-                    out.write(OracleListIndexesInfos.get(i).printIndexInfo());
-                }
-            } else if (dbType.equalsIgnoreCase("microsoft")) {
-                List<MSSqlRelationInfo> MSSqlListRelationInfos = sqlMapper.findTablesInfo();
-
-                out.write("\nTables Size");
-                out.write("\nTable Name, Rows Count, Total Space KB, Used Space KB, Unused Space KB");
-                for (int i = 0; i < listRelationInfos.size(); i++) {
-                    out.write(MSSqlListRelationInfos.get(i).printTableInfo());
-                }
-
-                List<MSSqlRelationInfo> MSSqlListIndexesInfos = dbSizeMapper.findIndexesInfoMSSql();
-
-                out.write("\n\nIndexes Size");
-                out.write("\nTable Name, Index Name, Index Size KB");
-                for (int i = 0; i < MSSqlListIndexesInfos.size(); i++) {
-                    out.write(MSSqlListIndexesInfos.get(i).printIndexInfo());
-                }
-            }
-
-            // Large Folders
-            listLargeFolders = sqlMapper.findLargeFolders();
-            out.write("\n\nLarge Folders");
-            out.write("\nFolder Name, Node Reference, Type, No. of Child Nodes");
-            if (listLargeFolders != null) {
-                for (int i = 0; i < listLargeFolders.size(); i++) {
-                    out.write(listLargeFolders.get(i).printLargeFolders());
-                }
-            }
-
+            // DB Size
+            this.writeDBTableSize(out);
+            // Large folders
+            this.writeLargeFolder(out);
             // Large Transactions
-            listLargeTransactions = largeTransactionMapper.findBySize(largeTransactionSize);
-            out.write("\n\nLarge Transactions");
-            out.write("\nTransaction Id, Nodes Count");
-            if (listLargeTransactions != null) {
-                for (int i = 0; i < listLargeTransactions.size(); i++) {
-                    out.write(listLargeTransactions.get(i).printLargeTransactions());
-                }
-            }
-
+            this.writeLargeTransaction(out);
             // Access Control List
-            String aclSize = sqlMapper.findAccessControlList();
-            out.write("\n\nAccess Control List Size");
-            out.write("\n" + aclSize);
-            model.addAttribute("aclSize", aclSize);
-
-            listAccessControlListEntries = sqlMapper.findAccessControlListEntries();
-            Integer aceSize = 0;
-            for (int i = 0; i < listAccessControlListEntries.size(); i++) {
-                Integer count = Integer.valueOf(listAccessControlListEntries.get(i).getPermissionCount());
-                aceSize = aceSize + count;
-            }
-
-            String orphanedAcls = sqlMapper.findOrphanedAcls();
-            out.write("\n\nOrphaned ACLs");
-            out.write("\n" + orphanedAcls);
-
-            aclNodeRepartition = sqlMapper.findACLNodeRepartition();
-            out.write("\n\nNodes Repartition");
-            out.write("\nACL ID, Nodes");
-            if (aclNodeRepartition != null) {
-                for (int i = 0; i < aclNodeRepartition.size(); i++) {
-                    out.write(aclNodeRepartition.get(i).printAclNode());
-                }
-            }
-
-            aclTypeRepartition = sqlMapper.findAclTypeRepartition();
-            out.write("\n\nType repartition");
-            out.write("\nACL type, Count");
-            if (aclTypeRepartition != null) {
-                for (int i = 0; i < aclTypeRepartition.size(); i++) {
-                    out.write(aclTypeRepartition.get(i).printAclType());
-                }
-            }
-
-            aclsHeight = sqlMapper.findAclsHeight();
-            out.write("\n\nNumber of ACEs in ACLs");
-            out.write("\nACL ID, ACE count");
-            for (int i = 0; i < aclsHeight.size(); i++) {
-                out.write(aclsHeight.get(i).printAclHeight());
-            }
-
-            out.write("\n\nAccess Control List Entries");
-            out.write("\nSize");
-            out.write("\n" + String.valueOf(aceSize));
-
-            out.write("\n\nACE Permission, Occurrences");
-            if (listAccessControlListEntries != null) {
-                for (int i = 0; i < listAccessControlListEntries.size(); i++) {
-                    out.write(listAccessControlListEntries.get(i).printAccessControlListEntries());
-                }
-            }
-
-            aceAuthorities = sqlMapper.findACEAuthorities();
-            out.write("\n\nAuthorities & ACEs");
-            out.write("\nAuthority hash, ACEs");
-            if (aceAuthorities != null) {
-                for (int i = 0; i < aceAuthorities.size(); i++) {
-                    out.write(aceAuthorities.get(i).printAuthorityAce());
-                }
-            }
-
+            this.writeLargeACL(out);
             // Content Model Properties List
-            listContentModelProperties = sqlMapper.findContentModelProperties();
-            out.write("\n\nContent Model Properties");
-            out.write("\nContent Model URI, Property");
-            if (listContentModelProperties != null) {
-                for (int i = 0; i < listContentModelProperties.size(); i++) {
-                    out.write(listContentModelProperties.get(i).printContentModelProperties());
-                }
-            }
-
+            this.writeContentModelProps(out);
             // Activities
-            listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
-            out.write("\n\nActivities by Activity Type");
-            out.write("\nDate, Site Network, Activity Type, Activities Count");
-            if (listActivitiesFeed != null) {
-                for (int i = 0; i < listActivitiesFeed.size(); i++) {
-                    out.write(listActivitiesFeed.get(i).printActivitiesByActivityType());
-                }
-            }
-
-            listActivitiesFeed = sqlMapper.findActivitiesByUser();
-            out.write("\n\nActivities by User");
-            out.write("\nDate, Site Network, User Id, Activities Count");
-            if (listActivitiesFeed != null) {
-                for (int i = 0; i < listActivitiesFeed.size(); i++) {
-                    out.write(listActivitiesFeed.get(i).printActivitiesByUser());
-                }
-            }
-
-            listActivitiesFeed = sqlMapper.findActivitiesByApplicationInterface();
-            out.write("\n\nActivities by Application Interface");
-            out.write("\nDate, Site Network, Application Interface, Activities Count");
-            if (listActivitiesFeed != null) {
-                for (int i = 0; i < listActivitiesFeed.size(); i++) {
-                    out.write(listActivitiesFeed.get(i).printActivitiesByInterface());
-                }
-            }
-
+            this.writeActivities(out);
             /* Workflows */
-            listWorkflows = workflowMapper.findAll();
-            out.write("\n\nAll Workflows Grouped by Process Definition and Task Name");
-            out.write("\nProcess Definition, Task Name, No Occurrences");
-            if (listWorkflows != null) {
-                for (int i = 0; i < listWorkflows.size(); i++) {
-                    out.write(listWorkflows.get(i).printTasks());
-                }
-            }
-
-            List<Workflow> listOpenWorkflows = workflowMapper.openWorkflows();
-            out.write("\n\nOpen Workflows");
-            out.write("\nProcess Definition, No Occurrences");
-            if (listOpenWorkflows != null) {
-                for (int i = 0; i < listOpenWorkflows.size(); i++) {
-                    out.write(listOpenWorkflows.get(i).printProcesses());
-                }
-            }
-
-            List<Workflow> listClosedWorkflows = workflowMapper.closedWorkflows();
-            out.write("\n\nClosed Workflows");
-            out.write("\nProcess Definition, No Occurrences");
-            if (listClosedWorkflows != null) {
-                for (int i = 0; i < listClosedWorkflows.size(); i++) {
-                    out.write(listClosedWorkflows.get(i).printProcesses());
-                }
-            }
-
-            List<Workflow> listOpenTasks = workflowMapper.openTasks();
-            out.write("\n\nOpen Tasks");
-            out.write("\nProcess Definition, Task Name, No Occurrences");
-            if (listOpenTasks != null) {
-                for (int i = 0; i < listOpenTasks.size(); i++) {
-                    out.write(listOpenTasks.get(i).printTasks());
-                }
-            }
-
-            List<Workflow> listClosedTasks = workflowMapper.closedTasks();
-            out.write("\n\nClosed Tasks");
-            out.write("\nProcess Definition, Task Name, No Occurrences");
-            if (listClosedTasks != null) {
-                for (int i = 0; i < listClosedTasks.size(); i++) {
-                    out.write(listClosedTasks.get(i).printTasks());
-                }
-            }
-
+            this.writeWorkflows(out);
             // Archived Nodes
-            listArchivedNodes = archivedNodesMapper.findArchivedNodes();
-            out.write("\n\nAll Archived Nodes");
-            if (listArchivedNodes != null) {
-                for (int i = 0; i < listArchivedNodes.size(); i++) {
-                    out.write(listArchivedNodes.get(i).printArchivedNodes());
-                }
-            }
-
-            listArchivedNodes = archivedNodesMapper.findArchivedNodesByUser();
-            out.write("\n\nArchived Nodes by User");
-            out.write("\nArchived Nodes, User");
-            if (listArchivedNodes != null) {
-                for (int i = 0; i < listArchivedNodes.size(); i++) {
-                    out.write(listArchivedNodes.get(i).printArchivedNodesByUser());
-                }
-            }
-
+            this.writeArchivedNodes(out);
             // List Nodes by Mimetype
-            listNodesByMimeType = sqlMapper.findNodesSizeByMimeType();
-            out.write("\n\nNodes Disk Space by Mimetype");
-            out.write("\nMime Types, Nodes Count, Disk Space MB");
-            if (listNodesByMimeType != null) {
-                for (int i = 0; i < listNodesByMimeType.size(); i++) {
-                    out.write(listNodesByMimeType.get(i).printNodesByMimeType());
-                }
-            }
-
-            // Nodes disk space
-            List<NodesList> diskSpace = sqlMapper.findNodesSize();
-            model.addAttribute("totalDiskSpace", diskSpace);
-
+            this.writeNodesByMimetype(out);
+            // Nodes disk space -- commented out as it's not actually printing on file
+            // this.writeNodesDiskSpace(out);
             // List Nodes by Content Type
-            listNodesByType = sqlMapper.findNodesByContentType();
-            out.write("\n\nNodes by Content Type");
-            out.write("\nNode Type, Nodes Count");
-            if (listNodesByType != null) {
-                for (int i = 0; i < listNodesByType.size(); i++) {
-                    out.write(listNodesByType.get(i).printNodesByType());
-                }
-            }
-
-            // List Nodes by Content Type
-            listNodesByType = sqlMapper.findNodesByContentTypeAndMonth();
-            out.write("\n\nNodes by Content Type Grouped by Month");
-            out.write("\nDate, Node Type, Nodes Count");
-            if (listNodesByType != null) {
-                for (int i = 0; i < listNodesByType.size(); i++) {
-                    out.write(listNodesByType.get(i).printNodesByTypeAndMonth());
-                }
-            }
-
+            this.writeNodesByContentType(out);
+            // List Nodes by Content Type per month
+            this.writeNodesByContentTypeAndMonth(out);
             // List Nodes by Store
-            listNodesByStore = sqlMapper.findNodesByStore();
-            out.write("\n\nNodes by Store");
-            out.write("\nStore, Nodes Count");
-            if (listNodesByStore != null) {
-                for (int i = 0; i < listNodesByStore.size(); i++) {
-                    out.write(listNodesByStore.get(i).printNodesByStore());
-                }
-            }
-
+            this.writeNodesByStore(out);
             // Resource Locking
-            listLockedResources = lockedResourcesMapper.findAll();
-            out.write("\n\nResource Locking");
-            out.write("\nIde, Lock Token, Start Time, Expiry Time, Shared Resource, Exclusive Resource, URI");
-            for (int i = 0; i < listLockedResources.size(); i++) {
-                out.write(listLockedResources.get(i).findAll());
-            }
-
+            this.writeResouceLocking(out);
             // Authorities
-            out.write("\n\nAuthorities");
-            listUsers = authorityMapper.findUsers();
-            out.write("\nUsers Count");
-            if (listUsers != null) {
-                for (int i = 0; i < listUsers.size(); i++) {
-                    out.write(listUsers.get(i).printUsers());
-                }
-            }
-
-            if (alfAuthStatus == true) {
-                listAuthorizedUsers = sqlMapper.findAuthorizedUsers();
-                out.write("\n\nAuthorized Users Count");
-                if (listUsers != null) {
-                    for (int i = 0; i < listAuthorizedUsers.size(); i++) {
-                        out.write(listAuthorizedUsers.get(i).printUsers());
-                    }
-                }
-                model.addAttribute("listAuthorizedUsers", listAuthorizedUsers);
-            }
-
-            listGroups = authorityMapper.findGroups();
-            out.write("\n\nGroups Count");
-            if (listGroups != null) {
-                for (int i = 0; i < listGroups.size(); i++) {
-                    out.write(listGroups.get(i).printGroups());
-                }
-            }
-
+            this.writeAuthorities(out);
             // Solr memory
-            List<SolrMemory> solrMemoryList = sqlMapper.solrMemory();
-
-            for (int i = 0; i < solrMemoryList.size(); i++) {
-                Long alfrescoNodes = Long.valueOf(solrMemoryList.get(i).getAlfrescoNodes());
-                Long archiveNodes = Long.valueOf(solrMemoryList.get(i).getArchiveNodes());
-                Long transactions = Long.valueOf(solrMemoryList.get(i).getTransactions());
-                Long acls = Long.valueOf(solrMemoryList.get(i).getAcls());
-                Long aclTransactions = Long.valueOf(solrMemoryList.get(i).getAclTransactions());
-                double alfrescoCoreMemory = (double) (120 * alfrescoNodes
-                        + 32 * (transactions + acls + aclTransactions)) / 1024 / 1024 / 1024;
-                double archiveCoreMemory = (double) (120 * archiveNodes + 32 * (transactions + acls + aclTransactions))
-                        / 1024 / 1024 / 1024;
-                double totalDataStructuresMemory = (double) alfrescoCoreMemory + archiveCoreMemory;
-                double alfrescoSolrCachesMemory = (double) (alfrescoSolrFilterCacheSize
-                        + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize)
-                        * (double) (2 * alfrescoNodes + transactions + acls + aclTransactions) / 8 / 1024 / 1024 / 1024;
-                double archiveSolrCachesMemory = (double) (alfrescoSolrFilterCacheSize
-                        + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize)
-                        * (double) (2 * archiveNodes + transactions + acls + aclTransactions) / 8 / 1024 / 1024 / 1024;
-                double totalSolrCachesMemory = (double) alfrescoSolrCachesMemory + archiveSolrCachesMemory;
-                double totalSolrMemory = (double) totalDataStructuresMemory + totalSolrCachesMemory;
-
-                out.write("\n\nSolr Memory");
-                out.write("\nAlfresco Nodes, Archive Nodes, Transactions, ACLs, ACL Transactions");
-                out.write("\n" + String.valueOf(alfrescoNodes) + ", " + String.valueOf(archiveNodes) + ", "
-                        + String.valueOf(transactions) + ", " + String.valueOf(acls) + ", "
-                        + String.valueOf(aclTransactions));
-
-                out.write(
-                        "\n\nAlfresco Core Query Result Cache Size, Alfresco Core Authority Cache Size, Alfresco Core Path Cache Size, Alfresco Core Filter Cache Size");
-                out.write("\n" + String.valueOf(archiveSolrQueryResultCacheSize) + ", "
-                        + String.valueOf(alfrescoSolrAuthorityCacheSize) + ", "
-                        + String.valueOf(alfrescoSolrPathCacheSize) + ", "
-                        + String.valueOf(alfrescoSolrFilterCacheSize));
-
-                out.write(
-                        "\n\nArchive Core Query Result Cache Size, Archive Core Authority Cache Size, Archive Core Path Cache Size, Archive Core Filter Cache Size");
-                out.write("\n" + String.valueOf(archiveSolrQueryResultCacheSize) + ", "
-                        + String.valueOf(archiveSolrAuthorityCacheSize) + ", "
-                        + String.valueOf(archiveSolrPathCacheSize) + ", " + String.valueOf(archiveSolrFilterCacheSize));
-
-                out.write(
-                        "\n\nAlfresco Core Data Structures Memory GB, Archive Core Data Structures Memory GB, Total Solr Data Structures Memory GB");
-                out.write("\n" + String.valueOf(alfrescoCoreMemory) + ", " + String.valueOf(archiveCoreMemory) + ", "
-                        + String.valueOf(totalDataStructuresMemory));
-                out.write(
-                        "\n\nAlfresco Core Cache Memory GB, Archive Core Cache Memory GB, Total Solr Cache Memory GB");
-                out.write("\n" + String.valueOf(alfrescoSolrCachesMemory) + ", "
-                        + String.valueOf(archiveSolrCachesMemory) + ", " + String.valueOf(totalSolrCachesMemory));
-                out.write("\n\nSolr Required Memory GB (for 2 searches per core)");
-                out.write("\n" + String.valueOf(2 * totalSolrMemory));
-            }
-
+            this.writeSolrMemory(out);
             // JMX Properties
-            listJmxProperties = jmxPropertiesMapper.findJmxProperties();
-            out.write("\n\nJMX Properties set in DB");
-            out.write("\nProperty Name, Property Value");
-            if (listJmxProperties != null) {
-                for (int i = 0; i < listJmxProperties.size(); i++) {
-                    out.write(listJmxProperties.get(i).printJmxProperties());
-                }
-            }
-
+            this.writeJmxProps(out);
             // Applied Patches
-            listAppliedPatches = sqlMapper.findAppliedPatches();
-            out.write("\n\nApplied Patches");
-            out.write("\nId, Applied to Schema, Applied on Date, Applied to Server, Was Executed, Succeeded, Report");
-            if (listAppliedPatches != null) {
-                for (int i = 0; i < listAppliedPatches.size(); i++) {
-                    out.write(listAppliedPatches.get(i).printAppliedPatches());
-                }
-            }
+            this.writeAppliedPatches(out);
 
             model.addAttribute("reportFile", reportFile);
             out.close();
         } catch (IOException e) {
             System.out.println("Exception ");
-
+            e.printStackTrace();
         }
     }
 
