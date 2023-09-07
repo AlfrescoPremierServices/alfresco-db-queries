@@ -1,3 +1,4 @@
 target/*
 application.properties
 acs-db-*.csv
+acs-db-queries.log
