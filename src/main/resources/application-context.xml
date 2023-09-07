@@ -10,4 +10,7 @@
 
     <bean id="sqlMapper" class="com.alfresco.support.alfrescodb.controllers.SqlMapperController">
     </bean>
+
+    <bean id="exportController" class="com.alfresco.support.alfrescodb.controllers.ExportController">
+    </bean>
 </beans>
