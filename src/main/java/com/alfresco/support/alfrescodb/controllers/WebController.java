@@ -21,7 +21,7 @@ public class WebController {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private ExportController exportController;
+    ExportController exportController;
 
     @Autowired
     SqlMapperController sqlMapper;

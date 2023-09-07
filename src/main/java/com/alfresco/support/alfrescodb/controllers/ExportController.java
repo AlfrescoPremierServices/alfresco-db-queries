@@ -248,8 +248,9 @@ public class ExportController {
     }
 
     private BufferedWriter prepareOutputFile(String name) throws IOException {
+        logger.debug("Creating new output file: "+name);
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(reportFile));
+            BufferedWriter out = new BufferedWriter(new FileWriter(name));
             return out;
         } catch (IOException ioex) {
             throw new IOException("Exception creating output file: " + name, ioex);
@@ -262,7 +263,7 @@ public class ExportController {
             out.write(str);
         } catch (IOException ioex) {
             System.out.println("Exception while writing to file");
-            ioex.printStackTrace()
+            ioex.printStackTrace();
         }
     }
 
