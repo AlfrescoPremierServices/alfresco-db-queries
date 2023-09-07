@@ -128,6 +128,7 @@ public class ExportController {
 
     public void exportReport(Model model) {
         try {
+            logger.debug("Full Export started. Multifile: " + multiReportFile);
             BufferedWriter out;
             List <String> generatedFiles = new ArrayList<String>();
             if (multiReportFile) {
@@ -262,18 +263,21 @@ public class ExportController {
 
             model.addAttribute("generatedFiles", generatedFiles);
             out.close();
+            logger.debug("Full Export  ended!");
         } catch (IOException e) {
             System.out.println("Exception ");
             e.printStackTrace();
         }
     }
 
+    /** Utility to centralize the creation of new output file */
     private BufferedWriter prepareOutputFile(String name) throws IOException {
         logger.debug("Creating new output file: "+name);
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(name));
             return out;
         } catch (IOException ioex) {
+            logger.error("Exception creating output file: " + name, ioex);
             throw new IOException("Exception creating output file: " + name, ioex);
         }
     }
@@ -281,8 +285,10 @@ public class ExportController {
     /** This is the only method that actually write to the file provided */
     private void writeLine(BufferedWriter out, String str) {
         try {
+            logger.trace("Writing to file: "+str);
             out.write(str);
         } catch (IOException ioex) {
+            logger.error("Exception while writing to file", ioex);
             System.out.println("Exception while writing to file");
             ioex.printStackTrace();
         }
