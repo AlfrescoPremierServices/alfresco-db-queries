@@ -1,0 +1,29 @@
+2023-09-08 16:28:30.974  INFO 7583 --- [main] c.a.s.alfrescodb.AlfrescoDbApplication   : Starting AlfrescoDbApplication v0.0.1-SNAPSHOT on ldap.example.com with PID 7583 (/mnt/hgfs/sources/_MyRepo/alfresco-db-queries/target/alfresco-db-0.0.1-SNAPSHOT.jar started by lmattioli in /mnt/hgfs/sources/_MyRepo/alfresco-db-queries)
+2023-09-08 16:28:30.987  INFO 7583 --- [main] c.a.s.alfrescodb.AlfrescoDbApplication   : No active profile set, falling back to default profiles: default
+2023-09-08 16:28:36.899  INFO 7583 --- [main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat initialized with port(s): 8888 (http)
+2023-09-08 16:28:41.385  INFO 7583 --- [main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8888 (http)
+2023-09-08 16:28:41.403  INFO 7583 --- [main] c.a.s.alfrescodb.AlfrescoDbApplication   : Started AlfrescoDbApplication in 11.85 seconds (JVM running for 12.896)
+2023-09-08 16:29:34.934 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Full Export started. Multifile: true
+2023-09-08 16:29:34.935 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_DBSize.csv
+2023-09-08 16:29:34.995 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_LargeFolder.csv
+2023-09-08 16:29:35.002 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_LargeTransaction.csv
+2023-09-08 16:29:35.007 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_AccessControlList.csv
+2023-09-08 16:29:35.028 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_ContentModelProperties.csv
+2023-09-08 16:29:35.039 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_Activities.csv
+2023-09-08 16:29:35.055 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_Workflows.csv
+2023-09-08 16:29:35.076 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_ArchivedNodes.csv
+2023-09-08 16:29:35.084 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_NodesByMimetype.csv
+2023-09-08 16:29:35.100 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_NodesByContentType.csv
+2023-09-08 16:29:35.116 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_NodesByContentTypeAndMonth.csv
+2023-09-08 16:29:35.129 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_NodesByStore.csv
+2023-09-08 16:29:35.140 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_ResourceLocking.csv
+2023-09-08 16:29:35.150 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_Authorities.csv
+2023-09-08 16:29:35.157 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_SolrMemory.csv
+2023-09-08 16:29:35.164 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_JMXProperties.csv
+2023-09-08 16:29:35.174 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Creating new output file: acs-db-report_AppliedPatches.csv
+2023-09-08 16:29:35.183 DEBUG 7583 --- [http-nio-8888-exec-3] c.a.s.a.controllers.ExportController     : Full Export  ended!
+2023-09-11 08:31:05.617  INFO 3958 --- [main] c.a.s.alfrescodb.AlfrescoDbApplication   : Starting AlfrescoDbApplication v0.0.1-SNAPSHOT on ldap.example.com with PID 3958 (/mnt/hgfs/sources/_MyRepo/alfresco-db-queries/target/alfresco-db-0.0.1-SNAPSHOT.jar started by lmattioli in /mnt/hgfs/sources/_MyRepo/alfresco-db-queries)
+2023-09-11 08:31:05.630  INFO 3958 --- [main] c.a.s.alfrescodb.AlfrescoDbApplication   : No active profile set, falling back to default profiles: default
+2023-09-11 08:31:12.365  INFO 3958 --- [main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat initialized with port(s): 8888 (http)
+2023-09-11 08:31:18.458  INFO 3958 --- [main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8888 (http)
+2023-09-11 08:31:18.478  INFO 3958 --- [main] c.a.s.alfrescodb.AlfrescoDbApplication   : Started AlfrescoDbApplication in 14.288 seconds (JVM running for 15.865)

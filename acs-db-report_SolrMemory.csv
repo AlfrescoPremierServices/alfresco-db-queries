@@ -1,0 +1,20 @@
+
+
+Solr Memory
+Alfresco Nodes, Archive Nodes, Transactions, ACLs, ACL Transactions
+1339, 220, 1248, 143, 63
+
+Alfresco Core Query Result Cache Size, Alfresco Core Authority Cache Size, Alfresco Core Path Cache Size, Alfresco Core Filter Cache Size
+1024, 128, 256, 256
+
+Archive Core Query Result Cache Size, Archive Core Authority Cache Size, Archive Core Path Cache Size, Archive Core Filter Cache Size
+1024, 128, 256, 256
+
+Alfresco Core Data Structures Memory GB, Archive Core Data Structures Memory GB, Total Solr Data Structures Memory GB
+1.9297748804092407E-4, 6.791949272155762E-5, 2.608969807624817E-4
+
+Alfresco Core Cache Memory GB, Archive Core Cache Memory GB, Total Solr Cache Memory GB
+8.004307746887207E-4, 3.66896390914917E-4, 0.0011673271656036377
+
+Solr Required Memory GB (for 2 searches per core)
+0.0028564482927322388
