@@ -1,12 +1,11 @@
 package com.alfresco.support.alfrescodb.dao;
 
-import com.alfresco.support.alfrescodb.model.AccessControlList;
-import com.alfresco.support.alfrescodb.model.ActivitiesFeed;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
-import javax.websocket.server.ServerEndpoint;
-import java.util.List;
+import com.alfresco.support.alfrescodb.model.AccessControlList;
 
 @Mapper
 public interface AccessControlListMapper {

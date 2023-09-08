@@ -1,15 +1,13 @@
 package com.alfresco.support.alfrescodb.dao;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
 import com.alfresco.support.alfrescodb.model.MSSqlRelationInfo;
 import com.alfresco.support.alfrescodb.model.OracleRelationInfo;
 import com.alfresco.support.alfrescodb.model.RelationInfo;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.springframework.beans.factory.annotation.Value;
-import org.apache.ibatis.annotations.Param;
-
-
-import java.util.List;
 
 @Mapper
 public interface DbSizeMapper {

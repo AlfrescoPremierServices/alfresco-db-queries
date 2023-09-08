@@ -1,11 +1,11 @@
 package com.alfresco.support.alfrescodb.dao;
 
-import com.alfresco.support.alfrescodb.model.AccessControlList;
-import com.alfresco.support.alfrescodb.model.ContentModelProperties;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
-import java.util.List;
+import com.alfresco.support.alfrescodb.model.ContentModelProperties;
 
 @Mapper
 public interface ContentModelPropertiesMapper {

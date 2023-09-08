@@ -1,30 +1,70 @@
 package com.alfresco.support.alfrescodb.controllers;
 
 import java.util.List;
-import com.alfresco.support.alfrescodb.dao.*;
-import com.alfresco.support.alfrescodb.model.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.alfresco.support.alfrescodb.dao.ArchivedNodesMapper;
+import com.alfresco.support.alfrescodb.dao.AuthorityMapper;
+import com.alfresco.support.alfrescodb.dao.DbSizeMapper;
+import com.alfresco.support.alfrescodb.dao.JmxPropertiesMapper;
+import com.alfresco.support.alfrescodb.dao.LargeTransactionMapper;
+import com.alfresco.support.alfrescodb.dao.LockedResourcesMapper;
+import com.alfresco.support.alfrescodb.dao.WorkflowMapper;
+import com.alfresco.support.alfrescodb.model.AccessControlList;
+import com.alfresco.support.alfrescodb.model.ActivitiesFeed;
+import com.alfresco.support.alfrescodb.model.AppliedPatches;
+import com.alfresco.support.alfrescodb.model.ArchivedNodes;
+import com.alfresco.support.alfrescodb.model.Authority;
+import com.alfresco.support.alfrescodb.model.ContentModelProperties;
+import com.alfresco.support.alfrescodb.model.JmxProperties;
+import com.alfresco.support.alfrescodb.model.LargeFolder;
+import com.alfresco.support.alfrescodb.model.LargeTransaction;
+import com.alfresco.support.alfrescodb.model.LockedResources;
+import com.alfresco.support.alfrescodb.model.MSSqlRelationInfo;
+import com.alfresco.support.alfrescodb.model.NodesList;
+import com.alfresco.support.alfrescodb.model.OracleRelationInfo;
+import com.alfresco.support.alfrescodb.model.RelationInfo;
+import com.alfresco.support.alfrescodb.model.SolrMemory;
+import com.alfresco.support.alfrescodb.model.Workflow;
 
 @Controller
 public class WebController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
     ExportController exportController;
 
     @Autowired
     SqlMapperController sqlMapper;
+
+    @Autowired
+    private LockedResourcesMapper lockedResourcesMapper;
+
+    @Autowired
+    private WorkflowMapper workflowMapper;
+    
+    @Autowired
+    private DbSizeMapper dbSizeMapper;
+
+    @Autowired
+    private LargeTransactionMapper largeTransactionMapper;
+
+    @Autowired
+    private ArchivedNodesMapper archivedNodesMapper;
+
+    @Autowired
+    private AuthorityMapper authorityMapper;
+
+    @Autowired
+    private JmxPropertiesMapper jmxPropertiesMapper;    
 
     @Value("${largeFolderSize}")
     private Integer largeFolderSize;
@@ -68,10 +108,7 @@ public class WebController {
     public String index(String name, Model model) {
         addAdditionalParamsToModel(model);
         return "index";
-    }
-
-    @Autowired
-    private WorkflowMapper workflowMapper;
+    }  
 
     @RequestMapping("/report")
     public void report(Model model) {
@@ -119,9 +156,6 @@ public class WebController {
         return null;
     }
 
-    @Autowired
-    private DbSizeMapper dbSizeMapper;
-
     @RequestMapping("/dbSize")
     public String dbSize(Model model) {
         if (dbType.equalsIgnoreCase("mysql") || dbType.equalsIgnoreCase("postgres")) {
@@ -149,9 +183,6 @@ public class WebController {
         return null;
     }
 
-    @Autowired
-    private LargeFolderMapper largeFolderMapper;
-
     @RequestMapping("/largeFolders")
     public String largeFolders(@RequestParam(value = "size", required = true) String size, Model model) {
         List < LargeFolder > listLargeFolders = sqlMapper.findLargeFolders();
@@ -164,9 +195,6 @@ public class WebController {
 
         return null;
     }
-
-    @Autowired
-    private LargeTransactionMapper largeTransactionMapper;
 
     @RequestMapping("/largeTransactions")
     public String largeTransactions(@RequestParam(value = "size", required = true) String size, Model model) {
@@ -249,9 +277,6 @@ public class WebController {
         return null;
     }
 
-    @Autowired
-    private ArchivedNodesMapper archivedNodesMapper;
-
     @RequestMapping("/archivedNodes")
     public String archivedNodes(Model model) {
 
@@ -268,9 +293,6 @@ public class WebController {
 
         return null;
     }
-
-    @Autowired
-    private NodeListMapper nodeListMapper;
 
     @RequestMapping("/listNodesByMimeType")
     public void nodesByMimeType(Model model) {
@@ -322,9 +344,6 @@ public class WebController {
         return null;
     }
 
-    @Autowired
-    private LockedResourcesMapper lockedResourcesMapper;
-
     @RequestMapping("/lockedResources")
     public String lockedResources(Model model) {
 
@@ -337,8 +356,6 @@ public class WebController {
         return null;
     }
 
-    @Autowired
-    private AuthorityMapper authorityMapper;
 
     @RequestMapping("/authorities")
     public String authorities(Model model) {
@@ -365,9 +382,6 @@ public class WebController {
 
         return null;
     }
-
-    @Autowired
-    private JmxPropertiesMapper jmxPropertiesMapper;
 
     @RequestMapping("/jmxProperties")
     public String jmxProperties(Model model) {

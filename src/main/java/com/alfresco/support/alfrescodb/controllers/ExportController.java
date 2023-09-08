@@ -130,9 +130,9 @@ public class ExportController {
         try {
             logger.debug("Full Export started. Multifile: " + multiReportFile);
             BufferedWriter out;
-            List <String> generatedFiles = new ArrayList<String>();
+            List<String> generatedFiles = new ArrayList<String>();
             if (multiReportFile) {
-                reportFile = reportFile.substring(0, reportFile.length()-4); //removing .csv
+                reportFile = reportFile.substring(0, reportFile.length() - 4); // removing .csv
                 out = this.prepareOutputFile(reportFile + "_DBSize.csv");
                 generatedFiles.add(reportFile + "_DBSize.csv");
             } else {
@@ -145,119 +145,119 @@ public class ExportController {
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_LargeFolder.csv");
-				generatedFiles.add(reportFile + "_LargeFolder.csv");
+                generatedFiles.add(reportFile + "_LargeFolder.csv");
             }
             this.writeLargeFolder(out);
             // Large Transactions
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_LargeTransaction.csv");
-				generatedFiles.add(reportFile + "_LargeTransaction.csv");
+                generatedFiles.add(reportFile + "_LargeTransaction.csv");
             }
             this.writeLargeTransaction(out);
             // Access Control List
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_AccessControlList.csv");
-				generatedFiles.add(reportFile + "_AccessControlList.csv");
+                generatedFiles.add(reportFile + "_AccessControlList.csv");
             }
             this.writeLargeACL(out);
             // Content Model Properties List
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_ContentModelProperties.csv");
-				generatedFiles.add(reportFile + "_ContentModelProperties.csv");
+                generatedFiles.add(reportFile + "_ContentModelProperties.csv");
             }
             this.writeContentModelProps(out);
             // Activities
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_Activities.csv");
-				generatedFiles.add(reportFile + "_Activities.csv");
+                generatedFiles.add(reportFile + "_Activities.csv");
             }
             this.writeActivities(out);
             /* Workflows */
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_Workflows.csv");
-				generatedFiles.add(reportFile + "_Workflows.csv");
+                generatedFiles.add(reportFile + "_Workflows.csv");
             }
             this.writeWorkflows(out);
             // Archived Nodes
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_ArchivedNodes.csv");
-				generatedFiles.add(reportFile + "_ArchivedNodes.csv");
+                generatedFiles.add(reportFile + "_ArchivedNodes.csv");
             }
             this.writeArchivedNodes(out);
             // List Nodes by Mimetype
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_NodesByMimetype.csv");
-				generatedFiles.add(reportFile + "_NodesByMimetype.csv");
+                generatedFiles.add(reportFile + "_NodesByMimetype.csv");
             }
             this.writeNodesByMimetype(out);
             // Nodes disk space -- commented out as it's not actually printing on file
-            //if (multiReportFile) {
-            //    out.close();
-            //    out = this.prepareOutputFile(reportFile + "_NodesDiskSpace.csv");
-			//	  generatedFiles.add(reportFile + "_NodesDiskSpace.csv");
-            //}
+            // if (multiReportFile) {
+            // out.close();
+            // out = this.prepareOutputFile(reportFile + "_NodesDiskSpace.csv");
+            // generatedFiles.add(reportFile + "_NodesDiskSpace.csv");
+            // }
             // this.writeNodesDiskSpace(out);
             // List Nodes by Content Type
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_NodesByContentType.csv");
-				generatedFiles.add(reportFile + "_NodesByContentType.csv");
+                generatedFiles.add(reportFile + "_NodesByContentType.csv");
             }
             this.writeNodesByContentType(out);
             // List Nodes by Content Type per month
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_NodesByContentTypeAndMonth.csv");
-				generatedFiles.add(reportFile + "_NodesByContentTypeAndMonth.csv");
+                generatedFiles.add(reportFile + "_NodesByContentTypeAndMonth.csv");
             }
             this.writeNodesByContentTypeAndMonth(out);
             // List Nodes by Store
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_NodesByStore.csv");
-				generatedFiles.add(reportFile + "_NodesByStore.csv");
+                generatedFiles.add(reportFile + "_NodesByStore.csv");
             }
             this.writeNodesByStore(out);
             // Resource Locking
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_ResourceLocking.csv");
-				generatedFiles.add(reportFile + "_ResourceLocking.csv");
+                generatedFiles.add(reportFile + "_ResourceLocking.csv");
             }
             this.writeResouceLocking(out);
             // Authorities
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_Authorities.csv");
-				generatedFiles.add(reportFile + "_Authorities.csv");
+                generatedFiles.add(reportFile + "_Authorities.csv");
             }
             this.writeAuthorities(out);
             // Solr memory
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_SolrMemory.csv");
-				generatedFiles.add(reportFile + "_SolrMemory.csv");
+                generatedFiles.add(reportFile + "_SolrMemory.csv");
             }
             this.writeSolrMemory(out);
             // JMX Properties
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_JMXProperties.csv");
-				generatedFiles.add(reportFile + "_JMXProperties.csv");
+                generatedFiles.add(reportFile + "_JMXProperties.csv");
             }
             this.writeJmxProps(out);
             // Applied Patches
             if (multiReportFile) {
                 out.close();
                 out = this.prepareOutputFile(reportFile + "_AppliedPatches.csv");
-				generatedFiles.add(reportFile + "_AppliedPatches.csv");
+                generatedFiles.add(reportFile + "_AppliedPatches.csv");
             }
             this.writeAppliedPatches(out);
 
@@ -272,7 +272,7 @@ public class ExportController {
 
     /** Utility to centralize the creation of new output file */
     private BufferedWriter prepareOutputFile(String name) throws IOException {
-        logger.debug("Creating new output file: "+name);
+        logger.debug("Creating new output file: " + name);
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(name));
             return out;
@@ -285,7 +285,7 @@ public class ExportController {
     /** This is the only method that actually write to the file provided */
     private void writeLine(BufferedWriter out, String str) {
         try {
-            logger.trace("Writing to file: "+str);
+            logger.trace("Writing to file: " + str);
             out.write(str);
         } catch (IOException ioex) {
             logger.error("Exception while writing to file", ioex);
