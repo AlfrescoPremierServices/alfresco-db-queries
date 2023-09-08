@@ -357,8 +357,7 @@ public class ExportController {
 
     private void writeLargeTransaction(BufferedWriter out) {
         listLargeTransactions = largeTransactionMapper.findBySize(largeTransactionSize);
-        this.writeLine(out, "\n\nLarge Transactions");
-        this.writeLine(out, "\nTransaction Id, Nodes Count");
+        this.writeLine(out, "Large Transaction Id, Nodes Count");
         if (listLargeTransactions != null) {
             for (int i = 0; i < listLargeTransactions.size(); i++) {
                 this.writeLine(out, listLargeTransactions.get(i).printLargeTransactions());
@@ -430,8 +429,7 @@ public class ExportController {
 
     private void writeContentModelProps(BufferedWriter out) {
         listContentModelProperties = sqlMapper.findContentModelProperties();
-        this.writeLine(out, "\n\nContent Model Properties");
-        this.writeLine(out, "\nContent Model URI, Property");
+        this.writeLine(out, "Content Model URI, Property");
         if (listContentModelProperties != null) {
             for (int i = 0; i < listContentModelProperties.size(); i++) {
                 this.writeLine(out, listContentModelProperties.get(i).printContentModelProperties());
@@ -536,8 +534,7 @@ public class ExportController {
 
     private void writeNodesByMimetype(BufferedWriter out) {
         listNodesByMimeType = sqlMapper.findNodesSizeByMimeType();
-        this.writeLine(out, "\n\nNodes Disk Space by Mimetype");
-        this.writeLine(out, "\nMime Types, Nodes Count, Disk Space MB");
+        this.writeLine(out, "Mime Type, Nodes Count, Disk Space MB");
         if (listNodesByMimeType != null) {
             for (int i = 0; i < listNodesByMimeType.size(); i++) {
                 this.writeLine(out, listNodesByMimeType.get(i).printNodesByMimeType());
@@ -545,14 +542,9 @@ public class ExportController {
         }
     }
 
-    private void writeNodesDiskSpace(BufferedWriter out) {
-        // List<NodesList> diskSpace = sqlMapper.findNodesSize();
-        // model.addAttribute("totalDiskSpace", diskSpace);
-    }
-
     private void writeNodesByContentType(BufferedWriter out) {
         listNodesByType = sqlMapper.findNodesByContentType();
-        this.writeLine(out, "\nNode Type, Nodes Count");
+        this.writeLine(out, "Node Type, Nodes Count");
         if (listNodesByType != null) {
             for (int i = 0; i < listNodesByType.size(); i++) {
                 this.writeLine(out, listNodesByType.get(i).printNodesByType());
@@ -562,8 +554,7 @@ public class ExportController {
 
     private void writeNodesByContentTypeAndMonth(BufferedWriter out) {
         listNodesByType = sqlMapper.findNodesByContentTypeAndMonth();
-        this.writeLine(out, "\n\nNodes by Content Type Grouped by Month");
-        this.writeLine(out, "\nDate, Node Type, Nodes Count");
+        this.writeLine(out, "Date, Node Type, Nodes Count");
         if (listNodesByType != null) {
             for (int i = 0; i < listNodesByType.size(); i++) {
                 this.writeLine(out, listNodesByType.get(i).printNodesByTypeAndMonth());
@@ -573,8 +564,7 @@ public class ExportController {
 
     private void writeNodesByStore(BufferedWriter out) {
         listNodesByStore = sqlMapper.findNodesByStore();
-        this.writeLine(out, "\n\nNodes by Store");
-        this.writeLine(out, "\nStore, Nodes Count");
+        this.writeLine(out, "Store, Nodes Count");
         if (listNodesByStore != null) {
             for (int i = 0; i < listNodesByStore.size(); i++) {
                 this.writeLine(out, listNodesByStore.get(i).printNodesByStore());
@@ -584,8 +574,7 @@ public class ExportController {
 
     private void writeResouceLocking(BufferedWriter out) {
         listLockedResources = lockedResourcesMapper.findAll();
-        this.writeLine(out, "\n\nResource Locking");
-        this.writeLine(out, "\nIde, Lock Token, Start Time, Expiry Time, Shared Resource, Exclusive Resource, URI");
+        this.writeLine(out, "Ide, Lock Token, Start Time, Expiry Time, Shared Resource, Exclusive Resource, URI");
         for (int i = 0; i < listLockedResources.size(); i++) {
             this.writeLine(out, listLockedResources.get(i).findAll());
         }
@@ -679,8 +668,7 @@ public class ExportController {
 
     private void writeJmxProps(BufferedWriter out) {
         listJmxProperties = jmxPropertiesMapper.findJmxProperties();
-        this.writeLine(out, "\n\nJMX Properties set in DB");
-        this.writeLine(out, "\nProperty Name, Property Value");
+        this.writeLine(out, "JMX Property Name, Property Value set on DB");
         if (listJmxProperties != null) {
             for (int i = 0; i < listJmxProperties.size(); i++) {
                 this.writeLine(out, listJmxProperties.get(i).printJmxProperties());
@@ -690,9 +678,7 @@ public class ExportController {
 
     private void writeAppliedPatches(BufferedWriter out) {
         listAppliedPatches = sqlMapper.findAppliedPatches();
-        this.writeLine(out, "\n\nApplied Patches");
-        this.writeLine(out,
-                "\nId, Applied to Schema, Applied on Date, Applied to Server, Was Executed, Succeeded, Report");
+        this.writeLine(out,"Id, Applied to Schema, Applied on Date, Applied to Server, Was Executed, Succeeded, Report");
         if (listAppliedPatches != null) {
             for (int i = 0; i < listAppliedPatches.size(); i++) {
                 this.writeLine(out, listAppliedPatches.get(i).printAppliedPatches());
