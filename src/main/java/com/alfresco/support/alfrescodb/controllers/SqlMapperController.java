@@ -93,16 +93,7 @@ public class SqlMapperController {
     }
 
     public List findLargeFolders(){
-        if (dbType.equalsIgnoreCase("postgres")){
-            return largeFolderMapper.findBySize(largeFolderSize);
-        } else if (dbType.equalsIgnoreCase("mysql")){
-            return largeFolderMapper.findBySize(largeFolderSize);
-        } else if (dbType.equalsIgnoreCase("oracle")){
-            return largeFolderMapper.findBySizeOracle(largeFolderSize);
-        } else if (dbType.equalsIgnoreCase("microsoft")){
-            return largeFolderMapper.findBySizeMSSql(largeFolderSize);
-        }
-        return null;
+        return largeFolderMapper.findBySize(largeFolderSize);
     }
 
     public List findNodesByContentType(){
