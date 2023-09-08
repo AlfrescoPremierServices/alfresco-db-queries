@@ -347,8 +347,7 @@ public class ExportController {
 
     private void writeLargeFolder(BufferedWriter out) {
         listLargeFolders = sqlMapper.findLargeFolders();
-        this.writeLine(out, "\n\nLarge Folders");
-        this.writeLine(out, "\nFolder Name, Node Reference, Type, No. of Child Nodes");
+        this.writeLine(out, "Folder Name, Node Reference, Type, No. of Child Nodes");
         if (listLargeFolders != null) {
             for (int i = 0; i < listLargeFolders.size(); i++) {
                 this.writeLine(out, listLargeFolders.get(i).printLargeFolders());
