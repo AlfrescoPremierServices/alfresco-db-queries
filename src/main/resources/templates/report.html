@@ -45,13 +45,18 @@
 
         <table class="display noPaging-noSearching">
             <thead>
-            <td>
-                <p></p>
-                <th>Name:   </th>
-                <td th:text="${reportFile}"></td>
+            <tr>
+                <td>Generated Files:</td>
             </tr>
             </thead>
+            <tbody>
+            <tr th:each="generatedFile : ${generatedFiles}">
+                <td th:text="${generatedFile}"></td>
+            </tr>
+            <tr><td th:text="${reportFile}"></td></tr>
+            </tbody>
         </table>
+
         </p>
     </div>
 
