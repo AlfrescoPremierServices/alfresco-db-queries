@@ -64,7 +64,7 @@ Copy the application.properties file to the same folder as the jar file and exec
 
 ```sh
 $ cd target
-$ java -jar alfresco-db-0.0.1-SNAPSHOT.jar
+$ java --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED -jar alfresco-db-0.0.1-SNAPSHOT.jar
 ```
 Finally connect to the running application on [http://localhost:8888](http://localhost:8888) or the port specified by "server.port" parameter in application.properties. 
 
