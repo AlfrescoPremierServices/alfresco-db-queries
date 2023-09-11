@@ -124,7 +124,7 @@ public interface NodeListMapper {
             "GROUP BY stores.protocol, stores.identifier ")
     List<NodesList> findNodesByStoreMSSql();
 
-    @Select("SELECT (sum(content_size) / 1024 / 1024) diskSpace " +
+    @Select("SELECT (sum(convert(bigint,content_size)) / 1024 / 1024) diskSpace " +
             "FROM alf_content_url")
     List<NodesList> findNodesSizeMSSql();
 
@@ -136,4 +136,18 @@ public interface NodeListMapper {
             "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
             "GROUP BY substring(nodes.audit_created, 0, 8), nodes.type_qname_id, names.local_name, ns.uri ")
     List<NodesList> findNodesByContentTypeAndMonthMSSql();
+
+    @Select("SELECT mimetype_str mimeType, count(*) occurrences, (sum(convert(bigint,content_size)) / 1024 / 1024) diskSpace " +
+            "FROM alf_content_data  content, alf_content_url  contentUrl, alf_mimetype  mime, alf_node nodes, alf_node_properties nodes_props " +
+            "WHERE content.content_mimetype_id = mime.id " +
+            "AND contentUrl.id = content.content_url_id " +
+            "AND nodes.id = nodes_props.node_id AND nodes_props.long_value = content.id " +
+            "AND nodes_props.qname_id in (select id from alf_qname where local_name = 'content') " +
+            "AND nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
+            "GROUP BY mimetype_str")
+    List<NodesList> findNodesSizeByMimeTypeMSSql();
+
+
+
+
 }
