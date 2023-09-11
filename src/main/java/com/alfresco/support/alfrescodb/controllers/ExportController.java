@@ -289,7 +289,7 @@ public class ExportController {
             out.write(str);
         } catch (IOException ioex) {
             logger.error("Exception while writing to file", ioex);
-            System.out.println("Exception while writing to file");
+            //System.out.println("Exception while writing to file");
             ioex.printStackTrace();
         }
     }
