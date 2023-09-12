@@ -76,7 +76,9 @@ public class SqlMapperController {
     }
 
     public List findNodesSizeByMimeType(){
-        return nodeListMapper.findNodesSizeByMimeType();
+        if (dbType.equalsIgnoreCase("microsoft")){
+            return nodeListMapper.findNodesSizeByMimeTypeMSSql();
+        } else return nodeListMapper.findNodesSizeByMimeType();
     }
 
     public List findNodesByStore(){
