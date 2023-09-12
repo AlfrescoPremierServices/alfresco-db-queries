@@ -39,6 +39,10 @@ import com.alfresco.support.alfrescodb.model.Workflow;
 public class ExportController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public static String EXPORT_CSV = "csv";
+    public static String EXPORT_TXT = "txt";
+    public static String EXPORT_JSON = "json";
+
     @Autowired
     SqlMapperController sqlMapper;
 
@@ -68,6 +72,9 @@ public class ExportController {
 
     @Value("${reportSplit}")
     private boolean multiReportFile;
+
+    @Value("${reportExportType}")
+    private String reportExportType;
 
     @Value("${spring.datasource.platform}")
     private String dbType;
@@ -127,8 +134,9 @@ public class ExportController {
     private List<AppliedPatches> listAppliedPatches;
 
     public void exportReport(Model model) {
+        checkExportType();
         try {
-            logger.debug("Full Export started. Multifile: " + multiReportFile);
+            logger.debug("Full Export started. Multifile: " + multiReportFile + "; Export Type: " + reportExportType);
             BufferedWriter out;
             List<String> generatedFiles = new ArrayList<String>();
             if (multiReportFile) {
@@ -270,6 +278,17 @@ public class ExportController {
         }
     }
 
+    /** Utlity to check the validity of reportExportType paramater. If the value is invalid is reset to EXPORT_TXT */
+    private void checkExportType() {
+        String tmp = reportExportType.toLowerCase();
+        if (EXPORT_CSV.equals(tmp) || EXPORT_JSON.equals(tmp) || EXPORT_TXT.equals(tmp)) {
+            logger.trace("reportExportType has a valid value");
+        } else {
+            reportExportType = EXPORT_TXT;
+            logger.warn("reportExportType has a invalid value, reset to default txt");
+        }
+    }
+
     /** Utility to centralize the creation of new output file */
     private BufferedWriter prepareOutputFile(String name) throws IOException {
         logger.debug("Creating new output file: " + name);
@@ -303,11 +322,6 @@ public class ExportController {
             for (int i = 0; i < listRelationInfos.size(); i++) {
                 this.writeLine(out, listRelationInfos.get(i).printDbInfo());
             }
-
-            String dbSize = sqlMapper.findDbSize();
-            this.writeLine(out, "\n\nDatabase Size");
-            this.writeLine(out, "\nSize");
-            this.writeLine(out, dbSize);
 
         } else if (dbType.equalsIgnoreCase("oracle")) {
             List<OracleRelationInfo> OracleListRelationInfos = sqlMapper.findTablesInfo();
@@ -676,7 +690,8 @@ public class ExportController {
 
     private void writeAppliedPatches(BufferedWriter out) {
         listAppliedPatches = sqlMapper.findAppliedPatches();
-        this.writeLine(out,"Id, Applied to Schema, Applied on Date, Applied to Server, Was Executed, Succeeded, Report");
+        this.writeLine(out,
+                "Id, Applied to Schema, Applied on Date, Applied to Server, Was Executed, Succeeded, Report");
         if (listAppliedPatches != null) {
             for (int i = 0; i < listAppliedPatches.size(); i++) {
                 this.writeLine(out, listAppliedPatches.get(i).printAppliedPatches());
