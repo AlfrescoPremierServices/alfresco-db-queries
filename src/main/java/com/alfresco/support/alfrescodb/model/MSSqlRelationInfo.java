@@ -1,6 +1,7 @@
 package com.alfresco.support.alfrescodb.model;
 
 public class MSSqlRelationInfo {
+    private String SchemaName;
     private String TableName;
 	private String RowCounts;
 	private String TotalSpace;
@@ -10,7 +11,15 @@ public class MSSqlRelationInfo {
     private String IndexSize;
     private String IndexID;
 
-	public void setTableName(String TableName) {
+	public void setSchemaName(String SchemaName) {
+		this.SchemaName = SchemaName;
+	}
+
+	public String getSchemaName(){
+		return this.SchemaName;
+	}
+    
+    public void setTableName(String TableName) {
 		this.TableName = TableName;
 	}
 
@@ -75,10 +84,10 @@ public class MSSqlRelationInfo {
     }
 
     public String printTableInfo() {
-		return String.format("\n%s, %s, %s, %s, %s ", TableName, RowCounts, TotalSpace, UsedSpace, UnUsedSpace);
+		return String.format("\n%s, %s, %s, %s, %s, %s ", SchemaName, TableName, RowCounts, TotalSpace, UsedSpace, UnUsedSpace);
 	}
 
     public String printIndexInfo() {
-        return String.format("\n%s, %s, %s ", TableName, IndexName, IndexSize);
+        return String.format("\n%s, %s, %s, %s ", SchemaName, TableName, IndexName, IndexSize);
     }
 }

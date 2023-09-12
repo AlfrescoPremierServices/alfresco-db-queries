@@ -56,7 +56,7 @@ public interface DbSizeMapper {
 
     // MS SQL Queries
     @Select("SELECT \n" +
-            " t.NAME AS TableName, p.rows AS RowCounts,\n" +
+            " s.Name as SchemaName, t.NAME AS TableName, p.rows AS RowCounts,\n" +
             " (SUM(a.total_pages) * 8 * 1024) AS TotalSpace, \n" +
             " (SUM(a.used_pages) * 8 * 1024) AS UsedSpace, \n" +
             " ((SUM(a.total_pages) - SUM(a.used_pages)) * 8 *1024 ) AS UnusedSpace \n" +
@@ -74,13 +74,15 @@ public interface DbSizeMapper {
     List<MSSqlRelationInfo> findTablesInfoMSSql();
 
     @Select("SELECT\n" +
-            " OBJECT_NAME(i.OBJECT_ID) AS TableName,\n" +
+            " s.Name as SchemaName, OBJECT_NAME(i.OBJECT_ID) AS TableName,\n" +
             " i.name AS IndexName,\n" +
             " i.index_id AS IndexID,\n" +
             " (8 * SUM(a.used_pages) * 1024) AS 'IndexSize'\n" +
             "FROM sys.indexes AS i\n" +
             "JOIN sys.partitions AS p ON p.OBJECT_ID = i.OBJECT_ID AND p.index_id = i.index_id \n" +
             "JOIN sys.allocation_units AS a ON a.container_id = p.partition_id \n" +
+            "JOIN sys.tables t ON t.OBJECT_ID = i.object_id \n" + 
+            "JOIN sys.schemas s ON s.schema_id = t.schema_id \n" +
             "GROUP BY i.OBJECT_ID,i.index_id,i.name")
     List<MSSqlRelationInfo> findIndexesInfoMSSql();
 

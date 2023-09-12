@@ -328,8 +328,7 @@ public class ExportController {
         } else if (dbType.equalsIgnoreCase("microsoft")) {
             List<MSSqlRelationInfo> MSSqlListRelationInfos = sqlMapper.findTablesInfo();
 
-            this.writeLine(out, "\nTables Size");
-            this.writeLine(out, "\nTable Name, Rows Count, Total Space KB, Used Space KB, Unused Space KB");
+            this.writeLine(out, "Table Schema, Table Name, Rows Count, Total Space KB, Used Space KB, Unused Space KB");
             for (int i = 0; i < listRelationInfos.size(); i++) {
                 this.writeLine(out, MSSqlListRelationInfos.get(i).printTableInfo());
             }
@@ -337,7 +336,7 @@ public class ExportController {
             List<MSSqlRelationInfo> MSSqlListIndexesInfos = dbSizeMapper.findIndexesInfoMSSql();
 
             this.writeLine(out, "\n\nIndexes Size");
-            this.writeLine(out, "\nTable Name, Index Name, Index Size KB");
+            this.writeLine(out, "\nTable Schema, Table Name, Index Name, Index Size KB");
             for (int i = 0; i < MSSqlListIndexesInfos.size(); i++) {
                 this.writeLine(out, MSSqlListIndexesInfos.get(i).printIndexInfo());
             }
