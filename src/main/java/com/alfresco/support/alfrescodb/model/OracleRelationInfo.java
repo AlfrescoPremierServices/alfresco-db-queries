@@ -3,7 +3,7 @@ package com.alfresco.support.alfrescodb.model;
 public class OracleRelationInfo {
     private String tableName;
     private String indexName;
-    private String sizeMB;
+    private String size;
 
 
 	public void setTableName(String tableName) {
@@ -22,19 +22,19 @@ public class OracleRelationInfo {
         return this.indexName;
     }
 
-    public void setSizeMB(String sizeMB) {
-        this.sizeMB = sizeMB;
+    public void setsize(String size) {
+        this.size = size;
     }
 
-    public String getSizeMB(){
-        return this.sizeMB;
+    public String getsize(){
+        return this.size;
     }
 
     public String printTableInfo() {
-		return String.format("\n%s, %s ", tableName, sizeMB);
+		return String.format("\n%s, %s ", tableName, size);
 	}
 
     public String printIndexInfo() {
-        return String.format("\n%s, %s, %s ", tableName, indexName, sizeMB);
+        return String.format("\n%s, %s, %s ", tableName, indexName, size);
     }
 }

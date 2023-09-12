@@ -289,7 +289,6 @@ public class ExportController {
             out.write(str);
         } catch (IOException ioex) {
             logger.error("Exception while writing to file", ioex);
-            System.out.println("Exception while writing to file");
             ioex.printStackTrace();
         }
     }
@@ -299,7 +298,7 @@ public class ExportController {
         listRelationInfos = sqlMapper.findTablesInfo();
 
         if (dbType.equalsIgnoreCase("mysql") || dbType.equalsIgnoreCase("postgres")) {
-            this.writeLine(out, "\nTable Name, Total Size, Row Estimate, Table Size, Index Size");
+            this.writeLine(out, "Table Schema, Table Name, Total Size, Row Estimate, Table Size, Index Size");
 
             for (int i = 0; i < listRelationInfos.size(); i++) {
                 this.writeLine(out, listRelationInfos.get(i).printDbInfo());
