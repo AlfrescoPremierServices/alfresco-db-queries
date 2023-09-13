@@ -1,61 +1,64 @@
 package com.alfresco.support.alfrescodb.model;
 
+import com.alfresco.support.alfrescodb.controllers.ExportController;
+import com.github.dandelion.datatables.core.export.ExportConf;
+
 public class MSSqlRelationInfo {
     private String SchemaName;
     private String TableName;
-	private String RowCounts;
-	private String TotalSpace;
+    private String RowCounts;
+    private String TotalSpace;
     private String UsedSpace;
     private String UnUsedSpace;
     private String IndexName;
     private String IndexSize;
     private String IndexID;
 
-	public void setSchemaName(String SchemaName) {
-		this.SchemaName = SchemaName;
-	}
+    public void setSchemaName(String SchemaName) {
+        this.SchemaName = SchemaName;
+    }
 
-	public String getSchemaName(){
-		return this.SchemaName;
-	}
-    
+    public String getSchemaName() {
+        return this.SchemaName;
+    }
+
     public void setTableName(String TableName) {
-		this.TableName = TableName;
-	}
+        this.TableName = TableName;
+    }
 
-	public String getTableName(){
-		return this.TableName;
-	}
-	
-	public void setRowCounts(String RowCounts) {
-		this.RowCounts = RowCounts;
-	}
+    public String getTableName() {
+        return this.TableName;
+    }
 
-	public String getRowCounts(){
-		return this.RowCounts;
-	}	
-	
-	public void setTotalSpace(String TotalSpace) {
-		this.TotalSpace = TotalSpace;
-	}
+    public void setRowCounts(String RowCounts) {
+        this.RowCounts = RowCounts;
+    }
 
-	public String getTotalSpace(){
-		return this.TotalSpace;
-	}
+    public String getRowCounts() {
+        return this.RowCounts;
+    }
 
-	public void setUsedSpace(String UsedSpace) {
-		this.UsedSpace = UsedSpace;
-	}
+    public void setTotalSpace(String TotalSpace) {
+        this.TotalSpace = TotalSpace;
+    }
 
-	public String getUsedSpace(){
-		return this.UsedSpace;
-	}
+    public String getTotalSpace() {
+        return this.TotalSpace;
+    }
+
+    public void setUsedSpace(String UsedSpace) {
+        this.UsedSpace = UsedSpace;
+    }
+
+    public String getUsedSpace() {
+        return this.UsedSpace;
+    }
 
     public void setUnUsedSpace(String UnUsedSpace) {
         this.UnUsedSpace = UnUsedSpace;
     }
 
-    public String getUnusedSpace(){
+    public String getUnusedSpace() {
         return this.UnUsedSpace;
     }
 
@@ -63,7 +66,7 @@ public class MSSqlRelationInfo {
         this.IndexName = IndexName;
     }
 
-    public String getIndexName(){
+    public String getIndexName() {
         return this.IndexName;
     }
 
@@ -71,7 +74,7 @@ public class MSSqlRelationInfo {
         this.IndexSize = indexSize;
     }
 
-    public String getIndexSize(){
+    public String getIndexSize() {
         return this.IndexSize;
     }
 
@@ -79,15 +82,43 @@ public class MSSqlRelationInfo {
         this.IndexSize = indexID;
     }
 
-    public String getIndexID(){
+    public String getIndexID() {
         return this.IndexID;
     }
 
     public String printTableInfo() {
-		return String.format("\n%s, %s, %s, %s, %s, %s ", SchemaName, TableName, RowCounts, TotalSpace, UsedSpace, UnUsedSpace);
-	}
+        return this.printTableInfo(ExportController.EXPORT_TXT);
+    }
+
+    public String printTableInfo(String format) {
+        String res = null;
+        if (ExportController.EXPORT_CSV.equals(format)) {
+            res = String.format("\n%s,%s,%s,%s,%s,%s ", SchemaName, TableName, RowCounts, TotalSpace, UsedSpace,
+                    UnUsedSpace);
+        } else if (ExportController.EXPORT_JSON.equals(format)) {
+            res = String.format(
+                    "\n{\"SchemaName\":\"%s\", \"TableName\":\"%s\", \"RowCounts\":\"%s\", \"TotalSpace\":\"%s\", \"UsedSpace\":\"%s\", \"UnUsedSpace\":\"%s\"}",
+                    SchemaName, TableName, RowCounts, TotalSpace, UsedSpace, UnUsedSpace);
+        } else { // Default TXT
+            res = String.format("\n%s, %s, %s, %s, %s, %s ", SchemaName, TableName, RowCounts, TotalSpace, UsedSpace,
+                    UnUsedSpace);
+        }
+        return res;
+    }
 
     public String printIndexInfo() {
-        return String.format("\n%s, %s, %s, %s ", SchemaName, TableName, IndexName, IndexSize);
+        return this.printIndexInfo(ExportController.EXPORT_TXT);
+    }
+
+    public String printIndexInfo(String format) {
+		String res = null;
+		if (ExportController.EXPORT_CSV.equals(format)) {
+			res = String.format("\n%s,%s,%s,%s ", SchemaName, TableName, IndexName, IndexSize);
+		} else if (ExportController.EXPORT_JSON.equals(format)) {
+			res = String.format("\n{\"SchemaName\":\"%s\", \"TableName\":\"%s\", \"IndexName\":\"%s\", \"IndexSize\":\"%s\"}", SchemaName, TableName, IndexName, IndexSize);
+		} else { // Default TXT
+			res = String.format("\n%s, %s, %s, %s ", SchemaName, TableName, IndexName, IndexSize);
+		}
+		return res;
     }
 }

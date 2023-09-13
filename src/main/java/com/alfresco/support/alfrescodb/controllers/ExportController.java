@@ -39,9 +39,9 @@ import com.alfresco.support.alfrescodb.model.Workflow;
 public class ExportController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public static String EXPORT_CSV = "csv";
-    public static String EXPORT_TXT = "txt";
-    public static String EXPORT_JSON = "json";
+    public static final String EXPORT_CSV = "csv";
+    public static final String EXPORT_TXT = "txt";
+    public static final String EXPORT_JSON = "json";
 
     @Autowired
     SqlMapperController sqlMapper;
@@ -111,165 +111,232 @@ public class ExportController {
     @Value("${alf_auth_status}")
     private Boolean alfAuthStatus;
 
-    private List<RelationInfo> listRelationInfos;
-    private List<LargeFolder> listLargeFolders;
-    private List<LargeTransaction> listLargeTransactions;
     private List<AccessControlList> listAccessControlListEntries;
-    private List<AccessControlList> aclTypeRepartition;
-    private List<AccessControlList> aclNodeRepartition;
     private List<AccessControlList> aclsHeight;
-    private List<AccessControlList> aceAuthorities;
-    private List<ContentModelProperties> listContentModelProperties;
-    private List<ActivitiesFeed> listActivitiesFeed;
     private List<ArchivedNodes> listArchivedNodes;
-    private List<NodesList> listNodesByMimeType;
-    private List<NodesList> listNodesByType;
-    private List<NodesList> listNodesByStore;
-    private List<LockedResources> listLockedResources;
-    private List<Authority> listUsers;
-    private List<Authority> listAuthorizedUsers;
-    private List<Authority> listGroups;
-    private List<Workflow> listWorkflows;
     private List<JmxProperties> listJmxProperties;
     private List<AppliedPatches> listAppliedPatches;
 
+    private BufferedWriter out;
+
     public void exportReport(Model model) {
+        String[] headers = { "" };
+        String outputFile = this.reportFile;
+
         checkExportType();
+
         try {
             logger.debug("Full Export started. Multifile: " + multiReportFile + "; Export Type: " + reportExportType);
-            BufferedWriter out;
             List<String> generatedFiles = new ArrayList<String>();
             if (multiReportFile) {
-                reportFile = reportFile.substring(0, reportFile.length() - 4); // removing .csv
-                out = this.prepareOutputFile(reportFile + "_DBSize.csv");
-                generatedFiles.add(reportFile + "_DBSize.csv");
+                outputFile = outputFile.substring(0, outputFile.length() - 4); // removing extension e.g.: ".csv"
             } else {
-                out = this.prepareOutputFile(reportFile);
-                generatedFiles.add(reportFile);
+                out = this.prepareOutputFile(outputFile);
+                generatedFiles.add(outputFile);
+                if (EXPORT_JSON.equals(this.reportExportType)) {
+                    this.writeLine(out, "{ \"" + outputFile + "\": [");
+                }
             }
             // DB Size
+            if (dbType.equalsIgnoreCase("mysql") || dbType.equalsIgnoreCase("postgres")) {
+                headers = new String[] { "Table Schema", "Table Name", "Total Size", "Row Estimate", "Table Size",
+                        "Index Size" };
+            } else if (dbType.equalsIgnoreCase("oracle")) {
+                headers = new String[] { "Table Name", "Size" };
+            } else if (dbType.equalsIgnoreCase("microsoft")) {
+                headers = new String[] { "Table Schema", "Table Name", "Rows Count", "Total Space", "Used Space",
+                        "Unused Space" };
+            }
+
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_DBSize", headers));
             this.writeDBTableSize(out);
+
+            // DB Size - Indexes
+            if (dbType.equalsIgnoreCase("mysql") || dbType.equalsIgnoreCase("postgres")) {
+                // NOP
+            } else {
+                if (dbType.equalsIgnoreCase("oracle")) {
+                    headers = new String[] { "Table Name", "Index Name", "Index Size" };
+                } else if (dbType.equalsIgnoreCase("microsoft")) {
+                    headers = new String[] { "Table Schema", "Table Name", "Index Name", "Index Size" };
+                }
+
+                generatedFiles.add(this.prepareOutputFile(outputFile + "_DBSizeIndex", headers));
+                this.writeDBTableSize2(out);
+            }
+
             // Large folders
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(reportFile + "_LargeFolder.csv");
-                generatedFiles.add(reportFile + "_LargeFolder.csv");
-            }
+            headers = new String[] { "Folder Name", "Node Reference", "Type", "No. of Child Nodes" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_LargeFolder", headers));
             this.writeLargeFolder(out);
+
             // Large Transactions
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(reportFile + "_LargeTransaction.csv");
-                generatedFiles.add(reportFile + "_LargeTransaction.csv");
-            }
+            headers = new String[] { "Large Transaction Id", "Nodes Count" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_LargeTransaction", headers));
             this.writeLargeTransaction(out);
-            // Access Control List
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(reportFile + "_AccessControlList.csv");
-                generatedFiles.add(reportFile + "_AccessControlList.csv");
-            }
-            this.writeLargeACL(out);
-            // Content Model Properties List
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(reportFile + "_ContentModelProperties.csv");
-                generatedFiles.add(reportFile + "_ContentModelProperties.csv");
-            }
+
+            // Access Control List 1 - Nodes repartition
+            headers = new String[] { "ACL ID", "Nodes" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_AccessControlList1", headers));
+            this.writeLargeACL1(out);
+
+            // Access Control List 2 - Type repartition
+            headers = new String[] { "ACL type", "Count" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_AccessControlList2", headers));
+            this.writeLargeACL2(out);
+
+            // Access Control List 3 - Number of ACEs in ACLs
+            headers = new String[] { "ACL ID", "ACE count" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_AccessControlList3", headers));
+            this.writeLargeACL3(out);
+
+            // Access Control List 4 -
+            headers = new String[] { "ACE Permission", "Occurrences" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_AccessControlList4", headers));
+            this.writeLargeACL4(out);
+
+            // Access Control List 5 - Authorities & ACEs
+            headers = new String[] { "Authority hash", "ACEs" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_AccessControlList5", headers));
+            this.writeLargeACL5(out);
+
+            // NEW ACL/ACE Totals
+            headers = new String[] { "Access Control List Size", "Orphaned ACLs", "Access Control List Entries" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_AccessControlListTotals", headers));
+            this.writeACLTotals(out);
+
+            // Content Model URIs
+            headers = new String[] { "Content Model URI", "Property" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_ContentModelProperties", headers));
             this.writeContentModelProps(out);
-            // Activities
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(reportFile + "_Activities.csv");
-                generatedFiles.add(reportFile + "_Activities.csv");
-            }
-            this.writeActivities(out);
-            /* Workflows */
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(reportFile + "_Workflows.csv");
-                generatedFiles.add(reportFile + "_Workflows.csv");
-            }
-            this.writeWorkflows(out);
-            // Archived Nodes
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(reportFile + "_ArchivedNodes.csv");
-                generatedFiles.add(reportFile + "_ArchivedNodes.csv");
-            }
-            this.writeArchivedNodes(out);
+
+            // Activities 1 - Activities by Type
+            headers = new String[] { "Date", "Site Network", "Activity Type", "Activities Count" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_Activities_by_type", headers));
+            this.writeActivities1(out);
+
+            // Activities 2 - Activities by User
+            headers = new String[] { "Date", "Site Network", "User Id", "Activities Count" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_Activities_by_user", headers));
+            this.writeActivities2(out);
+
+            // Activities 3 - Activities by Application Interface
+            headers = new String[] { "Date", "Site Network", "Application Interface", "Activities Count" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_Activities_by_API", headers));
+            this.writeActivities3(out);
+
+            // Workflows 1 - All Workflows Grouped by Process Definition and Task Name
+            headers = new String[] { "Process Definition", "Task Name", "No Occurrences" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_Workflows_by_proc_and_taskname", headers));
+            this.writeWorkflows1(out);
+
+            // Workflows 2 - Open Workflows
+            headers = new String[] { "Process Definition", "No Occurrences" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_Workflows_open", headers));
+            this.writeWorkflows2(out);
+
+            // Workflows 3 - Closed Workflows
+            headers = new String[] { "Process Definition", "No Occurrences" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_Workflows_closed", headers));
+            this.writeWorkflows3(out);
+
+            // Workflows 4 - Open tasks
+            headers = new String[] { "Process Definition", "Task Name", "No Occurrences" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_Workflows_task_open", headers));
+            this.writeWorkflows4(out);
+
+            // Workflows 5 - Closed Tasks
+            headers = new String[] { "Process Definition", "Task Name", "No Occurrences" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_Workflows_task_closed", headers));
+            this.writeWorkflows5(out);
+
+            // Archived Nodes 1 - All archived
+            headers = new String[] { "All Archived Nodes" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_ArchivedNodes_all", headers));
+            this.writeArchivedNodes1(out);
+
+            // Archived Nodes 2 - Archived by user
+            headers = new String[] { "Archived Nodes", "User" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_ArchivedNodes_by_user", headers));
+            this.writeArchivedNodes2(out);
+
             // List Nodes by Mimetype
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(reportFile + "_NodesByMimetype.csv");
-                generatedFiles.add(reportFile + "_NodesByMimetype.csv");
-            }
+            headers = new String[] { "Mime Type", "Nodes Count", "Disk Space" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_NodesByMimetype", headers));
             this.writeNodesByMimetype(out);
-            // Nodes disk space -- commented out as it's not actually printing on file
-            // if (multiReportFile) {
-            // out.close();
-            // out = this.prepareOutputFile(reportFile + "_NodesDiskSpace.csv");
-            // generatedFiles.add(reportFile + "_NodesDiskSpace.csv");
-            // }
-            // this.writeNodesDiskSpace(out);
+
             // List Nodes by Content Type
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(reportFile + "_NodesByContentType.csv");
-                generatedFiles.add(reportFile + "_NodesByContentType.csv");
-            }
+            headers = new String[] { "Node Type", "Nodes Count" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_NodesByContentType", headers));
             this.writeNodesByContentType(out);
+
             // List Nodes by Content Type per month
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(reportFile + "_NodesByContentTypeAndMonth.csv");
-                generatedFiles.add(reportFile + "_NodesByContentTypeAndMonth.csv");
-            }
+            headers = new String[] { "Date", "Node Type", "Nodes Count" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_NodesByContentTypeAndMonth", headers));
             this.writeNodesByContentTypeAndMonth(out);
+
             // List Nodes by Store
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(reportFile + "_NodesByStore.csv");
-                generatedFiles.add(reportFile + "_NodesByStore.csv");
-            }
+            headers = new String[] { "Store", "Nodes Count" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_NodesByStore", headers));
             this.writeNodesByStore(out);
+
             // Resource Locking
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(reportFile + "_ResourceLocking.csv");
-                generatedFiles.add(reportFile + "_ResourceLocking.csv");
-            }
+            headers = new String[] { "Ide", " Lock Token", " Start Time", " Expiry Time", " Shared Resource",
+                    " Exclusive Resource", " URI" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_ResourceLocking", headers));
             this.writeResouceLocking(out);
-            // Authorities
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(reportFile + "_Authorities.csv");
-                generatedFiles.add(reportFile + "_Authorities.csv");
-            }
-            this.writeAuthorities(out);
+
+            // Authorities 1 - Users Count
+            headers = new String[] { "Users Count" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_Authorities_users_count", headers));
+            this.writeAuthorities1(out);
+
+            // Authorities 2 - Authorized Users Count
+            headers = new String[] { "Authorized Users Count" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_Authorities_users_authorized", headers));
+            this.writeAuthorities2(out);
+
+            // Authorities 3 -
+            headers = new String[] { "Groups Count" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_Authorities_groups_count", headers));
+            this.writeAuthorities3(out);
+
+
+
+            //XXXXXXXX
+
             // Solr memory
             if (multiReportFile) {
                 out.close();
-                out = this.prepareOutputFile(reportFile + "_SolrMemory.csv");
-                generatedFiles.add(reportFile + "_SolrMemory.csv");
+                out = this.prepareOutputFile(outputFile + "_SolrMemory.csv");
+                generatedFiles.add(outputFile + "_SolrMemory.csv");
             }
             this.writeSolrMemory(out);
             // JMX Properties
             if (multiReportFile) {
                 out.close();
-                out = this.prepareOutputFile(reportFile + "_JMXProperties.csv");
-                generatedFiles.add(reportFile + "_JMXProperties.csv");
+                out = this.prepareOutputFile(outputFile + "_JMXProperties.csv");
+                generatedFiles.add(outputFile + "_JMXProperties.csv");
             }
             this.writeJmxProps(out);
             // Applied Patches
             if (multiReportFile) {
                 out.close();
-                out = this.prepareOutputFile(reportFile + "_AppliedPatches.csv");
-                generatedFiles.add(reportFile + "_AppliedPatches.csv");
+                out = this.prepareOutputFile(outputFile + "_AppliedPatches.csv");
+                generatedFiles.add(outputFile + "_AppliedPatches.csv");
             }
             this.writeAppliedPatches(out);
 
             model.addAttribute("generatedFiles", generatedFiles);
+
+
+            if (EXPORT_JSON.equals(this.reportExportType)) {
+                if (!multiReportFile) {
+                    this.writeLine(out, "]}"); //Close the single file
+                }
+                this.writeLine(out, "]}");
+            }
+
             out.close();
             logger.debug("Full Export  ended!");
         } catch (IOException e) {
@@ -278,22 +345,27 @@ public class ExportController {
         }
     }
 
-    /** Utlity to check the validity of reportExportType paramater. If the value is invalid is reset to EXPORT_TXT */
+    /*
+     * Utlity to check the validity of reportExportType paramater. If the value is
+     * invalid is reset to EXPORT_TXT
+     */
     private void checkExportType() {
-        String tmp = reportExportType.toLowerCase();
-        if (EXPORT_CSV.equals(tmp) || EXPORT_JSON.equals(tmp) || EXPORT_TXT.equals(tmp)) {
+        this.reportExportType = this.reportExportType.toLowerCase();
+
+        if (EXPORT_CSV.equals(this.reportExportType) || EXPORT_JSON.equals(this.reportExportType)
+                || EXPORT_TXT.equals(this.reportExportType)) {
             logger.trace("reportExportType has a valid value");
         } else {
-            reportExportType = EXPORT_TXT;
+            this.reportExportType = EXPORT_TXT;
             logger.warn("reportExportType has a invalid value, reset to default txt");
         }
     }
 
-    /** Utility to centralize the creation of new output file */
+    /* Utility to centralize the creation of new output file */
     private BufferedWriter prepareOutputFile(String name) throws IOException {
         logger.debug("Creating new output file: " + name);
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(name));
+            this.out = new BufferedWriter(new FileWriter(name));
             return out;
         } catch (IOException ioex) {
             logger.error("Exception creating output file: " + name, ioex);
@@ -301,7 +373,55 @@ public class ExportController {
         }
     }
 
-    /** This is the only method that actually write to the file provided */
+    /* Utility to centralize the creation of new output file. */
+    private String prepareOutputFile(String name, String[] headers) throws IOException {
+        String outputFileName = name + "." + this.reportExportType;
+
+        // Close the previous JSon file if necessary
+        if (EXPORT_JSON.equals(this.reportExportType) && out != null) {
+            this.writeLine(out, "]}"); // Close the previous Json file
+        }
+
+        // Check if you need to open a new file
+        if (multiReportFile) {
+            if (out != null) {
+                out.close();
+            }
+            out = this.prepareOutputFile(outputFileName);
+        } else {
+            if (EXPORT_TXT.equals(this.reportExportType)) {
+                this.writeLine(out, "\n\n");
+            } else if (EXPORT_CSV.equals(this.reportExportType)) {
+                this.writeLine(out, "\n\n");
+            } else {
+                this.writeLine(out, ",");
+            }
+            outputFileName = null;
+        }
+
+        // Calculate the Header section to write
+        String headerString = "";
+        if (EXPORT_CSV.equals(this.reportExportType)) {
+            headerString = headers[0];
+            for (int i = 1; i < headers.length; i++) {
+                headerString += "," + headers[i];
+            }
+        } else if (EXPORT_TXT.equals(this.reportExportType)) {
+            headerString = headers[0];
+            for (int i = 1; i < headers.length; i++) {
+                headerString += ", " + headers[i];
+            }
+        } else {
+            headerString = "{ \"" + name + "\": [";
+        }
+        // Write the headers
+        writeLine(out, headerString);
+
+        // Return the filename generated
+        return outputFileName;
+    }
+
+    /* This is the only method that actually write to the file provided */
     private void writeLine(BufferedWriter out, String str) {
         try {
             logger.trace("Writing to file: " + str);
@@ -312,312 +432,348 @@ public class ExportController {
         }
     }
 
+    /* Utility to complete the line written on filw */
+    private void writeEndLine(int actualIndex, int size) {
+        if ((actualIndex < size - 1) && EXPORT_JSON.equals(this.reportExportType)) {
+            try {
+                out.write(",");
+            } catch (IOException ioex) {
+                logger.error("Exception while writing to file", ioex);
+                ioex.printStackTrace();
+            }
+        }
+    }
+
     private void writeDBTableSize(BufferedWriter out) {
-        // Database Size
-        listRelationInfos = sqlMapper.findTablesInfo();
+        List<RelationInfo> listRelationInfos = sqlMapper.findTablesInfo();
 
         if (dbType.equalsIgnoreCase("mysql") || dbType.equalsIgnoreCase("postgres")) {
-            this.writeLine(out, "Table Schema, Table Name, Total Size, Row Estimate, Table Size, Index Size");
-
             for (int i = 0; i < listRelationInfos.size(); i++) {
-                this.writeLine(out, listRelationInfos.get(i).printDbInfo());
+                this.writeLine(out, listRelationInfos.get(i).printDbInfo(this.reportExportType));
+                this.writeEndLine(i, listRelationInfos.size());
             }
-
         } else if (dbType.equalsIgnoreCase("oracle")) {
-            List<OracleRelationInfo> OracleListRelationInfos = sqlMapper.findTablesInfo();
-
-            this.writeLine(out, "\nTables Size");
-            this.writeLine(out, "\nTable Name, Size MB");
-            for (int i = 0; i < OracleListRelationInfos.size(); i++) {
-                this.writeLine(out, OracleListRelationInfos.get(i).printTableInfo());
-            }
-
-            List<OracleRelationInfo> OracleListIndexesInfos = dbSizeMapper.findIndexesInfoOracle();
-
-            this.writeLine(out, "\n\nIndexes Size");
-            this.writeLine(out, "\nTable Name, Index Name, Index Size MB");
-            for (int i = 0; i < OracleListIndexesInfos.size(); i++) {
-                this.writeLine(out, OracleListIndexesInfos.get(i).printIndexInfo());
+            List<OracleRelationInfo> oracleListRelationInfos = sqlMapper.findTablesInfo();
+            for (int i = 0; i < oracleListRelationInfos.size(); i++) {
+                this.writeLine(out, oracleListRelationInfos.get(i).printTableInfo(this.reportExportType));
+                this.writeEndLine(i, oracleListRelationInfos.size());
             }
         } else if (dbType.equalsIgnoreCase("microsoft")) {
-            List<MSSqlRelationInfo> MSSqlListRelationInfos = sqlMapper.findTablesInfo();
-
-            this.writeLine(out, "Table Schema, Table Name, Rows Count, Total Space KB, Used Space KB, Unused Space KB");
+            List<MSSqlRelationInfo> mSSqlListRelationInfos = sqlMapper.findTablesInfo();
             for (int i = 0; i < listRelationInfos.size(); i++) {
-                this.writeLine(out, MSSqlListRelationInfos.get(i).printTableInfo());
+                this.writeLine(out, mSSqlListRelationInfos.get(i).printTableInfo(this.reportExportType));
+                this.writeEndLine(i, mSSqlListRelationInfos.size());
             }
+        }
+    }
 
-            List<MSSqlRelationInfo> MSSqlListIndexesInfos = dbSizeMapper.findIndexesInfoMSSql();
+    private void writeDBTableSize2(BufferedWriter out) {
+        // Database Size
+        if (dbType.equalsIgnoreCase("mysql") || dbType.equalsIgnoreCase("postgres")) {
 
-            this.writeLine(out, "\n\nIndexes Size");
-            this.writeLine(out, "\nTable Schema, Table Name, Index Name, Index Size KB");
-            for (int i = 0; i < MSSqlListIndexesInfos.size(); i++) {
-                this.writeLine(out, MSSqlListIndexesInfos.get(i).printIndexInfo());
+        } else if (dbType.equalsIgnoreCase("oracle")) {
+            List<OracleRelationInfo> oracleListIndexesInfos = dbSizeMapper.findIndexesInfoOracle();
+
+            for (int i = 0; i < oracleListIndexesInfos.size(); i++) {
+                this.writeLine(out, oracleListIndexesInfos.get(i).printIndexInfo(this.reportExportType));
+                this.writeEndLine(i, oracleListIndexesInfos.size());
+            }
+        } else if (dbType.equalsIgnoreCase("microsoft")) {
+            List<MSSqlRelationInfo> mSSqlListIndexesInfos = dbSizeMapper.findIndexesInfoMSSql();
+
+            for (int i = 0; i < mSSqlListIndexesInfos.size(); i++) {
+                this.writeLine(out, mSSqlListIndexesInfos.get(i).printIndexInfo(this.reportExportType));
+                this.writeEndLine(i, mSSqlListIndexesInfos.size());
             }
         }
     }
 
     private void writeLargeFolder(BufferedWriter out) {
-        listLargeFolders = sqlMapper.findLargeFolders();
-        this.writeLine(out, "Folder Name, Node Reference, Type, No. of Child Nodes");
+        List<LargeFolder> listLargeFolders = sqlMapper.findLargeFolders();
         if (listLargeFolders != null) {
             for (int i = 0; i < listLargeFolders.size(); i++) {
-                this.writeLine(out, listLargeFolders.get(i).printLargeFolders());
+                this.writeLine(out, listLargeFolders.get(i).printLargeFolders(this.reportExportType));
+                this.writeEndLine(i, listLargeFolders.size());
             }
         }
     }
 
     private void writeLargeTransaction(BufferedWriter out) {
-        listLargeTransactions = largeTransactionMapper.findBySize(largeTransactionSize);
-        this.writeLine(out, "Large Transaction Id, Nodes Count");
+        List<LargeTransaction> listLargeTransactions = largeTransactionMapper.findBySize(largeTransactionSize);
         if (listLargeTransactions != null) {
             for (int i = 0; i < listLargeTransactions.size(); i++) {
-                this.writeLine(out, listLargeTransactions.get(i).printLargeTransactions());
+                this.writeLine(out, listLargeTransactions.get(i).printLargeTransactions(this.reportExportType));
+                this.writeEndLine(i, listLargeTransactions.size());
             }
         }
     }
 
-    private void writeLargeACL(BufferedWriter out) {
-        String aclSize = sqlMapper.findAccessControlList();
-        this.writeLine(out, "\n\nAccess Control List Size");
-        this.writeLine(out, "\n" + aclSize);
+    /* This collects some data and print them together */
+    private void writeACLTotals(BufferedWriter out) {
 
+        String aclSize = sqlMapper.findAccessControlList();
+        String orphanedAcls = sqlMapper.findOrphanedAcls();
+
+        Integer aceSize = 0; // This need some calculation
         listAccessControlListEntries = sqlMapper.findAccessControlListEntries();
-        Integer aceSize = 0;
         for (int i = 0; i < listAccessControlListEntries.size(); i++) {
             Integer count = Integer.valueOf(listAccessControlListEntries.get(i).getPermissionCount());
             aceSize = aceSize + count;
         }
 
-        String orphanedAcls = sqlMapper.findOrphanedAcls();
-        this.writeLine(out, "\n\nOrphaned ACLs");
-        this.writeLine(out, "\n" + orphanedAcls);
+        String res = null;
+        if (EXPORT_CSV.equals(this.reportExportType)) {
+            res = String.format("\n%s,%s,%s", aclSize, orphanedAcls, aceSize);
+        } else if (EXPORT_JSON.equals(this.reportExportType)) {
+            res = String.format("\n{\"aclSize\":\"%s\", \"orphanedAcls\":\"%s\", \"aceSize\":\"%s\"}", aclSize,
+                    orphanedAcls, aceSize);
+        } else { // Default TXT
+            res = String.format("\n%s, %s, %s", aclSize, orphanedAcls, aceSize);
+        }
 
-        aclNodeRepartition = sqlMapper.findACLNodeRepartition();
-        this.writeLine(out, "\n\nNodes Repartition");
-        this.writeLine(out, "\nACL ID, Nodes");
+        this.writeLine(out, res);
+    }
+
+    private void writeLargeACL1(BufferedWriter out) {
+        List<AccessControlList> aclNodeRepartition = sqlMapper.findACLNodeRepartition();
         if (aclNodeRepartition != null) {
             for (int i = 0; i < aclNodeRepartition.size(); i++) {
-                this.writeLine(out, aclNodeRepartition.get(i).printAclNode());
+                this.writeLine(out, aclNodeRepartition.get(i).printAclNode(this.reportExportType));
+                this.writeEndLine(i, aclNodeRepartition.size());
             }
         }
+    }
 
-        aclTypeRepartition = sqlMapper.findAclTypeRepartition();
-        this.writeLine(out, "\n\nType repartition");
-        this.writeLine(out, "\nACL type, Count");
+    private void writeLargeACL2(BufferedWriter out) {
+        List<AccessControlList> aclTypeRepartition = sqlMapper.findAclTypeRepartition();
         if (aclTypeRepartition != null) {
             for (int i = 0; i < aclTypeRepartition.size(); i++) {
-                this.writeLine(out, aclTypeRepartition.get(i).printAclType());
+                this.writeLine(out, aclTypeRepartition.get(i).printAclType(this.reportExportType));
+                this.writeEndLine(i, aclTypeRepartition.size());
             }
         }
+    }
 
+    private void writeLargeACL3(BufferedWriter out) {
         aclsHeight = sqlMapper.findAclsHeight();
-        this.writeLine(out, "\n\nNumber of ACEs in ACLs");
-        this.writeLine(out, "\nACL ID, ACE count");
         for (int i = 0; i < aclsHeight.size(); i++) {
-            this.writeLine(out, aclsHeight.get(i).printAclHeight());
+            this.writeLine(out, aclsHeight.get(i).printAclHeight(this.reportExportType));
+            this.writeEndLine(i, aclsHeight.size());
         }
 
-        this.writeLine(out, "\n\nAccess Control List Entries");
-        this.writeLine(out, "\nSize");
-        this.writeLine(out, "\n" + String.valueOf(aceSize));
+    }
 
-        this.writeLine(out, "\n\nACE Permission, Occurrences");
+    private void writeLargeACL4(BufferedWriter out) {
         if (listAccessControlListEntries != null) {
             for (int i = 0; i < listAccessControlListEntries.size(); i++) {
-                this.writeLine(out, listAccessControlListEntries.get(i).printAccessControlListEntries());
+                this.writeLine(out,
+                        listAccessControlListEntries.get(i).printAccessControlListEntries(this.reportExportType));
+                this.writeEndLine(i, listAccessControlListEntries.size());
             }
         }
+    }
 
-        aceAuthorities = sqlMapper.findACEAuthorities();
-        this.writeLine(out, "\n\nAuthorities & ACEs");
-        this.writeLine(out, "\nAuthority hash, ACEs");
+    private void writeLargeACL5(BufferedWriter out) {
+        List<AccessControlList> aceAuthorities = sqlMapper.findACEAuthorities();
         if (aceAuthorities != null) {
             for (int i = 0; i < aceAuthorities.size(); i++) {
-                this.writeLine(out, aceAuthorities.get(i).printAuthorityAce());
+                this.writeLine(out, aceAuthorities.get(i).printAuthorityAce(this.reportExportType));
+                this.writeEndLine(i, aceAuthorities.size());
             }
         }
     }
 
     private void writeContentModelProps(BufferedWriter out) {
-        listContentModelProperties = sqlMapper.findContentModelProperties();
-        this.writeLine(out, "Content Model URI, Property");
+        List<ContentModelProperties> listContentModelProperties = sqlMapper.findContentModelProperties();
         if (listContentModelProperties != null) {
             for (int i = 0; i < listContentModelProperties.size(); i++) {
-                this.writeLine(out, listContentModelProperties.get(i).printContentModelProperties());
+                this.writeLine(out,
+                        listContentModelProperties.get(i).printContentModelProperties(this.reportExportType));
+                this.writeEndLine(i, listContentModelProperties.size());
             }
         }
     }
 
-    private void writeActivities(BufferedWriter out) {
-        listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
-        this.writeLine(out, "\n\nActivities by Activity Type");
-        this.writeLine(out, "\nDate, Site Network, Activity Type, Activities Count");
+    private void writeActivities1(BufferedWriter out) {
+        List<ActivitiesFeed> listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
         if (listActivitiesFeed != null) {
             for (int i = 0; i < listActivitiesFeed.size(); i++) {
-                this.writeLine(out, listActivitiesFeed.get(i).printActivitiesByActivityType());
-            }
-        }
-
-        listActivitiesFeed = sqlMapper.findActivitiesByUser();
-        this.writeLine(out, "\n\nActivities by User");
-        this.writeLine(out, "\nDate, Site Network, User Id, Activities Count");
-        if (listActivitiesFeed != null) {
-            for (int i = 0; i < listActivitiesFeed.size(); i++) {
-                this.writeLine(out, listActivitiesFeed.get(i).printActivitiesByUser());
-            }
-        }
-
-        listActivitiesFeed = sqlMapper.findActivitiesByApplicationInterface();
-        this.writeLine(out, "\n\nActivities by Application Interface");
-        this.writeLine(out, "\nDate, Site Network, Application Interface, Activities Count");
-        if (listActivitiesFeed != null) {
-            for (int i = 0; i < listActivitiesFeed.size(); i++) {
-                this.writeLine(out, listActivitiesFeed.get(i).printActivitiesByInterface());
+                this.writeLine(out, listActivitiesFeed.get(i).printActivitiesByActivityType(this.reportExportType));
+                this.writeEndLine(i, listActivitiesFeed.size());
             }
         }
     }
 
-    private void writeWorkflows(BufferedWriter out) {
-        listWorkflows = workflowMapper.findAll();
-        this.writeLine(out, "\n\nAll Workflows Grouped by Process Definition and Task Name");
-        this.writeLine(out, "\nProcess Definition, Task Name, No Occurrences");
+    private void writeActivities2(BufferedWriter out) {
+        List<ActivitiesFeed> listActivitiesFeed = sqlMapper.findActivitiesByUser();
+        if (listActivitiesFeed != null) {
+            for (int i = 0; i < listActivitiesFeed.size(); i++) {
+                this.writeLine(out, listActivitiesFeed.get(i).printActivitiesByUser(this.reportExportType));
+                this.writeEndLine(i, listActivitiesFeed.size());
+            }
+        }
+
+    }
+
+    private void writeActivities3(BufferedWriter out) {
+        List<ActivitiesFeed> listActivitiesFeed = sqlMapper.findActivitiesByApplicationInterface();
+        if (listActivitiesFeed != null) {
+            for (int i = 0; i < listActivitiesFeed.size(); i++) {
+                this.writeLine(out, listActivitiesFeed.get(i).printActivitiesByInterface(this.reportExportType));
+                this.writeEndLine(i, listActivitiesFeed.size());
+            }
+        }
+    }
+
+    private void writeWorkflows1(BufferedWriter out) {
+        List<Workflow> listWorkflows = workflowMapper.findAll();
         if (listWorkflows != null) {
             for (int i = 0; i < listWorkflows.size(); i++) {
-                this.writeLine(out, listWorkflows.get(i).printTasks());
-            }
-        }
-
-        List<Workflow> listOpenWorkflows = workflowMapper.openWorkflows();
-        this.writeLine(out, "\n\nOpen Workflows");
-        this.writeLine(out, "\nProcess Definition, No Occurrences");
-        if (listOpenWorkflows != null) {
-            for (int i = 0; i < listOpenWorkflows.size(); i++) {
-                this.writeLine(out, listOpenWorkflows.get(i).printProcesses());
-            }
-        }
-
-        List<Workflow> listClosedWorkflows = workflowMapper.closedWorkflows();
-        this.writeLine(out, "\n\nClosed Workflows");
-        this.writeLine(out, "\nProcess Definition, No Occurrences");
-        if (listClosedWorkflows != null) {
-            for (int i = 0; i < listClosedWorkflows.size(); i++) {
-                this.writeLine(out, listClosedWorkflows.get(i).printProcesses());
-            }
-        }
-
-        List<Workflow> listOpenTasks = workflowMapper.openTasks();
-        this.writeLine(out, "\n\nOpen Tasks");
-        this.writeLine(out, "\nProcess Definition, Task Name, No Occurrences");
-        if (listOpenTasks != null) {
-            for (int i = 0; i < listOpenTasks.size(); i++) {
-                this.writeLine(out, listOpenTasks.get(i).printTasks());
-            }
-        }
-
-        List<Workflow> listClosedTasks = workflowMapper.closedTasks();
-        this.writeLine(out, "\n\nClosed Tasks");
-        this.writeLine(out, "\nProcess Definition, Task Name, No Occurrences");
-        if (listClosedTasks != null) {
-            for (int i = 0; i < listClosedTasks.size(); i++) {
-                this.writeLine(out, listClosedTasks.get(i).printTasks());
+                this.writeLine(out, listWorkflows.get(i).printTasks(this.reportExportType));
+                this.writeEndLine(i, listWorkflows.size());
             }
         }
     }
 
-    private void writeArchivedNodes(BufferedWriter out) {
-        listArchivedNodes = archivedNodesMapper.findArchivedNodes();
-        this.writeLine(out, "\n\nAll Archived Nodes");
-        if (listArchivedNodes != null) {
-            for (int i = 0; i < listArchivedNodes.size(); i++) {
-                this.writeLine(out, listArchivedNodes.get(i).printArchivedNodes());
+    private void writeWorkflows2(BufferedWriter out) {
+        List<Workflow> listOpenWorkflows = workflowMapper.openWorkflows();
+        if (listOpenWorkflows != null) {
+            for (int i = 0; i < listOpenWorkflows.size(); i++) {
+                this.writeLine(out, listOpenWorkflows.get(i).printProcesses(this.reportExportType));
+                this.writeEndLine(i, listOpenWorkflows.size());
             }
         }
 
-        listArchivedNodes = archivedNodesMapper.findArchivedNodesByUser();
-        this.writeLine(out, "\n\nArchived Nodes by User");
-        this.writeLine(out, "\nArchived Nodes, User");
+    }
+
+    private void writeWorkflows3(BufferedWriter out) {
+        List<Workflow> listClosedWorkflows = workflowMapper.closedWorkflows();
+        if (listClosedWorkflows != null) {
+            for (int i = 0; i < listClosedWorkflows.size(); i++) {
+                this.writeLine(out, listClosedWorkflows.get(i).printProcesses(this.reportExportType));
+                this.writeEndLine(i, listClosedWorkflows.size());
+            }
+        }
+
+    }
+
+    private void writeWorkflows4(BufferedWriter out) {
+        List<Workflow> listOpenTasks = workflowMapper.openTasks();
+        if (listOpenTasks != null) {
+            for (int i = 0; i < listOpenTasks.size(); i++) {
+                this.writeLine(out, listOpenTasks.get(i).printTasks(this.reportExportType));
+                this.writeEndLine(i, listOpenTasks.size());
+            }
+        }
+
+    }
+
+    private void writeWorkflows5(BufferedWriter out) {
+        List<Workflow> listClosedTasks = workflowMapper.closedTasks();
+        if (listClosedTasks != null) {
+            for (int i = 0; i < listClosedTasks.size(); i++) {
+                this.writeLine(out, listClosedTasks.get(i).printTasks(this.reportExportType));
+                this.writeEndLine(i, listClosedTasks.size());
+            }
+        }
+    }
+
+    private void writeArchivedNodes1(BufferedWriter out) {
+        listArchivedNodes = archivedNodesMapper.findArchivedNodes();
         if (listArchivedNodes != null) {
             for (int i = 0; i < listArchivedNodes.size(); i++) {
-                this.writeLine(out, listArchivedNodes.get(i).printArchivedNodesByUser());
+                this.writeLine(out, listArchivedNodes.get(i).printArchivedNodes(this.reportExportType));
+                this.writeEndLine(i, listArchivedNodes.size());
+            }
+        }
+    }
+
+    private void writeArchivedNodes2(BufferedWriter out) {
+        listArchivedNodes = archivedNodesMapper.findArchivedNodesByUser();
+        if (listArchivedNodes != null) {
+            for (int i = 0; i < listArchivedNodes.size(); i++) {
+                this.writeLine(out, listArchivedNodes.get(i).printArchivedNodesByUser(this.reportExportType));
+                this.writeEndLine(i, listArchivedNodes.size());
             }
         }
     }
 
     private void writeNodesByMimetype(BufferedWriter out) {
-        listNodesByMimeType = sqlMapper.findNodesSizeByMimeType();
-        this.writeLine(out, "Mime Type, Nodes Count, Disk Space MB");
+        List<NodesList> listNodesByMimeType = sqlMapper.findNodesSizeByMimeType();
         if (listNodesByMimeType != null) {
             for (int i = 0; i < listNodesByMimeType.size(); i++) {
-                this.writeLine(out, listNodesByMimeType.get(i).printNodesByMimeType());
+                this.writeLine(out, listNodesByMimeType.get(i).printNodesByMimeType(this.reportExportType));
+                this.writeEndLine(i, listNodesByMimeType.size());
             }
         }
     }
 
     private void writeNodesByContentType(BufferedWriter out) {
-        listNodesByType = sqlMapper.findNodesByContentType();
-        this.writeLine(out, "Node Type, Nodes Count");
+        List<NodesList> listNodesByType = sqlMapper.findNodesByContentType();
         if (listNodesByType != null) {
             for (int i = 0; i < listNodesByType.size(); i++) {
-                this.writeLine(out, listNodesByType.get(i).printNodesByType());
+                this.writeLine(out, listNodesByType.get(i).printNodesByType(this.reportExportType));
+                this.writeEndLine(i, listNodesByType.size());
             }
         }
     }
 
     private void writeNodesByContentTypeAndMonth(BufferedWriter out) {
-        listNodesByType = sqlMapper.findNodesByContentTypeAndMonth();
-        this.writeLine(out, "Date, Node Type, Nodes Count");
+        List<NodesList> listNodesByType = sqlMapper.findNodesByContentTypeAndMonth();
         if (listNodesByType != null) {
             for (int i = 0; i < listNodesByType.size(); i++) {
-                this.writeLine(out, listNodesByType.get(i).printNodesByTypeAndMonth());
+                this.writeLine(out, listNodesByType.get(i).printNodesByTypeAndMonth(this.reportExportType));
+                this.writeEndLine(i, listNodesByType.size());
             }
         }
     }
 
     private void writeNodesByStore(BufferedWriter out) {
-        listNodesByStore = sqlMapper.findNodesByStore();
-        this.writeLine(out, "Store, Nodes Count");
+        List<NodesList> listNodesByStore = sqlMapper.findNodesByStore();
         if (listNodesByStore != null) {
             for (int i = 0; i < listNodesByStore.size(); i++) {
-                this.writeLine(out, listNodesByStore.get(i).printNodesByStore());
+                this.writeLine(out, listNodesByStore.get(i).printNodesByStore(this.reportExportType));
+                this.writeEndLine(i, listNodesByStore.size());
             }
         }
     }
 
     private void writeResouceLocking(BufferedWriter out) {
-        listLockedResources = lockedResourcesMapper.findAll();
-        this.writeLine(out, "Ide, Lock Token, Start Time, Expiry Time, Shared Resource, Exclusive Resource, URI");
+        List<LockedResources> listLockedResources = lockedResourcesMapper.findAll();
         for (int i = 0; i < listLockedResources.size(); i++) {
-            this.writeLine(out, listLockedResources.get(i).findAll());
+            this.writeLine(out, listLockedResources.get(i).printAll(this.reportExportType));
+            this.writeEndLine(i, listLockedResources.size());
         }
     }
 
-    private void writeAuthorities(BufferedWriter out) {
-        this.writeLine(out, "\n\nAuthorities");
-        listUsers = authorityMapper.findUsers();
-        this.writeLine(out, "\nUsers Count");
+    private void writeAuthorities1(BufferedWriter out) {
+        List<Authority> listUsers = authorityMapper.findUsers();
         if (listUsers != null) {
             for (int i = 0; i < listUsers.size(); i++) {
-                this.writeLine(out, listUsers.get(i).printUsers());
+                this.writeLine(out, listUsers.get(i).printUsers(this.reportExportType));
+                this.writeEndLine(i, listUsers.size());
             }
         }
+    }
 
+    private void writeAuthorities2(BufferedWriter out) {
         if (alfAuthStatus == true) {
-            listAuthorizedUsers = sqlMapper.findAuthorizedUsers();
-            this.writeLine(out, "\n\nAuthorized Users Count");
-            if (listUsers != null) {
-                for (int i = 0; i < listAuthorizedUsers.size(); i++) {
-                    this.writeLine(out, listAuthorizedUsers.get(i).printUsers());
-                }
+            List<Authority> listAuthorizedUsers = sqlMapper.findAuthorizedUsers();
+            for (int i = 0; i < listAuthorizedUsers.size(); i++) {
+                this.writeLine(out, listAuthorizedUsers.get(i).printUsers(this.reportExportType));
+                this.writeEndLine(i, listAuthorizedUsers.size());
             }
-            // model.addAttribute("listAuthorizedUsers", listAuthorizedUsers);
+        } else {
+            logger.warn("ACS Community version: no Alf_auth_status table for exporting *_Authorities_users_authorized");
         }
+    }
 
-        listGroups = authorityMapper.findGroups();
-        this.writeLine(out, "\n\nGroups Count");
+    private void writeAuthorities3(BufferedWriter out) {
+        List<Authority> listGroups = authorityMapper.findGroups();
         if (listGroups != null) {
             for (int i = 0; i < listGroups.size(); i++) {
-                this.writeLine(out, listGroups.get(i).printGroups());
+                this.writeLine(out, listGroups.get(i).printGroups(this.reportExportType));
+                this.writeEndLine(i, listGroups.size());
             }
         }
     }

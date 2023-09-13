@@ -1,5 +1,7 @@
 package com.alfresco.support.alfrescodb.model;
 
+import com.alfresco.support.alfrescodb.controllers.ExportController;
+
 public class LargeTransaction {
     private int nodes;
     private int trxId;
@@ -36,7 +38,18 @@ public class LargeTransaction {
 	}
 
 	public String printLargeTransactions() {
-		return String.format("\n%s, %s", trxId, nodes);
+		return this.printLargeTransactions(ExportController.EXPORT_TXT);
 	}
 
+	public String printLargeTransactions(String format) {
+		String res = null;
+		if (ExportController.EXPORT_CSV.equals(format)) {
+			res = String.format("\n%s, %s", trxId, nodes);
+		} else if (ExportController.EXPORT_JSON.equals(format)) {
+			res = String.format("\n{\"trxId\":\"%s\", \"nodes\":\"%s\"}", trxId, nodes);
+		} else { // Default TXT
+			res = String.format("\n%s, %s", trxId, nodes);
+		}
+		return res;
+	}
 }

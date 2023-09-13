@@ -1,5 +1,7 @@
 package com.alfresco.support.alfrescodb.model;
 
+import com.alfresco.support.alfrescodb.controllers.ExportController;
+
 public class RelationInfo {
 	private String tableSchema;
 	private String tableName;
@@ -57,6 +59,18 @@ public class RelationInfo {
 	}
 
 	public String printDbInfo() {
-		return String.format("\n%s, %s, %s, %s, %s ", tableName, total, rowEstimate, table, index);
+		return this.printDbInfo(ExportController.EXPORT_TXT);
+	}
+
+	public String printDbInfo(String format) {
+		String res = null;
+		if (ExportController.EXPORT_CSV.equals(format)) {
+			res = String.format("\n%s,%s,%s,%s,%s", tableName, total, rowEstimate, table, index);
+		} else if (ExportController.EXPORT_JSON.equals(format)) {
+			res = String.format("\n{\"tableName\":\"%s\", \"total\":\"%s\", \"rowEstimate\":\"%s\", \"table\":\"%s\", \"index\":\"%s\"}",  tableName, total, rowEstimate, table, index);
+		} else { // Default TXT
+			res = String.format("\n%s, %s, %s, %s, %s ", tableName, total, rowEstimate, table, index);
+		}
+		return res;
 	}
 }
