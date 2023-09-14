@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 
+import com.alfresco.support.alfrescodb.helpers.SolrMemoryHelper;
 import com.alfresco.support.alfrescodb.model.AccessControlList;
 import com.alfresco.support.alfrescodb.model.ActivitiesFeed;
 import com.alfresco.support.alfrescodb.model.AppliedPatches;
@@ -39,7 +40,11 @@ public class ExportController {
     @Autowired
     SqlMapperController sqlMapper;
 
+    @Autowired
     SolrMemory solrMemory;
+
+    @Autowired
+    SolrMemoryHelper solrMemoryHelper;
 
     @Value("${reportFile}")
     private String reportFile;
@@ -59,7 +64,6 @@ public class ExportController {
     private BufferedWriter out;
 
     public void exportReport(Model model) {
-        solrMemory = new SolrMemory();
         String[] headers = { "" };
         String outputFile = this.reportFile;
 
@@ -756,6 +760,7 @@ public class ExportController {
         List<SolrMemory> solrMemoryList = sqlMapper.solrMemory();
 
         for (int i = 0; i < solrMemoryList.size(); i++) {
+            solrMemoryList.get(i).setSolrMemoryHelper(solrMemoryHelper);
             this.writeLine(out, solrMemoryList.get(i).printSolrTotals(this.reportExportType));
             this.writeEndLine(i, solrMemoryList.size());
         }
@@ -765,6 +770,7 @@ public class ExportController {
         List<SolrMemory> solrMemoryList = sqlMapper.solrMemory();
 
         for (int i = 0; i < solrMemoryList.size(); i++) {
+            solrMemoryList.get(i).setSolrMemoryHelper(solrMemoryHelper);
             this.writeLine(out, solrMemoryList.get(i).printAlfrescoCoreDetails(this.reportExportType));
             this.writeEndLine(i, solrMemoryList.size());
         }
@@ -774,6 +780,7 @@ public class ExportController {
         List<SolrMemory> solrMemoryList = sqlMapper.solrMemory();
 
         for (int i = 0; i < solrMemoryList.size(); i++) {
+            solrMemoryList.get(i).setSolrMemoryHelper(solrMemoryHelper);
             this.writeLine(out, solrMemoryList.get(i).printArchiveCoreDetails(this.reportExportType));
             this.writeEndLine(i, solrMemoryList.size());
         }
@@ -783,6 +790,7 @@ public class ExportController {
         List<SolrMemory> solrMemoryList = sqlMapper.solrMemory();
 
         for (int i = 0; i < solrMemoryList.size(); i++) {
+            solrMemoryList.get(i).setSolrMemoryHelper(solrMemoryHelper);
             this.writeLine(out, solrMemoryList.get(i).printMemoryDataStructures(this.reportExportType));
             this.writeEndLine(i, solrMemoryList.size());
         }
@@ -792,6 +800,7 @@ public class ExportController {
         List<SolrMemory> solrMemoryList = sqlMapper.solrMemory();
 
         for (int i = 0; i < solrMemoryList.size(); i++) {
+            solrMemoryList.get(i).setSolrMemoryHelper(solrMemoryHelper);
             this.writeLine(out, solrMemoryList.get(i).printMemoryCacheStructures(this.reportExportType));
             this.writeEndLine(i, solrMemoryList.size());
         }

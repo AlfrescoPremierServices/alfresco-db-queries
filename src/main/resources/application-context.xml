@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-	   					   http://www.springframework.org/schema/beans/spring-beans.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="qlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
     </bean>
 
-    <bean id="sqlMapper" class="com.alfresco.support.alfrescodb.controllers.SqlMapperController">
+    <bean id="sqlMapper" class="com.alfresco.support.alfrescodb.controllers.SqlMapperController" />
+
+    <bean id="exportController" class="com.alfresco.support.alfrescodb.controllers.ExportController" />
+
+    <bean id="solrMemory" class="com.alfresco.support.alfrescodb.model.SolrMemory" />
+
+    <bean id="solrMemoryHelper" class="com.alfresco.support.alfrescodb.helpers.SolrMemoryHelper">
     </bean>
 
-    <bean id="exportController" class="com.alfresco.support.alfrescodb.controllers.ExportController">
-    </bean>
 </beans>

@@ -1,10 +1,7 @@
 package com.alfresco.support.alfrescodb.model;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Value;
-
 import com.alfresco.support.alfrescodb.controllers.ExportController;
+import com.alfresco.support.alfrescodb.helpers.SolrMemoryHelper;
 
 public class SolrMemory {
 	private String alfrescoNodes;
@@ -20,32 +17,34 @@ public class SolrMemory {
 	private double archiveSolrCachesMemory;
 	private double totalSolrCachesMemory;
 	private double totalSolrMemory;
-	
-	// Alfresco Solr caches
-	@Value("${alfresco.solr.filterCache.size}")
-	private Long alfrescoSolrFilterCacheSize;
 
-	@Value("${alfresco.solr.queryResultCache.size}")
-	private Long alfrescoSolrQueryResultCacheSize;
+	private SolrMemoryHelper solrMemoryHelper;
 
-	@Value("${alfresco.solr.authorityCache.size}")
-	private Long alfrescoSolrAuthorityCacheSize;
+	// // Alfresco Solr caches
+	// @Value("${alfresco.solr.filterCache.size}")
+	// private Long alfrescoSolrFilterCacheSize;
 
-	@Value("${alfresco.solr.pathCache.size}")
-	private Long alfrescoSolrPathCacheSize;
+	// @Value("${alfresco.solr.queryResultCache.size}")
+	// private Long alfrescoSolrQueryResultCacheSize;
 
-	// Archive Solr caches
-	@Value("${archive.solr.filterCache.size}")
-	private Long archiveSolrFilterCacheSize;
+	// @Value("${alfresco.solr.authorityCache.size}")
+	// private Long alfrescoSolrAuthorityCacheSize;
 
-	@Value("${archive.solr.queryResultCache.size}")
-	private Long archiveSolrQueryResultCacheSize;
+	// @Value("${alfresco.solr.pathCache.size}")
+	// private Long alfrescoSolrPathCacheSize;
 
-	@Value("${archive.solr.authorityCache.size}")
-	private Long archiveSolrAuthorityCacheSize;
+	// // Archive Solr caches
+	// @Value("${archive.solr.filterCache.size}")
+	// private Long archiveSolrFilterCacheSize;
 
-	@Value("${archive.solr.pathCache.size}")
-	private Long archiveSolrPathCacheSize;
+	// @Value("${archive.solr.queryResultCache.size}")
+	// private Long archiveSolrQueryResultCacheSize;
+
+	// @Value("${archive.solr.authorityCache.size}")
+	// private Long archiveSolrAuthorityCacheSize;
+
+	// @Value("${archive.solr.pathCache.size}")
+	// private Long archiveSolrPathCacheSize;
 
 	public String printSolrMemory() {
 		this.doCalculations();
@@ -62,7 +61,8 @@ public class SolrMemory {
 					"\n{\"alfrescoNodes\":\"%s\", \"archiveNodes\":\"%s\", \"transactions\":\"%s\", \"acls\":\"%s\", \"aclTransactions\":\"%s\"}",
 					alfrescoNodes, archiveNodes, transactions, acls, aclTransactions);
 		} else { // Default TXT
-			res = String.format("\n%s, %s, %s, %s, %s", alfrescoNodes, archiveNodes, transactions, acls, aclTransactions);
+			res = String.format("\n%s, %s, %s, %s, %s", alfrescoNodes, archiveNodes, transactions, acls,
+					aclTransactions);
 		}
 		return res;
 	}
@@ -71,16 +71,19 @@ public class SolrMemory {
 		this.doCalculations();
 		String res = null;
 		if (ExportController.EXPORT_CSV.equals(format)) {
-			res = String.format("\n%s,%s,%s,%s", alfrescoSolrQueryResultCacheSize, alfrescoSolrAuthorityCacheSize,
-					alfrescoSolrPathCacheSize, alfrescoSolrFilterCacheSize);
+			res = String.format("\n%s,%s,%s,%s", solrMemoryHelper.getAlfrescoSolrQueryResultCacheSize(),
+					solrMemoryHelper.getAlfrescoSolrAuthorityCacheSize(),
+					solrMemoryHelper.getAlfrescoSolrPathCacheSize(), solrMemoryHelper.getAlfrescoSolrFilterCacheSize());
 		} else if (ExportController.EXPORT_JSON.equals(format)) {
 			res = String.format(
 					"\n{\"alfrescoSolrQueryResultCacheSize\":\"%s\", \"alfrescoSolrAuthorityCacheSize\":\"%s\", \"alfrescoSolrPathCacheSize\":\"%s\", \"alfrescoSolrFilterCacheSize\":\"%s\"}",
-					alfrescoSolrQueryResultCacheSize, alfrescoSolrAuthorityCacheSize, alfrescoSolrPathCacheSize,
-					alfrescoSolrFilterCacheSize);
+					solrMemoryHelper.getAlfrescoSolrQueryResultCacheSize(),
+					solrMemoryHelper.getAlfrescoSolrAuthorityCacheSize(),
+					solrMemoryHelper.getAlfrescoSolrPathCacheSize(), solrMemoryHelper.getAlfrescoSolrFilterCacheSize());
 		} else { // Default TXT
-			res = String.format("\n%s, %s, %s, %s", alfrescoSolrQueryResultCacheSize, alfrescoSolrAuthorityCacheSize,
-					alfrescoSolrPathCacheSize, alfrescoSolrFilterCacheSize);
+			res = String.format("\n%s, %s, %s, %s", solrMemoryHelper.getAlfrescoSolrQueryResultCacheSize(),
+					solrMemoryHelper.getAlfrescoSolrAuthorityCacheSize(),
+					solrMemoryHelper.getAlfrescoSolrPathCacheSize(), solrMemoryHelper.getAlfrescoSolrFilterCacheSize());
 		}
 		return res;
 	}
@@ -89,16 +92,19 @@ public class SolrMemory {
 		this.doCalculations();
 		String res = null;
 		if (ExportController.EXPORT_CSV.equals(format)) {
-			res = String.format("\n%s,%s,%s,%s", archiveSolrQueryResultCacheSize, archiveSolrAuthorityCacheSize,
-					archiveSolrPathCacheSize, archiveSolrFilterCacheSize);
+			res = String.format("\n%s,%s,%s,%s", solrMemoryHelper.getArchiveSolrQueryResultCacheSize(),
+					solrMemoryHelper.getArchiveSolrAuthorityCacheSize(),
+					solrMemoryHelper.getArchiveSolrPathCacheSize(), solrMemoryHelper.getArchiveSolrFilterCacheSize());
 		} else if (ExportController.EXPORT_JSON.equals(format)) {
 			res = String.format(
 					"\n{\"archiveSolrQueryResultCacheSize\":\"%s\", \"archiveSolrAuthorityCacheSize\":\"%s\", \"archiveSolrPathCacheSize\":\"%s\", \"archiveSolrFilterCacheSize\":\"%s\"}",
-					archiveSolrQueryResultCacheSize, archiveSolrAuthorityCacheSize, archiveSolrPathCacheSize,
-					archiveSolrFilterCacheSize);
+					solrMemoryHelper.getArchiveSolrQueryResultCacheSize(),
+					solrMemoryHelper.getArchiveSolrAuthorityCacheSize(),
+					solrMemoryHelper.getArchiveSolrPathCacheSize(), solrMemoryHelper.getArchiveSolrFilterCacheSize());
 		} else { // Default TXT
-			res = String.format("\n%s, %s, %s, %s", archiveSolrQueryResultCacheSize, archiveSolrAuthorityCacheSize,
-					archiveSolrPathCacheSize, archiveSolrFilterCacheSize);
+			res = String.format("\n%s, %s, %s, %s", solrMemoryHelper.getArchiveSolrQueryResultCacheSize(),
+					solrMemoryHelper.getArchiveSolrAuthorityCacheSize(),
+					solrMemoryHelper.getArchiveSolrPathCacheSize(), solrMemoryHelper.getArchiveSolrFilterCacheSize());
 		}
 		return res;
 	}
@@ -128,15 +134,13 @@ public class SolrMemory {
 					"\n{\"alfrescoSolrCachesMemory\":\"%s\", \"archiveSolrCachesMemory\":\"%s\", \"totalSolrCachesMemory\":\"%s\"}",
 					alfrescoSolrCachesMemory, archiveSolrCachesMemory, totalSolrCachesMemory);
 		} else { // Default TXT
-			res = String.format("\n%s, %s, %s", alfrescoSolrCachesMemory, archiveSolrCachesMemory, totalSolrCachesMemory);
+			res = String.format("\n%s, %s, %s", alfrescoSolrCachesMemory, archiveSolrCachesMemory,
+					totalSolrCachesMemory);
 		}
 		return res;
 	}
 
-	private void doCalculations() {}
-
-	@PostConstruct
-	private void doCalculationsPost() {
+	private void doCalculations() {
 		Long tmpAlfrescoNodes = Long.valueOf(this.alfrescoNodes);
 		Long tmpArchiveNodes = Long.valueOf(this.archiveNodes);
 		Long tmpTransactions = Long.valueOf(this.transactions);
@@ -147,11 +151,11 @@ public class SolrMemory {
 		this.archiveCoreMemory = (double) (120 * tmpArchiveNodes
 				+ 32 * (tmpTransactions + tmpAcls + tmpAclTransactions));
 		this.totalDataStructuresMemory = (double) alfrescoCoreMemory + archiveCoreMemory;
-		this.alfrescoSolrCachesMemory = (double) (alfrescoSolrFilterCacheSize
-				+ alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize)
+		this.alfrescoSolrCachesMemory = (double) (solrMemoryHelper.getAlfrescoSolrFilterCacheSize()
+				+ solrMemoryHelper.getAlfrescoSolrQueryResultCacheSize() + solrMemoryHelper.getAlfrescoSolrAuthorityCacheSize() + solrMemoryHelper.getAlfrescoSolrPathCacheSize())
 				* (double) (2 * tmpAlfrescoNodes + tmpTransactions + tmpAcls + tmpAclTransactions) / 8;
-		this.archiveSolrCachesMemory = (double) (alfrescoSolrFilterCacheSize
-				+ alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize)
+		this.archiveSolrCachesMemory = (double) (solrMemoryHelper.getAlfrescoSolrFilterCacheSize()
+				+ solrMemoryHelper.getAlfrescoSolrQueryResultCacheSize() + solrMemoryHelper.getAlfrescoSolrAuthorityCacheSize() + solrMemoryHelper.getAlfrescoSolrPathCacheSize())
 				* (double) (2 * tmpArchiveNodes + tmpTransactions + tmpAcls + tmpAclTransactions) / 8;
 		this.totalSolrCachesMemory = (double) alfrescoSolrCachesMemory + archiveSolrCachesMemory;
 		this.totalSolrMemory = (double) totalDataStructuresMemory + totalSolrCachesMemory;
@@ -252,4 +256,81 @@ public class SolrMemory {
 	public void setTotalSolrMemory(double totalSolrMemory) {
 		this.totalSolrMemory = totalSolrMemory;
 	}
+
+	public void setSolrMemoryHelper(SolrMemoryHelper solrMemoryHelper) {
+		this.solrMemoryHelper = solrMemoryHelper;
+	}
+
+	public SolrMemoryHelper getSolrMemoryHelper() {
+		return this.solrMemoryHelper;
+	}
+
+	// public Long getAlfrescoSolrFilterCacheSize() {
+	// return alfrescoSolrFilterCacheSize;
+	// }
+
+	// public void setAlfrescoSolrFilterCacheSize(Long alfrescoSolrFilterCacheSize)
+	// {
+	// this.alfrescoSolrFilterCacheSize = alfrescoSolrFilterCacheSize;
+	// }
+
+	// public Long getAlfrescoSolrQueryResultCacheSize() {
+	// return alfrescoSolrQueryResultCacheSize;
+	// }
+
+	// public void setAlfrescoSolrQueryResultCacheSize(Long
+	// alfrescoSolrQueryResultCacheSize) {
+	// this.alfrescoSolrQueryResultCacheSize = alfrescoSolrQueryResultCacheSize;
+	// }
+
+	// public Long getAlfrescoSolrAuthorityCacheSize() {
+	// return alfrescoSolrAuthorityCacheSize;
+	// }
+
+	// public void setAlfrescoSolrAuthorityCacheSize(Long
+	// alfrescoSolrAuthorityCacheSize) {
+	// this.alfrescoSolrAuthorityCacheSize = alfrescoSolrAuthorityCacheSize;
+	// }
+
+	// public Long getAlfrescoSolrPathCacheSize() {
+	// return alfrescoSolrPathCacheSize;
+	// }
+
+	// public void setAlfrescoSolrPathCacheSize(Long alfrescoSolrPathCacheSize) {
+	// this.alfrescoSolrPathCacheSize = alfrescoSolrPathCacheSize;
+	// }
+
+	// public Long getArchiveSolrFilterCacheSize() {
+	// return archiveSolrFilterCacheSize;
+	// }
+
+	// public void setArchiveSolrFilterCacheSize(Long archiveSolrFilterCacheSize) {
+	// this.archiveSolrFilterCacheSize = archiveSolrFilterCacheSize;
+	// }
+
+	// public Long getArchiveSolrQueryResultCacheSize() {
+	// return archiveSolrQueryResultCacheSize;
+	// }
+
+	// public void setArchiveSolrQueryResultCacheSize(Long
+	// archiveSolrQueryResultCacheSize) {
+	// this.archiveSolrQueryResultCacheSize = archiveSolrQueryResultCacheSize;
+	// }
+
+	// public Long getArchiveSolrAuthorityCacheSize() {
+	// return archiveSolrAuthorityCacheSize;
+	// }
+
+	// public void setArchiveSolrAuthorityCacheSize(Long
+	// archiveSolrAuthorityCacheSize) {
+	// this.archiveSolrAuthorityCacheSize = archiveSolrAuthorityCacheSize;
+	// }
+
+	// public Long getArchiveSolrPathCacheSize() {
+	// return archiveSolrPathCacheSize;
+	// }
+
+	// public void setArchiveSolrPathCacheSize(Long archiveSolrPathCacheSize) {
+	// this.archiveSolrPathCacheSize = archiveSolrPathCacheSize;
+	// }
 }
