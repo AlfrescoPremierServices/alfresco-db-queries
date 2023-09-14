@@ -12,13 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 
-import com.alfresco.support.alfrescodb.dao.ArchivedNodesMapper;
-import com.alfresco.support.alfrescodb.dao.AuthorityMapper;
-import com.alfresco.support.alfrescodb.dao.DbSizeMapper;
-import com.alfresco.support.alfrescodb.dao.JmxPropertiesMapper;
-import com.alfresco.support.alfrescodb.dao.LargeTransactionMapper;
-import com.alfresco.support.alfrescodb.dao.LockedResourcesMapper;
-import com.alfresco.support.alfrescodb.dao.WorkflowMapper;
 import com.alfresco.support.alfrescodb.model.AccessControlList;
 import com.alfresco.support.alfrescodb.model.ActivitiesFeed;
 import com.alfresco.support.alfrescodb.model.AppliedPatches;
@@ -46,26 +39,7 @@ public class ExportController {
     @Autowired
     SqlMapperController sqlMapper;
 
-    @Autowired
-    private DbSizeMapper dbSizeMapper;
-
-    @Autowired
-    private LargeTransactionMapper largeTransactionMapper;
-
-    @Autowired
-    private WorkflowMapper workflowMapper;
-
-    @Autowired
-    private ArchivedNodesMapper archivedNodesMapper;
-
-    @Autowired
-    private LockedResourcesMapper lockedResourcesMapper;
-
-    @Autowired
-    private AuthorityMapper authorityMapper;
-
-    @Autowired
-    private JmxPropertiesMapper jmxPropertiesMapper;
+    SolrMemory solrMemory;
 
     @Value("${reportFile}")
     private String reportFile;
@@ -79,47 +53,13 @@ public class ExportController {
     @Value("${spring.datasource.platform}")
     private String dbType;
 
-    @Value("${largeTransactionSize}")
-    private Integer largeTransactionSize;
-
-    // Alfresco Solr caches
-    @Value("${alfresco.solr.filterCache.size}")
-    private Long alfrescoSolrFilterCacheSize;
-
-    @Value("${alfresco.solr.queryResultCache.size}")
-    private Long alfrescoSolrQueryResultCacheSize;
-
-    @Value("${alfresco.solr.authorityCache.size}")
-    private Long alfrescoSolrAuthorityCacheSize;
-
-    @Value("${alfresco.solr.pathCache.size}")
-    private Long alfrescoSolrPathCacheSize;
-
-    // Archive Solr caches
-    @Value("${archive.solr.filterCache.size}")
-    private Long archiveSolrFilterCacheSize;
-
-    @Value("${archive.solr.queryResultCache.size}")
-    private Long archiveSolrQueryResultCacheSize;
-
-    @Value("${archive.solr.authorityCache.size}")
-    private Long archiveSolrAuthorityCacheSize;
-
-    @Value("${archive.solr.pathCache.size}")
-    private Long archiveSolrPathCacheSize;
-
     @Value("${alf_auth_status}")
     private Boolean alfAuthStatus;
-
-    private List<AccessControlList> listAccessControlListEntries;
-    private List<AccessControlList> aclsHeight;
-    private List<ArchivedNodes> listArchivedNodes;
-    private List<JmxProperties> listJmxProperties;
-    private List<AppliedPatches> listAppliedPatches;
 
     private BufferedWriter out;
 
     public void exportReport(Model model) {
+        solrMemory = new SolrMemory();
         String[] headers = { "" };
         String outputFile = this.reportFile;
 
@@ -148,7 +88,7 @@ public class ExportController {
                         "Unused Space" };
             }
 
-            generatedFiles.add(this.prepareOutputFile(outputFile + "_DBSize", headers));
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_DBSize", headers, true));
             this.writeDBTableSize(out);
 
             // DB Size - Indexes
@@ -296,49 +236,58 @@ public class ExportController {
             generatedFiles.add(this.prepareOutputFile(outputFile + "_Authorities_users_authorized", headers));
             this.writeAuthorities2(out);
 
-            // Authorities 3 -
+            // Authorities 3 - Groups count
             headers = new String[] { "Groups Count" };
             generatedFiles.add(this.prepareOutputFile(outputFile + "_Authorities_groups_count", headers));
             this.writeAuthorities3(out);
 
-
-
-            //XXXXXXXX
-
-            // Solr memory
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(outputFile + "_SolrMemory.csv");
-                generatedFiles.add(outputFile + "_SolrMemory.csv");
-            }
-            this.writeSolrMemory(out);
             // JMX Properties
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(outputFile + "_JMXProperties.csv");
-                generatedFiles.add(outputFile + "_JMXProperties.csv");
-            }
+            headers = new String[] { "JMX Property Name", "Property Value set on DB" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_JMXProperties", headers));
             this.writeJmxProps(out);
+
             // Applied Patches
-            if (multiReportFile) {
-                out.close();
-                out = this.prepareOutputFile(outputFile + "_AppliedPatches.csv");
-                generatedFiles.add(outputFile + "_AppliedPatches.csv");
-            }
+            headers = new String[] { "Id", "Applied to Schema", "Applied on Date", "Applied to Server", "Was Executed",
+                    "Succeeded", "Report" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_AppliedPatches", headers));
             this.writeAppliedPatches(out);
+
+            // Solr 1 - Summary
+            headers = new String[] { "Alfresco Nodes", "Archive Nodes", "Transactions", "ACLs", "ACL Transactions" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_SOLR_Summary", headers));
+            this.writeSolrMemory1(out);
+
+            // Solr 2 - Alfresco Core Details
+            headers = new String[] { "Alfresco Core Query Result Cache Size", "Alfresco Core Authority Cache Size", "Alfresco Core Path Cache Size", "Alfresco Core Filter Cache Size" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_SOLR_Core_Alfresco", headers));
+            this.writeSolrMemory2(out);
+
+            // Solr 3 - Archive Core Details
+            headers = new String[] { "Archive Core Query Result Cache Size", "Archive Core Authority Cache Size", "Archive Core Path Cache Size", "Archive Core Filter Cache Size" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_SOLR_Core_Archive", headers));
+            this.writeSolrMemory3(out);
+
+            // Solr 4 - Memory Data Structures
+            headers = new String[] { "Alfresco Core Data Structures Memory", "Archive Core Data Structures Memory", "Total Solr Data Structures Memory" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_SOLR_Data_Memory", headers));
+            this.writeSolrMemory4(out);
+
+            // Solr 5 -
+            headers = new String[] { "Alfresco Core Cache Memory", "Archive Core Cache Memory", "Total Solr Cache Memory" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_SOLR_Caches_Memory", headers));
+            this.writeSolrMemory5(out);
 
             model.addAttribute("generatedFiles", generatedFiles);
 
-
             if (EXPORT_JSON.equals(this.reportExportType)) {
                 if (!multiReportFile) {
-                    this.writeLine(out, "]}"); //Close the single file
+                    this.writeLine(out, "]}"); // Close the single file
                 }
                 this.writeLine(out, "]}");
             }
 
             out.close();
-            logger.debug("Full Export  ended!");
+            logger.debug("Full Export completed!");
         } catch (IOException e) {
             System.out.println("Exception ");
             e.printStackTrace();
@@ -373,12 +322,15 @@ public class ExportController {
         }
     }
 
-    /* Utility to centralize the creation of new output file. */
     private String prepareOutputFile(String name, String[] headers) throws IOException {
+        return this.prepareOutputFile(name, headers, false);
+    }
+    /* Utility to centralize the creation of new output file. */
+    private String prepareOutputFile(String name, String[] headers, boolean dontClosePrevious) throws IOException {
         String outputFileName = name + "." + this.reportExportType;
 
         // Close the previous JSon file if necessary
-        if (EXPORT_JSON.equals(this.reportExportType) && out != null) {
+        if (EXPORT_JSON.equals(this.reportExportType) && out != null && !dontClosePrevious) {
             this.writeLine(out, "]}"); // Close the previous Json file
         }
 
@@ -393,7 +345,7 @@ public class ExportController {
                 this.writeLine(out, "\n\n");
             } else if (EXPORT_CSV.equals(this.reportExportType)) {
                 this.writeLine(out, "\n\n");
-            } else {
+            } else if (!dontClosePrevious) {
                 this.writeLine(out, ",");
             }
             outputFileName = null;
@@ -472,14 +424,14 @@ public class ExportController {
         if (dbType.equalsIgnoreCase("mysql") || dbType.equalsIgnoreCase("postgres")) {
 
         } else if (dbType.equalsIgnoreCase("oracle")) {
-            List<OracleRelationInfo> oracleListIndexesInfos = dbSizeMapper.findIndexesInfoOracle();
+            List<OracleRelationInfo> oracleListIndexesInfos = sqlMapper.findIndexesInfoOracle();
 
             for (int i = 0; i < oracleListIndexesInfos.size(); i++) {
                 this.writeLine(out, oracleListIndexesInfos.get(i).printIndexInfo(this.reportExportType));
                 this.writeEndLine(i, oracleListIndexesInfos.size());
             }
         } else if (dbType.equalsIgnoreCase("microsoft")) {
-            List<MSSqlRelationInfo> mSSqlListIndexesInfos = dbSizeMapper.findIndexesInfoMSSql();
+            List<MSSqlRelationInfo> mSSqlListIndexesInfos = sqlMapper.findIndexesInfoMSSql();
 
             for (int i = 0; i < mSSqlListIndexesInfos.size(); i++) {
                 this.writeLine(out, mSSqlListIndexesInfos.get(i).printIndexInfo(this.reportExportType));
@@ -499,7 +451,7 @@ public class ExportController {
     }
 
     private void writeLargeTransaction(BufferedWriter out) {
-        List<LargeTransaction> listLargeTransactions = largeTransactionMapper.findBySize(largeTransactionSize);
+        List<LargeTransaction> listLargeTransactions = sqlMapper.findLargeTransactions();
         if (listLargeTransactions != null) {
             for (int i = 0; i < listLargeTransactions.size(); i++) {
                 this.writeLine(out, listLargeTransactions.get(i).printLargeTransactions(this.reportExportType));
@@ -515,7 +467,7 @@ public class ExportController {
         String orphanedAcls = sqlMapper.findOrphanedAcls();
 
         Integer aceSize = 0; // This need some calculation
-        listAccessControlListEntries = sqlMapper.findAccessControlListEntries();
+        List<AccessControlList> listAccessControlListEntries = sqlMapper.findAccessControlListEntries();
         for (int i = 0; i < listAccessControlListEntries.size(); i++) {
             Integer count = Integer.valueOf(listAccessControlListEntries.get(i).getPermissionCount());
             aceSize = aceSize + count;
@@ -555,7 +507,7 @@ public class ExportController {
     }
 
     private void writeLargeACL3(BufferedWriter out) {
-        aclsHeight = sqlMapper.findAclsHeight();
+        List<AccessControlList> aclsHeight = sqlMapper.findAclsHeight();
         for (int i = 0; i < aclsHeight.size(); i++) {
             this.writeLine(out, aclsHeight.get(i).printAclHeight(this.reportExportType));
             this.writeEndLine(i, aclsHeight.size());
@@ -564,6 +516,8 @@ public class ExportController {
     }
 
     private void writeLargeACL4(BufferedWriter out) {
+        List<AccessControlList> listAccessControlListEntries = sqlMapper.findAccessControlListEntries();
+
         if (listAccessControlListEntries != null) {
             for (int i = 0; i < listAccessControlListEntries.size(); i++) {
                 this.writeLine(out,
@@ -626,7 +580,7 @@ public class ExportController {
     }
 
     private void writeWorkflows1(BufferedWriter out) {
-        List<Workflow> listWorkflows = workflowMapper.findAll();
+        List<Workflow> listWorkflows = sqlMapper.findAllWorkflows();
         if (listWorkflows != null) {
             for (int i = 0; i < listWorkflows.size(); i++) {
                 this.writeLine(out, listWorkflows.get(i).printTasks(this.reportExportType));
@@ -636,7 +590,7 @@ public class ExportController {
     }
 
     private void writeWorkflows2(BufferedWriter out) {
-        List<Workflow> listOpenWorkflows = workflowMapper.openWorkflows();
+        List<Workflow> listOpenWorkflows = sqlMapper.openWorkflows();
         if (listOpenWorkflows != null) {
             for (int i = 0; i < listOpenWorkflows.size(); i++) {
                 this.writeLine(out, listOpenWorkflows.get(i).printProcesses(this.reportExportType));
@@ -647,7 +601,7 @@ public class ExportController {
     }
 
     private void writeWorkflows3(BufferedWriter out) {
-        List<Workflow> listClosedWorkflows = workflowMapper.closedWorkflows();
+        List<Workflow> listClosedWorkflows = sqlMapper.closedWorkflows();
         if (listClosedWorkflows != null) {
             for (int i = 0; i < listClosedWorkflows.size(); i++) {
                 this.writeLine(out, listClosedWorkflows.get(i).printProcesses(this.reportExportType));
@@ -658,7 +612,7 @@ public class ExportController {
     }
 
     private void writeWorkflows4(BufferedWriter out) {
-        List<Workflow> listOpenTasks = workflowMapper.openTasks();
+        List<Workflow> listOpenTasks = sqlMapper.openTasks();
         if (listOpenTasks != null) {
             for (int i = 0; i < listOpenTasks.size(); i++) {
                 this.writeLine(out, listOpenTasks.get(i).printTasks(this.reportExportType));
@@ -669,7 +623,7 @@ public class ExportController {
     }
 
     private void writeWorkflows5(BufferedWriter out) {
-        List<Workflow> listClosedTasks = workflowMapper.closedTasks();
+        List<Workflow> listClosedTasks = sqlMapper.closedTasks();
         if (listClosedTasks != null) {
             for (int i = 0; i < listClosedTasks.size(); i++) {
                 this.writeLine(out, listClosedTasks.get(i).printTasks(this.reportExportType));
@@ -679,7 +633,7 @@ public class ExportController {
     }
 
     private void writeArchivedNodes1(BufferedWriter out) {
-        listArchivedNodes = archivedNodesMapper.findArchivedNodes();
+        List<ArchivedNodes> listArchivedNodes = sqlMapper.findArchivedNodes();
         if (listArchivedNodes != null) {
             for (int i = 0; i < listArchivedNodes.size(); i++) {
                 this.writeLine(out, listArchivedNodes.get(i).printArchivedNodes(this.reportExportType));
@@ -689,7 +643,7 @@ public class ExportController {
     }
 
     private void writeArchivedNodes2(BufferedWriter out) {
-        listArchivedNodes = archivedNodesMapper.findArchivedNodesByUser();
+        List<ArchivedNodes> listArchivedNodes = sqlMapper.findArchivedNodesByUser();
         if (listArchivedNodes != null) {
             for (int i = 0; i < listArchivedNodes.size(); i++) {
                 this.writeLine(out, listArchivedNodes.get(i).printArchivedNodesByUser(this.reportExportType));
@@ -739,7 +693,7 @@ public class ExportController {
     }
 
     private void writeResouceLocking(BufferedWriter out) {
-        List<LockedResources> listLockedResources = lockedResourcesMapper.findAll();
+        List<LockedResources> listLockedResources = sqlMapper.findAllLockedResources();
         for (int i = 0; i < listLockedResources.size(); i++) {
             this.writeLine(out, listLockedResources.get(i).printAll(this.reportExportType));
             this.writeEndLine(i, listLockedResources.size());
@@ -747,7 +701,7 @@ public class ExportController {
     }
 
     private void writeAuthorities1(BufferedWriter out) {
-        List<Authority> listUsers = authorityMapper.findUsers();
+        List<Authority> listUsers = sqlMapper.findUsers();
         if (listUsers != null) {
             for (int i = 0; i < listUsers.size(); i++) {
                 this.writeLine(out, listUsers.get(i).printUsers(this.reportExportType));
@@ -769,7 +723,7 @@ public class ExportController {
     }
 
     private void writeAuthorities3(BufferedWriter out) {
-        List<Authority> listGroups = authorityMapper.findGroups();
+        List<Authority> listGroups = sqlMapper.findGroups();
         if (listGroups != null) {
             for (int i = 0; i < listGroups.size(); i++) {
                 this.writeLine(out, listGroups.get(i).printGroups(this.reportExportType));
@@ -778,81 +732,68 @@ public class ExportController {
         }
     }
 
-    private void writeSolrMemory(BufferedWriter out) {
-        List<SolrMemory> solrMemoryList = sqlMapper.solrMemory();
-
-        for (int i = 0; i < solrMemoryList.size(); i++) {
-            Long alfrescoNodes = Long.valueOf(solrMemoryList.get(i).getAlfrescoNodes());
-            Long archiveNodes = Long.valueOf(solrMemoryList.get(i).getArchiveNodes());
-            Long transactions = Long.valueOf(solrMemoryList.get(i).getTransactions());
-            Long acls = Long.valueOf(solrMemoryList.get(i).getAcls());
-            Long aclTransactions = Long.valueOf(solrMemoryList.get(i).getAclTransactions());
-            double alfrescoCoreMemory = (double) (120 * alfrescoNodes
-                    + 32 * (transactions + acls + aclTransactions)) / 1024 / 1024 / 1024;
-            double archiveCoreMemory = (double) (120 * archiveNodes + 32 * (transactions + acls + aclTransactions))
-                    / 1024 / 1024 / 1024;
-            double totalDataStructuresMemory = (double) alfrescoCoreMemory + archiveCoreMemory;
-            double alfrescoSolrCachesMemory = (double) (alfrescoSolrFilterCacheSize
-                    + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize)
-                    * (double) (2 * alfrescoNodes + transactions + acls + aclTransactions) / 8 / 1024 / 1024 / 1024;
-            double archiveSolrCachesMemory = (double) (alfrescoSolrFilterCacheSize
-                    + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize)
-                    * (double) (2 * archiveNodes + transactions + acls + aclTransactions) / 8 / 1024 / 1024 / 1024;
-            double totalSolrCachesMemory = (double) alfrescoSolrCachesMemory + archiveSolrCachesMemory;
-            double totalSolrMemory = (double) totalDataStructuresMemory + totalSolrCachesMemory;
-
-            this.writeLine(out, "\n\nSolr Memory");
-            this.writeLine(out, "\nAlfresco Nodes, Archive Nodes, Transactions, ACLs, ACL Transactions");
-            this.writeLine(out, "\n" + String.valueOf(alfrescoNodes) + ", " + String.valueOf(archiveNodes) + ", "
-                    + String.valueOf(transactions) + ", " + String.valueOf(acls) + ", "
-                    + String.valueOf(aclTransactions));
-
-            this.writeLine(out,
-                    "\n\nAlfresco Core Query Result Cache Size, Alfresco Core Authority Cache Size, Alfresco Core Path Cache Size, Alfresco Core Filter Cache Size");
-            this.writeLine(out, "\n" + String.valueOf(archiveSolrQueryResultCacheSize) + ", "
-                    + String.valueOf(alfrescoSolrAuthorityCacheSize) + ", "
-                    + String.valueOf(alfrescoSolrPathCacheSize) + ", "
-                    + String.valueOf(alfrescoSolrFilterCacheSize));
-
-            this.writeLine(out,
-                    "\n\nArchive Core Query Result Cache Size, Archive Core Authority Cache Size, Archive Core Path Cache Size, Archive Core Filter Cache Size");
-            this.writeLine(out, "\n" + String.valueOf(archiveSolrQueryResultCacheSize) + ", "
-                    + String.valueOf(archiveSolrAuthorityCacheSize) + ", "
-                    + String.valueOf(archiveSolrPathCacheSize) + ", " + String.valueOf(archiveSolrFilterCacheSize));
-
-            this.writeLine(out,
-                    "\n\nAlfresco Core Data Structures Memory GB, Archive Core Data Structures Memory GB, Total Solr Data Structures Memory GB");
-            this.writeLine(out,
-                    "\n" + String.valueOf(alfrescoCoreMemory) + ", " + String.valueOf(archiveCoreMemory) + ", "
-                            + String.valueOf(totalDataStructuresMemory));
-            this.writeLine(out,
-                    "\n\nAlfresco Core Cache Memory GB, Archive Core Cache Memory GB, Total Solr Cache Memory GB");
-            this.writeLine(out, "\n" + String.valueOf(alfrescoSolrCachesMemory) + ", "
-                    + String.valueOf(archiveSolrCachesMemory) + ", " + String.valueOf(totalSolrCachesMemory));
-            this.writeLine(out, "\n\nSolr Required Memory GB (for 2 searches per core)");
-            this.writeLine(out, "\n" + String.valueOf(2 * totalSolrMemory));
-        }
-    }
-
     private void writeJmxProps(BufferedWriter out) {
-        listJmxProperties = jmxPropertiesMapper.findJmxProperties();
-        this.writeLine(out, "JMX Property Name, Property Value set on DB");
+        List<JmxProperties> listJmxProperties = sqlMapper.findJmxProperties();
         if (listJmxProperties != null) {
             for (int i = 0; i < listJmxProperties.size(); i++) {
-                this.writeLine(out, listJmxProperties.get(i).printJmxProperties());
+                this.writeLine(out, listJmxProperties.get(i).printJmxProperties(this.reportExportType));
+                this.writeEndLine(i, listJmxProperties.size());
             }
         }
     }
 
     private void writeAppliedPatches(BufferedWriter out) {
-        listAppliedPatches = sqlMapper.findAppliedPatches();
-        this.writeLine(out,
-                "Id, Applied to Schema, Applied on Date, Applied to Server, Was Executed, Succeeded, Report");
+        List<AppliedPatches> listAppliedPatches = sqlMapper.findAppliedPatches();
         if (listAppliedPatches != null) {
             for (int i = 0; i < listAppliedPatches.size(); i++) {
-                this.writeLine(out, listAppliedPatches.get(i).printAppliedPatches());
+                this.writeLine(out, listAppliedPatches.get(i).printAppliedPatches(this.reportExportType));
+                this.writeEndLine(i, listAppliedPatches.size());
             }
         }
     }
 
+    private void writeSolrMemory1(BufferedWriter out) {
+        List<SolrMemory> solrMemoryList = sqlMapper.solrMemory();
+
+        for (int i = 0; i < solrMemoryList.size(); i++) {
+            this.writeLine(out, solrMemoryList.get(i).printSolrTotals(this.reportExportType));
+            this.writeEndLine(i, solrMemoryList.size());
+        }
+    }
+
+    private void writeSolrMemory2(BufferedWriter out) {
+        List<SolrMemory> solrMemoryList = sqlMapper.solrMemory();
+
+        for (int i = 0; i < solrMemoryList.size(); i++) {
+            this.writeLine(out, solrMemoryList.get(i).printAlfrescoCoreDetails(this.reportExportType));
+            this.writeEndLine(i, solrMemoryList.size());
+        }
+    }
+
+    private void writeSolrMemory3(BufferedWriter out) {
+        List<SolrMemory> solrMemoryList = sqlMapper.solrMemory();
+
+        for (int i = 0; i < solrMemoryList.size(); i++) {
+            this.writeLine(out, solrMemoryList.get(i).printArchiveCoreDetails(this.reportExportType));
+            this.writeEndLine(i, solrMemoryList.size());
+        }
+    }
+
+    private void writeSolrMemory4(BufferedWriter out) {
+        List<SolrMemory> solrMemoryList = sqlMapper.solrMemory();
+
+        for (int i = 0; i < solrMemoryList.size(); i++) {
+            this.writeLine(out, solrMemoryList.get(i).printMemoryDataStructures(this.reportExportType));
+            this.writeEndLine(i, solrMemoryList.size());
+        }
+    }
+
+    private void writeSolrMemory5(BufferedWriter out) {
+        List<SolrMemory> solrMemoryList = sqlMapper.solrMemory();
+
+        for (int i = 0; i < solrMemoryList.size(); i++) {
+            this.writeLine(out, solrMemoryList.get(i).printMemoryCacheStructures(this.reportExportType));
+            this.writeEndLine(i, solrMemoryList.size());
+        }
+    }
 }

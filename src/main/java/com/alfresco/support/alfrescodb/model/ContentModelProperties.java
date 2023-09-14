@@ -29,7 +29,7 @@ public class ContentModelProperties {
 	public String printContentModelProperties(String format) {
 		String res = null;
 		if (ExportController.EXPORT_CSV.equals(format)) {
-			res = String.format("\n%s, %s", model, property);
+			res = String.format("\n%s,%s", model, property);
 		} else if (ExportController.EXPORT_JSON.equals(format)) {
 			res = String.format("\n{\"model\":\"%s\", \"property\":\"%s\"}", model, property);
 		} else { // Default TXT

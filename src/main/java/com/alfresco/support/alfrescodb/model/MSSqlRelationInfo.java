@@ -1,7 +1,6 @@
 package com.alfresco.support.alfrescodb.model;
 
 import com.alfresco.support.alfrescodb.controllers.ExportController;
-import com.github.dandelion.datatables.core.export.ExportConf;
 
 public class MSSqlRelationInfo {
     private String SchemaName;
@@ -93,14 +92,14 @@ public class MSSqlRelationInfo {
     public String printTableInfo(String format) {
         String res = null;
         if (ExportController.EXPORT_CSV.equals(format)) {
-            res = String.format("\n%s,%s,%s,%s,%s,%s ", SchemaName, TableName, RowCounts, TotalSpace, UsedSpace,
+            res = String.format("\n%s,%s,%s,%s,%s,%s", SchemaName, TableName, RowCounts, TotalSpace, UsedSpace,
                     UnUsedSpace);
         } else if (ExportController.EXPORT_JSON.equals(format)) {
             res = String.format(
                     "\n{\"SchemaName\":\"%s\", \"TableName\":\"%s\", \"RowCounts\":\"%s\", \"TotalSpace\":\"%s\", \"UsedSpace\":\"%s\", \"UnUsedSpace\":\"%s\"}",
                     SchemaName, TableName, RowCounts, TotalSpace, UsedSpace, UnUsedSpace);
         } else { // Default TXT
-            res = String.format("\n%s, %s, %s, %s, %s, %s ", SchemaName, TableName, RowCounts, TotalSpace, UsedSpace,
+            res = String.format("\n%s, %s, %s, %s, %s, %s", SchemaName, TableName, RowCounts, TotalSpace, UsedSpace,
                     UnUsedSpace);
         }
         return res;
@@ -113,11 +112,11 @@ public class MSSqlRelationInfo {
     public String printIndexInfo(String format) {
 		String res = null;
 		if (ExportController.EXPORT_CSV.equals(format)) {
-			res = String.format("\n%s,%s,%s,%s ", SchemaName, TableName, IndexName, IndexSize);
+			res = String.format("\n%s,%s,%s,%s", SchemaName, TableName, IndexName, IndexSize);
 		} else if (ExportController.EXPORT_JSON.equals(format)) {
 			res = String.format("\n{\"SchemaName\":\"%s\", \"TableName\":\"%s\", \"IndexName\":\"%s\", \"IndexSize\":\"%s\"}", SchemaName, TableName, IndexName, IndexSize);
 		} else { // Default TXT
-			res = String.format("\n%s, %s, %s, %s ", SchemaName, TableName, IndexName, IndexSize);
+			res = String.format("\n%s, %s, %s, %s", SchemaName, TableName, IndexName, IndexSize);
 		}
 		return res;
     }

@@ -44,7 +44,7 @@ public class LargeTransaction {
 	public String printLargeTransactions(String format) {
 		String res = null;
 		if (ExportController.EXPORT_CSV.equals(format)) {
-			res = String.format("\n%s, %s", trxId, nodes);
+			res = String.format("\n%s,%s", trxId, nodes);
 		} else if (ExportController.EXPORT_JSON.equals(format)) {
 			res = String.format("\n{\"trxId\":\"%s\", \"nodes\":\"%s\"}", trxId, nodes);
 		} else { // Default TXT

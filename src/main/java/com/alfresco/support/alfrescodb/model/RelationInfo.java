@@ -69,7 +69,7 @@ public class RelationInfo {
 		} else if (ExportController.EXPORT_JSON.equals(format)) {
 			res = String.format("\n{\"tableName\":\"%s\", \"total\":\"%s\", \"rowEstimate\":\"%s\", \"table\":\"%s\", \"index\":\"%s\"}",  tableName, total, rowEstimate, table, index);
 		} else { // Default TXT
-			res = String.format("\n%s, %s, %s, %s, %s ", tableName, total, rowEstimate, table, index);
+			res = String.format("\n%s, %s, %s, %s, %s", tableName, total, rowEstimate, table, index);
 		}
 		return res;
 	}
