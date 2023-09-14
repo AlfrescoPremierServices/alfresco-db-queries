@@ -13,7 +13,6 @@
 
     <bean id="solrMemory" class="com.alfresco.support.alfrescodb.model.SolrMemory" />
 
-    <bean id="solrMemoryHelper" class="com.alfresco.support.alfrescodb.helpers.SolrMemoryHelper">
-    </bean>
+    <bean id="solrMemoryHelper" class="com.alfresco.support.alfrescodb.helpers.SolrMemoryHelper" />
 
 </beans>
