@@ -43,7 +43,15 @@ The steps to build the application are:
     - Set port for web server
     - Adjust Solr cache values coming from solrcore.properties
     - Set alf_auth_status to false if table does not exists in your database
+    - set the output format. Valid values are txt, csv, json
+    - set if one file per query or every query result one single file
  - Compile and build application
+
+### Output selection
+
+You can export data in 3 different formats: JSON, txt, CSV: set the variable reportExportType in application.properties
+You can export in one single file containing all the query results, or a single file per query: set the variable reportSplit in application.properties
+When you select the single file per query, the name in the variable reportFile will be used as a prefix to create the files
 
 ### Compiling and building the executable jar file
 
