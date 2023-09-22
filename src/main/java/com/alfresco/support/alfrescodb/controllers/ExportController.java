@@ -19,6 +19,7 @@ import com.alfresco.support.alfrescodb.model.AppliedPatches;
 import com.alfresco.support.alfrescodb.model.ArchivedNodes;
 import com.alfresco.support.alfrescodb.model.Authority;
 import com.alfresco.support.alfrescodb.model.ContentModelProperties;
+import com.alfresco.support.alfrescodb.model.IndexedList;
 import com.alfresco.support.alfrescodb.model.JmxProperties;
 import com.alfresco.support.alfrescodb.model.LargeFolder;
 import com.alfresco.support.alfrescodb.model.LargeTransaction;
@@ -223,6 +224,12 @@ public class ExportController {
             headers = new String[] { "Store", "Nodes Count" };
             generatedFiles.add(this.prepareOutputFile(outputFile + "_NodesByStore", headers));
             this.writeNodesByStore(out);
+
+            // List Nodes by Type and Indexing
+            headers = new String[] { "QName_id", "QName", "Indexed", "Entries" };
+            generatedFiles.add(this.prepareOutputFile(outputFile + "_NodesByTypeAndIndexing", headers));
+            this.writeNodesByTypeAndIndexing(out);
+
 
             // Resource Locking
             headers = new String[] { "Ide", " Lock Token", " Start Time", " Expiry Time", " Shared Resource",
@@ -695,6 +702,16 @@ public class ExportController {
             }
         }
     }
+
+    private void writeNodesByTypeAndIndexing(BufferedWriter out) {
+        List<IndexedList> listNodesByTypeAndIndexing = sqlMapper.findNodesByTypeAndIndexing();
+        if (listNodesByTypeAndIndexing != null) {
+            for (int i = 0; i < listNodesByTypeAndIndexing.size(); i++) {
+                this.writeLine(out, listNodesByTypeAndIndexing.get(i).printNodeTypesandIndexing(this.reportExportType) );
+                this.writeEndLine(i, listNodesByTypeAndIndexing.size());
+            }
+        }
+    }    
 
     private void writeResouceLocking(BufferedWriter out) {
         List<LockedResources> listLockedResources = sqlMapper.findAllLockedResources();

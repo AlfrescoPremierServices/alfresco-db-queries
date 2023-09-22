@@ -1,5 +1,6 @@
 package com.alfresco.support.alfrescodb.dao;
 
+import com.alfresco.support.alfrescodb.model.IndexedList;
 import com.alfresco.support.alfrescodb.model.NodesList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -147,7 +148,9 @@ public interface NodeListMapper {
             "GROUP BY mimetype_str")
     List<NodesList> findNodesSizeByMimeTypeMSSql();
 
-
-
-
+    @Select("SELECT alf_qname.id as qname_id, alf_qname.local_name, p.boolean_value as indexed, count(*) as entries "+
+            "FROM alf_node JOIN alf_qname on alf_node.type_qname_id = alf_qname.id " +
+            "LEFT JOIN alf_node_properties p on (p.node_id=alf_node.id and p.qname_id in (select id from alf_qname where local_name='isIndexed')) " +
+            "group by alf_qname.id, alf_qname.local_name, p.boolean_value;")
+    List<IndexedList> findNodesByTypeAndIndexing();
 }

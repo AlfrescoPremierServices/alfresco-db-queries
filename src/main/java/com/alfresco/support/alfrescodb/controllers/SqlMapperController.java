@@ -25,6 +25,7 @@ import com.alfresco.support.alfrescodb.model.AppliedPatches;
 import com.alfresco.support.alfrescodb.model.ArchivedNodes;
 import com.alfresco.support.alfrescodb.model.Authority;
 import com.alfresco.support.alfrescodb.model.ContentModelProperties;
+import com.alfresco.support.alfrescodb.model.IndexedList;
 import com.alfresco.support.alfrescodb.model.JmxProperties;
 import com.alfresco.support.alfrescodb.model.LargeFolder;
 import com.alfresco.support.alfrescodb.model.LargeTransaction;
@@ -150,6 +151,10 @@ public class SqlMapperController {
             return nodeListMapper.findNodesByStoreMSSql();
         }
         return null;
+    }
+
+    public List<IndexedList> findNodesByTypeAndIndexing() {
+        return nodeListMapper.findNodesByTypeAndIndexing();
     }
 
     public List<LargeFolder> findLargeFolders() {
