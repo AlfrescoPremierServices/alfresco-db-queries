@@ -1,5 +1,7 @@
 package com.alfresco.support.alfrescodb.model;
 
+import com.alfresco.support.alfrescodb.controllers.ExportController;
+
 public class AppliedPatches {
     private String id;
     private String appliedToSchema;
@@ -66,6 +68,24 @@ public class AppliedPatches {
     }
 
     public String printAppliedPatches() {
-		return String.format("\n%s, %s, %s, %s, %s, %s, %s", id, appliedToSchema, appliedOnDate, appliedToServer, wasExecuted, succeeded, report);
-	}
+        return this.printAppliedPatches(ExportController.EXPORT_TXT);
+    }
+
+    public String printAppliedPatches(String format) {
+        String res = null;
+        if (ExportController.EXPORT_CSV.equals(format)) {
+            res = String.format("\n%s,%s,%s,%s,%s,%s,%s", id, appliedToSchema, appliedOnDate, appliedToServer,
+                    wasExecuted, succeeded, report);
+        } else if (ExportController.EXPORT_JSON.equals(format)) {
+            res = String.format(
+                    "\n{\"id\":\"%s\", \"appliedToSchema\":\"%s\", \"appliedOnDate\":\"%s\", \"appliedToServer\":\"%s\", \"wasExecuted\":\"%s\", \"succeeded\":\"%s\", \"report\":\"%s\"}",
+                    id, appliedToSchema,
+                    appliedOnDate, appliedToServer, wasExecuted, succeeded, report);
+        } else { // Default TXT
+            res = String.format("\n%s, %s, %s, %s, %s, %s, %s", id, appliedToSchema, appliedOnDate, appliedToServer,
+                    wasExecuted, succeeded, report);
+        }
+        return res;
+    }
+
 }
