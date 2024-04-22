@@ -1,3 +1,4 @@
 target/
 acs-db-*.css
 acs-db-queries.log
+/application.properties
