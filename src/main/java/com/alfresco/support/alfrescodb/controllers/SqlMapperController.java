@@ -1,9 +1,27 @@
 package com.alfresco.support.alfrescodb.controllers;
 
-import com.alfresco.support.alfrescodb.dao.*;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import java.util.List;
+
+import com.alfresco.support.alfrescodb.dao.AccessControlListMapper;
+import com.alfresco.support.alfrescodb.dao.ActivitiesFeedMapper;
+import com.alfresco.support.alfrescodb.dao.AppliedPatchesMapper;
+import com.alfresco.support.alfrescodb.dao.AuthorityMapper;
+import com.alfresco.support.alfrescodb.dao.ContentModelPropertiesMapper;
+import com.alfresco.support.alfrescodb.dao.DbSizeMapper;
+import com.alfresco.support.alfrescodb.dao.LargeFolderMapper;
+import com.alfresco.support.alfrescodb.dao.NodeListMapper;
+import com.alfresco.support.alfrescodb.dao.SolrMemoryMapper;
+import com.alfresco.support.alfrescodb.model.AccessControlList;
+import com.alfresco.support.alfrescodb.model.ActivitiesFeed;
+import com.alfresco.support.alfrescodb.model.AppliedPatches;
+import com.alfresco.support.alfrescodb.model.Authority;
+import com.alfresco.support.alfrescodb.model.ContentModelProperties;
+import com.alfresco.support.alfrescodb.model.LargeFolder;
+import com.alfresco.support.alfrescodb.model.NodesList;
+import com.alfresco.support.alfrescodb.model.SolrMemory;
 
 public class SqlMapperController {
 
@@ -62,7 +80,7 @@ public class SqlMapperController {
         return null;
     }
 
-    public List findNodesSize(){
+    public List < NodesList > findNodesSize(){
         if (dbType.equalsIgnoreCase("postgres")){
             return nodeListMapper.findNodesSize();
         } else if (dbType.equalsIgnoreCase("mysql")){
@@ -75,13 +93,13 @@ public class SqlMapperController {
         return null;
     }
 
-    public List findNodesSizeByMimeType(){
+    public List < NodesList > findNodesSizeByMimeType(){
         if (dbType.equalsIgnoreCase("microsoft")){
             return nodeListMapper.findNodesSizeByMimeTypeMSSql();
         } else return nodeListMapper.findNodesSizeByMimeType();
     }
 
-    public List findNodesByStore(){
+    public List < NodesList > findNodesByStore(){
         if (dbType.equalsIgnoreCase("postgres")){
             return nodeListMapper.findNodesByStorePostgres();
         } else if (dbType.equalsIgnoreCase("mysql")){
@@ -94,7 +112,7 @@ public class SqlMapperController {
         return null;
     }
 
-    public List findLargeFolders(){
+    public List< LargeFolder > findLargeFolders(){
         if (dbType.equalsIgnoreCase("postgres")){
             return largeFolderMapper.findBySize(largeFolderSize);
         } else if (dbType.equalsIgnoreCase("mysql")){
@@ -107,7 +125,7 @@ public class SqlMapperController {
         return null;
     }
 
-    public List findNodesByContentType(){
+    public List < NodesList > findNodesByContentType(){
         if (dbType.equalsIgnoreCase("postgres")){
             return nodeListMapper.findNodesByContentTypePostgres();
         } else if (dbType.equalsIgnoreCase("mysql")){
@@ -120,7 +138,7 @@ public class SqlMapperController {
         return null;
     }
 
-    public List findNodesByContentTypeAndMonth(){
+    public List < NodesList > findNodesByContentTypeAndMonth(){
         if (dbType.equalsIgnoreCase("postgres")){
             return nodeListMapper.findNodesByContentTypeAndMonthPostgres();
         } else if (dbType.equalsIgnoreCase("mysql")){
@@ -137,11 +155,11 @@ public class SqlMapperController {
         return accessControlListMapper.findAccessControlList();
     }
 
-    public List findAccessControlListEntries(){
+    public List< AccessControlList > findAccessControlListEntries(){
         return accessControlListMapper.findAccessControlListEntries();
     }
 
-    public List findACLNodeRepartition() {
+    public List< AccessControlList > findACLNodeRepartition() {
         if (dbType.equalsIgnoreCase("oracle")){
             return accessControlListMapper.findACLNodeRepartitionOracle();
 	} else if (dbType.equalsIgnoreCase("microsoft")){
@@ -149,7 +167,7 @@ public class SqlMapperController {
 	} else return accessControlListMapper.findACLNodeRepartition();
     }
 
-    public List findACEAuthorities() {
+    public List< AccessControlList > findACEAuthorities() {
         if (dbType.equalsIgnoreCase("oracle")){
             return accessControlListMapper.findACEAuthoritiesOracle();
 	} else if (dbType.equalsIgnoreCase("microsoft")){
@@ -161,19 +179,19 @@ public class SqlMapperController {
         return accessControlListMapper.findOrphanedAcls();
     }
 
-    public List findAclTypeRepartition() {
+    public List< AccessControlList > findAclTypeRepartition() {
         return accessControlListMapper.findAclTypesRepartition();
     }
 
-    public List findAclsHeight() {
+    public List< AccessControlList > findAclsHeight() {
         return accessControlListMapper.findAclsHeight();
     }
 
-    public List findContentModelProperties(){
+    public List < ContentModelProperties > findContentModelProperties(){
         return contentModelPropertiesMapper.findContentModelProperties();
     }
 
-    public List findActivitiesByActivityType(){
+    public List < ActivitiesFeed > findActivitiesByActivityType(){
         if (dbType.equalsIgnoreCase("postgres")){
             return activitiesFeedMapper.findActivitiesByActivityTypePostgres();
         } else if (dbType.equalsIgnoreCase("mysql")){
@@ -186,7 +204,7 @@ public class SqlMapperController {
         return null;
     }
 
-    public List findActivitiesByUser(){
+    public List < ActivitiesFeed > findActivitiesByUser(){
         if (dbType.equalsIgnoreCase("postgres")){
             return activitiesFeedMapper.findActivitiesByUserPostgres();
         } else if (dbType.equalsIgnoreCase("mysql")){
@@ -199,7 +217,7 @@ public class SqlMapperController {
         return null;
     }
 
-    public List findActivitiesByApplicationInterface(){
+    public List < ActivitiesFeed > findActivitiesByApplicationInterface(){
         if (dbType.equalsIgnoreCase("postgres")){
             return activitiesFeedMapper.findActivitiesByApplicationInterfacePostgres();
         } else if (dbType.equalsIgnoreCase("mysql")){
@@ -212,11 +230,11 @@ public class SqlMapperController {
         return null;
     }
 
-    public List solrMemory(){
+    public List < SolrMemory > solrMemory(){
         return solrMemoryMapper.solrMemory();
     }
 
-    public List findAuthorizedUsers(){
+    public List < Authority > findAuthorizedUsers(){
         if (dbType.equalsIgnoreCase("postgres")){
             return authorityMapper.findAuthorizedUsers();
         } else if (dbType.equalsIgnoreCase("mysql")){
@@ -230,7 +248,7 @@ public class SqlMapperController {
     }
 
     //Applied Patches
-    public List findAppliedPatches(){
+    public List<AppliedPatches> findAppliedPatches(){
         return appliedPatchesMapper.findAppliedPatches();
     }
 
