@@ -49,7 +49,7 @@ The steps to build the application are:
 
 **Note** : There is an executable jar file available in the target directory in case you want to use that one.
 
-Compile and build the application using Maven
+Compile and build the application using Maven. Due to Oracle license restriction, there are no public repositories that provide ojdbc jar so you need to install manually (just once) before compiling 
 ```sh
 $ cd alfresco-db-queries
 $ mvn install:install-file -Dfile=./lib/ojdbc6.jar -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.3 -Dpackaging=jar
