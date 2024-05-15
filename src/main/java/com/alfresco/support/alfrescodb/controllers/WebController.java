@@ -81,14 +81,24 @@ public class WebController {
     @Value("${alf_auth_status}")
     private Boolean alfAuthStatus;
 
+    @Autowired
+    ExportController exportController;
+
+    @Autowired
+    private WorkflowMapper workflowMapper;
+
     @RequestMapping("/")
     public String index(String name, Model model) {
         addAdditionalParamsToModel(model);
         return "index";
     }
 
-    @Autowired
-    private WorkflowMapper workflowMapper;
+    @RequestMapping("/report")
+    public void report(Model model) {
+        addAdditionalParamsToModel(model);
+        exportController.exportReport(model);
+    }
+
 
     @RequestMapping("/workflows")
     public String workflows(Model model) {
