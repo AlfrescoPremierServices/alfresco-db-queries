@@ -52,7 +52,7 @@ public class ExportController {
             List <AppliedPatchesBean> listAppliedPatches = exportMapper.findAppliedPatches();
             ObjectSerializer.serialize(listAppliedPatches, this.reportExportFolder + "/listAppliedPatches."+this.reportExportType, this.reportExportType);
             List<String> generatedFiles = new ArrayList<String>();
-            generatedFiles.add(this.reportExportType+"/listAppliedPatches."+this.reportExportType);
+            generatedFiles.add(this.reportExportFolder+"/listAppliedPatches."+this.reportExportType);
 
 
             model.addAttribute("generatedFiles", generatedFiles);
