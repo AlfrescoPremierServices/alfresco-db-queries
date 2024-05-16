@@ -16,6 +16,7 @@ import com.alfresco.support.alfrescodb.dao.JmxPropertiesMapper;
 import com.alfresco.support.alfrescodb.dao.LargeTransactionMapper;
 import com.alfresco.support.alfrescodb.dao.LockedResourcesMapper;
 import com.alfresco.support.alfrescodb.dao.WorkflowMapper;
+import com.alfresco.support.alfrescodb.export.ExportComponent;
 import com.alfresco.support.alfrescodb.model.AccessControlList;
 import com.alfresco.support.alfrescodb.model.ActivitiesFeed;
 import com.alfresco.support.alfrescodb.model.AppliedPatches;
@@ -82,7 +83,7 @@ public class WebController {
     private Boolean alfAuthStatus;
 
     @Autowired
-    ExportController exportController;
+    ExportComponent exportController;
 
     @Autowired
     private WorkflowMapper workflowMapper;

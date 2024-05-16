@@ -1,6 +1,1 @@
 target/
-application.properties
-.vscode/
-export/listAppliedPatches.csv
-export/listAppliedPatches.json
-acs-db-queries.log

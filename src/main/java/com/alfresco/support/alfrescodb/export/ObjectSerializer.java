@@ -51,7 +51,7 @@ public class ObjectSerializer {
 
     private static void serializeToCsv(Object object, String outputPath) throws IOException {
         CsvMapper csvMapper = new CsvMapper();
-        CsvSchema schema = csvMapper.schemaFor(object.getClass()).withHeader(); // Object MUST have public getters
+        CsvSchema schema = csvMapper.schemaFor(object.getClass()).withoutHeader(); // Object MUST have public getters
         csvMapper.writer(schema).writeValue(new File(outputPath), object);
     }
 }
