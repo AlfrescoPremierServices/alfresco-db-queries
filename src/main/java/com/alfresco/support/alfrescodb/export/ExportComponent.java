@@ -12,11 +12,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 
 import com.alfresco.support.alfrescodb.export.beans.AccessControlBean;
+import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByApplication;
+import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByTypeBean;
+import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByUser;
 import com.alfresco.support.alfrescodb.export.beans.AppliedPatchesBean;
+import com.alfresco.support.alfrescodb.export.beans.ArchivedNodesBean;
+import com.alfresco.support.alfrescodb.export.beans.ContentModelBean;
 import com.alfresco.support.alfrescodb.export.beans.DbMySQLBean;
 import com.alfresco.support.alfrescodb.export.beans.DbPostgresBean;
 import com.alfresco.support.alfrescodb.export.beans.LargeFolderBean;
 import com.alfresco.support.alfrescodb.export.beans.LargeTransactionBean;
+import com.alfresco.support.alfrescodb.export.beans.LockedResourcesBean;
 
 public class ExportComponent {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -37,13 +43,13 @@ public class ExportComponent {
     private String dbType;
 
     @Value("${alf_auth_status}")
-    private Boolean alfAuthStatusExists;
+    private Boolean isEnterpriseVersion;
 
     @Value("${largeFolderSize}")
     private Integer largeFolderSize;
 
     @Value("${largeTransactionSize}")
-    private Integer largeTransactionSize;    
+    private Integer largeTransactionSize;
 
     @Autowired
     private ExportMapper exportMapper;
@@ -69,11 +75,11 @@ public class ExportComponent {
                 List<DbMySQLBean> listDbMySQL = exportMapper.findTablesInfoMysql();
                 generatedFiles.add(this.exportToFile(listDbMySQL, "listDbMySQL"));
             } else if ("oracle".equalsIgnoreCase(dbType)) {
-                //XXX TODO
+                // XXX TODO
             } else if ("microsoft".equalsIgnoreCase(dbType)) {
-                //XXX TODO
+                // XXX TODO
             }
-            
+
             /* Large Folders */
             List<LargeFolderBean> largeFolders = exportMapper.findLargeFolders(largeFolderSize);
             generatedFiles.add(this.exportToFile(largeFolders, "largeFolders"));
@@ -110,6 +116,43 @@ public class ExportComponent {
             generatedFiles.add(this.exportToFile(totAcls, "totAcls"));
             String totAclsOrphaned = exportMapper.countTotalOrphanedAcls();
             generatedFiles.add(this.exportToFile(totAclsOrphaned, "totAclsOrphaned"));
+
+            /* Content Model */
+            List<ContentModelBean> contentModelBean = exportMapper.listContentModels();
+            generatedFiles.add(this.exportToFile(contentModelBean, "contentModel"));
+
+            /* Activities Feed */
+            List<ActivitiesFeedByTypeBean> activitiesFeedTypeBean = exportMapper.listActivitiesByActivityType();
+            generatedFiles.add(this.exportToFile(activitiesFeedTypeBean, "activitiesFeedByType"));
+
+            List<ActivitiesFeedByUser> activitiesFeedByUser = exportMapper.listActivitiesByUser();
+            generatedFiles.add(this.exportToFile(activitiesFeedByUser, "activitiesFeedByUser"));
+
+            List<ActivitiesFeedByApplication> activitiesFeedByApplication = exportMapper.listActivitiesByApplication();
+            generatedFiles.add(this.exportToFile(activitiesFeedByApplication, "activitiesFeedByApplication"));
+
+            /* Archived nodes */
+            List<ArchivedNodesBean> archivedNodesByUser = exportMapper.listArchivedNodesByUser();
+            generatedFiles.add(this.exportToFile(archivedNodesByUser, "archivedNodesByUser"));
+
+            String totArchivedNodes = exportMapper.countTotalArchivedNodes();
+            generatedFiles.add(this.exportToFile(totArchivedNodes, "totArchivedNodes"));
+
+            /* Locked Resources */
+            List<LockedResourcesBean> lockedResources = exportMapper.lockedResources();
+            generatedFiles.add(this.exportToFile(lockedResources, "lockedResources"));
+
+            /* Users and Groups */
+            String countTotalUsers = exportMapper.countTotalUsers();
+            generatedFiles.add(this.exportToFile(countTotalUsers, "countTotalUsers"));
+
+            if (this.isEnterpriseVersion) {
+                String countAuthorizedUsers = exportMapper.countAuthorizedUsers();
+                generatedFiles.add(this.exportToFile(countAuthorizedUsers, "countAuthorizedUsers"));
+            }
+
+            String countGroups = exportMapper.countGroups();
+            generatedFiles.add(this.exportToFile(countGroups, "countGroups"));
 
             model.addAttribute("generatedFiles", generatedFiles);
         } catch (IOException ioex) {

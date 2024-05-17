@@ -7,13 +7,20 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import com.alfresco.support.alfrescodb.export.beans.AccessControlBean;
+import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByApplication;
+import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByTypeBean;
+import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByUser;
 import com.alfresco.support.alfrescodb.export.beans.AppliedPatchesBean;
+import com.alfresco.support.alfrescodb.export.beans.ArchivedNodesBean;
+import com.alfresco.support.alfrescodb.export.beans.ContentModelBean;
 import com.alfresco.support.alfrescodb.export.beans.DbMSSQLBean;
 import com.alfresco.support.alfrescodb.export.beans.DbMySQLBean;
 import com.alfresco.support.alfrescodb.export.beans.DbOracleBean;
 import com.alfresco.support.alfrescodb.export.beans.DbPostgresBean;
+import com.alfresco.support.alfrescodb.export.beans.JmxPropertiesBean;
 import com.alfresco.support.alfrescodb.export.beans.LargeFolderBean;
 import com.alfresco.support.alfrescodb.export.beans.LargeTransactionBean;
+import com.alfresco.support.alfrescodb.export.beans.LockedResourcesBean;
 
 @Mapper
 public interface ExportMapper {
@@ -189,4 +196,87 @@ public interface ExportMapper {
             "aacl ON aacl.id=acm.acl_id AND aacl.type=1 \n" +
             "GROUP BY acm.acl_id" })
     List<AccessControlBean> findAclsHeight();
+
+    /*
+     * Content Model
+     */
+    @Select({"select an.uri model, local_name property " +
+    "from alf_qname aq, alf_namespace an " +
+    "where an.id = aq.ns_id "})
+    List<ContentModelBean> listContentModels();
+
+    /*
+     * Activities Feed
+     */
+     @Select("select count(*) as occurrences, CAST(post_date AS DATE) post_date, site_network as siteNetwork, activity_type as activityType " +
+     "from alf_activity_feed " +
+     "where feed_user_id = post_user_id " +
+     "group by post_date, site_network, activity_type ")
+    List<ActivitiesFeedByTypeBean> listActivitiesByActivityType();
+
+    @Select("select count(*) as occurrences, CAST(post_date AS DATE) post_date, site_network as siteNetwork, feed_user_id as feedUserId " +
+    "from alf_activity_feed " +
+    "where feed_user_id != '@@NULL@@' " +
+    "and feed_user_id = post_user_id " +
+    "group by CAST(post_date AS DATE), site_network, feed_user_id ")
+    List<ActivitiesFeedByUser> listActivitiesByUser();
+
+    @Select("select count(*) as occurrences, CAST(post_date AS DATE) as post_date, site_network as siteNetwork, app_tool as appTool " +
+    "from alf_activity_feed " +
+    "where feed_user_id != '@@NULL@@' " +
+    "and feed_user_id = post_user_id " +
+    "group by CAST(post_date AS DATE), site_network, app_tool ")
+    List<ActivitiesFeedByApplication> listActivitiesByApplication();
+
+    /*
+     * Archived Nodes
+     */
+
+     @Select("select count(*) as nodes from alf_node " +
+        "where store_id in (select id from alf_store where protocol = 'archive' and identifier = 'SpacesStore')")
+    String countTotalArchivedNodes();
+
+    @Select("select audit_modifier as auditModifier, count(*) as occurrences " +
+        "from alf_node " +
+        "where store_id in (select id from alf_store where protocol = 'archive' and identifier = 'SpacesStore') " +
+        "group by audit_modifier ")
+    List<ArchivedNodesBean> listArchivedNodesByUser();
+
+    /*
+     * Locked Resources
+     */
+    @Select("select al.id, al.lock_token as lockToken, start_time as startTime, expiry_time as expiryTime, " +
+    "alr1.qname_localname as sharedResource, alr2.qname_localname as exclusiveResource, uri " +
+    "from alf_lock al, alf_lock_resource alr1, alf_lock_resource alr2, alf_namespace an " +
+    "where alr1.id = al.shared_resource_id " +
+    "and alr2.id = al.excl_resource_id " +
+    "and an.id = alr1.qname_ns_id ")
+    List<LockedResourcesBean> lockedResources();
+
+    /*
+     * Users and Groups
+     */
+    @Select("select count(*) as authoritiesCount from alf_node_properties " +
+    "where node_id in (select id from alf_node where type_qname_id in (select id from alf_qname where local_name = 'person')) " +
+    "and qname_id in (select id from alf_qname where local_name ='userName')" )
+    String countTotalUsers();
+
+    @Select("select count(*) as authoritiesCount from alf_auth_status where authorized is TRUE")
+    String countAuthorizedUsers();
+
+    @Select("select count(*) as authoritiesCount from alf_node_properties where qname_id in (select id from alf_qname where local_name = 'authorityName')")
+    String countGroups();
+
+    /*
+     * Jmx Properties
+     */
+    @Select("SELECT APSVk.string_value as propertyName,APSVv.string_value as propertyValue " +
+    "FROM alf_prop_link APL " +
+    "JOIN alf_prop_value APVv ON APL.value_prop_id=APVv.id " +
+    "JOIN alf_prop_value APVk ON APL.key_prop_id=APVk.id " +
+    "JOIN alf_prop_string_value APSVk ON APVk.long_value=APSVk.id " +
+    "JOIN alf_prop_string_value APSVv ON APVv.long_value=APSVv.id " +
+    "WHERE APL.key_prop_id <> APL.value_prop_id " +
+    "AND APL.root_prop_id IN (SELECT prop1_id FROM alf_prop_unique_ctx)")
+    List<JmxPropertiesBean> findJmxProperties();
 }
