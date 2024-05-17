@@ -11,9 +11,9 @@ public class DbPostgresBean implements Serializable{
     private String schemaname;
     private String tablename;
     private String rowestimates;
-    private BigInteger table_size;
+    private BigInteger table_size_bytes;
     private String pretty_size;
-    private BigInteger index_bytes;
+    private BigInteger index_size_bytes;
     private Timestamp last_vacuum;
     private Timestamp last_autovacuum;
     private Timestamp last_analyze;
@@ -40,11 +40,11 @@ public class DbPostgresBean implements Serializable{
         this.rowestimates = rowestimates;
     }
 
-    public BigInteger getTable_size() {
-        return table_size;
+    public BigInteger getTable_size_bytes() {
+        return table_size_bytes;
     }
-    public void setTable_size(BigInteger table_size) {
-        this.table_size = table_size;
+    public void setTable_size_bytes(BigInteger table_size) {
+        this.table_size_bytes = table_size;
     }
 
     public String getPretty_size() {
@@ -54,11 +54,11 @@ public class DbPostgresBean implements Serializable{
         this.pretty_size = pretty_size;
     }
 
-    public BigInteger getIndex_bytes() {
-        return index_bytes;
+    public BigInteger getIndex_size_bytes() {
+        return index_size_bytes;
     }
-    public void setIndex_bytes(BigInteger index_bytes) {
-        this.index_bytes = index_bytes;
+    public void setIndex_size_bytes(BigInteger index_bytes) {
+        this.index_size_bytes = index_bytes;
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSZ")

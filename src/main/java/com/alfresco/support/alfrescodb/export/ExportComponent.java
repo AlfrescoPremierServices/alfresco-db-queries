@@ -13,7 +13,10 @@ import org.springframework.ui.Model;
 
 import com.alfresco.support.alfrescodb.export.beans.AccessControlBean;
 import com.alfresco.support.alfrescodb.export.beans.AppliedPatchesBean;
+import com.alfresco.support.alfrescodb.export.beans.DbMySQLBean;
 import com.alfresco.support.alfrescodb.export.beans.DbPostgresBean;
+import com.alfresco.support.alfrescodb.export.beans.LargeFolderBean;
+import com.alfresco.support.alfrescodb.export.beans.LargeTransactionBean;
 
 public class ExportComponent {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -36,6 +39,12 @@ public class ExportComponent {
     @Value("${alf_auth_status}")
     private Boolean alfAuthStatusExists;
 
+    @Value("${largeFolderSize}")
+    private Integer largeFolderSize;
+
+    @Value("${largeTransactionSize}")
+    private Integer largeTransactionSize;    
+
     @Autowired
     private ExportMapper exportMapper;
 
@@ -56,7 +65,22 @@ public class ExportComponent {
             if ("postgres".equalsIgnoreCase(dbType)) {
                 List<DbPostgresBean> listDbPostgres = exportMapper.findTablesInfoPostgres();
                 generatedFiles.add(this.exportToFile(listDbPostgres, "listDbPostgres"));
+            } else if ("mysql".equalsIgnoreCase(dbType)) {
+                List<DbMySQLBean> listDbMySQL = exportMapper.findTablesInfoMysql();
+                generatedFiles.add(this.exportToFile(listDbMySQL, "listDbMySQL"));
+            } else if ("oracle".equalsIgnoreCase(dbType)) {
+                //XXX TODO
+            } else if ("microsoft".equalsIgnoreCase(dbType)) {
+                //XXX TODO
             }
+            
+            /* Large Folders */
+            List<LargeFolderBean> largeFolders = exportMapper.findLargeFolders(largeFolderSize);
+            generatedFiles.add(this.exportToFile(largeFolders, "largeFolders"));
+
+            /* Large Transactions */
+            List<LargeTransactionBean> largeTransaction = exportMapper.findLargeTransactions(largeTransactionSize);
+            generatedFiles.add(this.exportToFile(largeTransaction, "largeTransaction"));
 
             /* ACLs */
             List<AccessControlBean> listACLs = exportMapper.findAccessControlListEntries();

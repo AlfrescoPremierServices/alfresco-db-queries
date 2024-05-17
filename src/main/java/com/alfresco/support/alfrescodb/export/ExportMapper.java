@@ -3,6 +3,7 @@ package com.alfresco.support.alfrescodb.export;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import com.alfresco.support.alfrescodb.export.beans.AccessControlBean;
@@ -11,14 +12,16 @@ import com.alfresco.support.alfrescodb.export.beans.DbMSSQLBean;
 import com.alfresco.support.alfrescodb.export.beans.DbMySQLBean;
 import com.alfresco.support.alfrescodb.export.beans.DbOracleBean;
 import com.alfresco.support.alfrescodb.export.beans.DbPostgresBean;
+import com.alfresco.support.alfrescodb.export.beans.LargeFolderBean;
+import com.alfresco.support.alfrescodb.export.beans.LargeTransactionBean;
 
 @Mapper
 public interface ExportMapper {
     /*
      * Applied Patches
      */
-    @Select("SELECT id, applied_to_schema appliedToSchema, applied_on_date appliedOnDate, applied_to_server appliedToServer, " +
-            "was_executed wasExecuted, succeeded, report " +
+    @Select("SELECT id, applied_to_schema appliedToSchema, applied_on_date appliedOnDate, " +
+            "applied_to_server appliedToServer, was_executed wasExecuted, succeeded, report " +
             "FROM alf_applied_patch")
     List<AppliedPatchesBean> listAppliedPatches();
 
@@ -26,22 +29,23 @@ public interface ExportMapper {
      * DB Size
      */
     // Postgres Queries
-    @Select(
-        "SELECT pg_namespace.nspname AS schemaname, pg_class.relname as tablename, pg_class.reltuples as rowEstimates, " +
-        "  pg_relation_size(pg_catalog.pg_class.oid) AS table_size, pg_size_pretty(pg_relation_size(pg_catalog.pg_class.oid)) AS pretty_size, " +
-        "  pg_indexes_size(pg_class.oid) AS index_bytes, stats.last_vacuum, stats.last_autovacuum, stats.last_analyze, stats.last_autoanalyze " +
-        "FROM pg_catalog.pg_class " +
-        "JOIN pg_catalog.pg_namespace ON relnamespace = pg_catalog.pg_namespace.oid " +
-        "left JOIN pg_catalog.pg_stat_all_tables stats on pg_class.oid = stats.relid " +
-        "WHERE pg_namespace.nspname NOT LIKE 'pg_%' ")
+    @Select("SELECT pg_namespace.nspname schemaname, pg_class.relname tablename, pg_class.reltuples rowEstimates, " +
+            "pg_relation_size(pg_catalog.pg_class.oid) table_size, pg_size_pretty(pg_relation_size(pg_catalog.pg_class.oid)) pretty_size, "
+            +
+            "pg_indexes_size(pg_class.oid) AS index_bytes, stats.last_vacuum, stats.last_autovacuum, stats.last_analyze, stats.last_autoanalyze "
+            +
+            "FROM pg_catalog.pg_class " +
+            "JOIN pg_catalog.pg_namespace ON relnamespace = pg_catalog.pg_namespace.oid " +
+            "left JOIN pg_catalog.pg_stat_all_tables stats on pg_class.oid = stats.relid " +
+            "WHERE pg_namespace.nspname NOT LIKE 'pg_%' ")
     List<DbPostgresBean> findTablesInfoPostgres();
 
     // MySQL Queries/
-    @Select("SELECT TABLE_SCHEMA 'tableSchema', TABLE_NAME 'tableName', (data_length + index_length) 'total', " +
-            "table_rows 'rowEstimate', index_length 'index',  " +
-            "data_length 'table' " +
+    @Select("SELECT table_schema as schemaname, table_name as tablename, engine, " +
+            "data_length as tableSize, index_length as indexSize, table_rows as rowEstimates, " +
+            "(data_length +index_length) as total_size_bytes " +
             "FROM information_schema.TABLES " +
-            "WHERE table_schema like '%' and TABLE_TYPE='BASE TABLE' ORDER BY TABLE_SCHEMA, data_length DESC")
+            "where table_schema not in ('sys','performance_schema','information_schema','mysql') ")
     List<DbMySQLBean> findTablesInfoMysql();
 
     // Oracle Queries
@@ -90,6 +94,30 @@ public interface ExportMapper {
             "JOIN sys.schemas s ON s.schema_id = t.schema_id \n" +
             "GROUP BY i.OBJECT_ID,i.index_id,i.name")
     List<DbMSSQLBean> findIndexesInfoMSSql();
+
+    /*
+     * Large Folders
+     */
+    @Select("SELECT count(*) as occurrences, concat (stores.protocol, '://', stores.identifier, '/', nodes.uuid) as nodeRef, "
+            +
+            "props.string_value as nodeName, qname.local_name as localName " +
+            "FROM alf_node as nodes, alf_store as stores, alf_child_assoc as children, alf_node_properties as props, alf_qname as qname "
+            +
+            "WHERE children.parent_node_id=nodes.id and stores.id=nodes.store_id and props.node_id = nodes.id and " +
+            "props.qname_id IN (SELECT id FROM alf_qname WHERE local_name = 'name') and qname.id = nodes.type_qname_id "
+            +
+            "GROUP BY stores.protocol, stores.identifier, nodes.uuid, string_value, local_name HAVING count(*) > #{size} ")
+    List<LargeFolderBean> findLargeFolders(@Param("size") int size);
+
+    /*
+     * Large Transactions
+     */
+    @Select("SELECT trx.id as trxId, count(*) as nodes " +
+            "FROM alf_transaction trx, alf_node an " +
+            "WHERE an.transaction_id = trx.id " +
+            "GROUP BY trx.id HAVING count(*) > #{size} ")
+    List<LargeTransactionBean> findLargeTransactions(@Param("size") int size);
+
 
     /*
      * Access Control List
