@@ -1,6 +1,8 @@
 package com.alfresco.support.alfrescodb.export.beans;
 
-public class JmxPropertiesBean {
+import java.io.Serializable;
+
+public class JmxPropertiesBean implements Serializable {
 	private String propertyName;
 	private String propertyValue;
     

@@ -1,8 +1,9 @@
 package com.alfresco.support.alfrescodb.export.beans;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
-public class WorkflowBean {
+public class WorkflowBean implements Serializable {
     private BigInteger occurrences;
     private String procdefid;
     private String taskname;

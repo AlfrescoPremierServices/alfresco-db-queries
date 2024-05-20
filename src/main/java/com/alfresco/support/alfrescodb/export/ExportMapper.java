@@ -21,6 +21,10 @@ import com.alfresco.support.alfrescodb.export.beans.JmxPropertiesBean;
 import com.alfresco.support.alfrescodb.export.beans.LargeFolderBean;
 import com.alfresco.support.alfrescodb.export.beans.LargeTransactionBean;
 import com.alfresco.support.alfrescodb.export.beans.LockedResourcesBean;
+import com.alfresco.support.alfrescodb.export.beans.NodeContentTypeBean;
+import com.alfresco.support.alfrescodb.export.beans.NodeContentTypeMonthBean;
+import com.alfresco.support.alfrescodb.export.beans.NodeMimeTypeBean;
+import com.alfresco.support.alfrescodb.export.beans.NodeStoreBean;
 import com.alfresco.support.alfrescodb.export.beans.WorkflowBean;
 
 @Mapper
@@ -106,8 +110,7 @@ public interface ExportMapper {
     /*
      * Large Folders
      */
-    @Select("SELECT count(*) as occurrences, concat (stores.protocol, '://', stores.identifier, '/', nodes.uuid) as nodeRef, "
-            +
+    @Select("SELECT count(*) as occurrences, stores.protocol, stores.identifier, nodes.uuid, " +
             "props.string_value as nodeName, qname.local_name as localName " +
             "FROM alf_node as nodes, alf_store as stores, alf_child_assoc as children, alf_node_properties as props, alf_qname as qname "
             +
@@ -125,7 +128,6 @@ public interface ExportMapper {
             "WHERE an.transaction_id = trx.id " +
             "GROUP BY trx.id HAVING count(*) > #{size} ")
     List<LargeTransactionBean> findLargeTransactions(@Param("size") int size);
-
 
     /*
      * Access Control List
@@ -201,65 +203,68 @@ public interface ExportMapper {
     /*
      * Content Model
      */
-    @Select({"select an.uri model, local_name property " +
-    "from alf_qname aq, alf_namespace an " +
-    "where an.id = aq.ns_id "})
+    @Select({ "select an.uri model, local_name property " +
+            "from alf_qname aq, alf_namespace an " +
+            "where an.id = aq.ns_id " })
     List<ContentModelBean> listContentModels();
 
     /*
      * Activities Feed
      */
-     @Select("select count(*) as occurrences, CAST(post_date AS DATE) post_date, site_network as siteNetwork, activity_type as activityType " +
-     "from alf_activity_feed " +
-     "where feed_user_id = post_user_id " +
-     "group by post_date, site_network, activity_type ")
+    @Select("select count(*) as occurrences, CAST(post_date AS DATE) post_date, site_network as siteNetwork, activity_type as activityType "
+            +
+            "from alf_activity_feed " +
+            "where feed_user_id = post_user_id " +
+            "group by post_date, site_network, activity_type ")
     List<ActivitiesFeedByTypeBean> listActivitiesByActivityType();
 
-    @Select("select count(*) as occurrences, CAST(post_date AS DATE) post_date, site_network as siteNetwork, feed_user_id as feedUserId " +
-    "from alf_activity_feed " +
-    "where feed_user_id != '@@NULL@@' " +
-    "and feed_user_id = post_user_id " +
-    "group by CAST(post_date AS DATE), site_network, feed_user_id ")
+    @Select("select count(*) as occurrences, CAST(post_date AS DATE) post_date, site_network as siteNetwork, feed_user_id as feedUserId "
+            +
+            "from alf_activity_feed " +
+            "where feed_user_id != '@@NULL@@' " +
+            "and feed_user_id = post_user_id " +
+            "group by CAST(post_date AS DATE), site_network, feed_user_id ")
     List<ActivitiesFeedByUser> listActivitiesByUser();
 
-    @Select("select count(*) as occurrences, CAST(post_date AS DATE) as post_date, site_network as siteNetwork, app_tool as appTool " +
-    "from alf_activity_feed " +
-    "where feed_user_id != '@@NULL@@' " +
-    "and feed_user_id = post_user_id " +
-    "group by CAST(post_date AS DATE), site_network, app_tool ")
+    @Select("select count(*) as occurrences, CAST(post_date AS DATE) as post_date, site_network as siteNetwork, app_tool as appTool "
+            +
+            "from alf_activity_feed " +
+            "where feed_user_id != '@@NULL@@' " +
+            "and feed_user_id = post_user_id " +
+            "group by CAST(post_date AS DATE), site_network, app_tool ")
     List<ActivitiesFeedByApplication> listActivitiesByApplication();
 
     /*
      * Archived Nodes
      */
-
-     @Select("select count(*) as nodes from alf_node " +
-        "where store_id in (select id from alf_store where protocol = 'archive' and identifier = 'SpacesStore')")
+    @Select("select count(*) as nodes from alf_node " +
+            "where store_id in (select id from alf_store where protocol = 'archive' and identifier = 'SpacesStore')")
     String countTotalArchivedNodes();
 
     @Select("select audit_modifier as auditModifier, count(*) as occurrences " +
-        "from alf_node " +
-        "where store_id in (select id from alf_store where protocol = 'archive' and identifier = 'SpacesStore') " +
-        "group by audit_modifier ")
+            "from alf_node " +
+            "where store_id in (select id from alf_store where protocol = 'archive' and identifier = 'SpacesStore') " +
+            "group by audit_modifier ")
     List<ArchivedNodesBean> listArchivedNodesByUser();
 
     /*
      * Locked Resources
      */
     @Select("select al.id, al.lock_token as lockToken, start_time as startTime, expiry_time as expiryTime, " +
-    "alr1.qname_localname as sharedResource, alr2.qname_localname as exclusiveResource, uri " +
-    "from alf_lock al, alf_lock_resource alr1, alf_lock_resource alr2, alf_namespace an " +
-    "where alr1.id = al.shared_resource_id " +
-    "and alr2.id = al.excl_resource_id " +
-    "and an.id = alr1.qname_ns_id ")
+            "alr1.qname_localname as sharedResource, alr2.qname_localname as exclusiveResource, uri " +
+            "from alf_lock al, alf_lock_resource alr1, alf_lock_resource alr2, alf_namespace an " +
+            "where alr1.id = al.shared_resource_id " +
+            "and alr2.id = al.excl_resource_id " +
+            "and an.id = alr1.qname_ns_id ")
     List<LockedResourcesBean> lockedResources();
 
     /*
      * Users and Groups
      */
     @Select("select count(*) as authoritiesCount from alf_node_properties " +
-    "where node_id in (select id from alf_node where type_qname_id in (select id from alf_qname where local_name = 'person')) " +
-    "and qname_id in (select id from alf_qname where local_name ='userName')" )
+            "where node_id in (select id from alf_node where type_qname_id in (select id from alf_qname where local_name = 'person')) "
+            +
+            "and qname_id in (select id from alf_qname where local_name ='userName')")
     String countTotalUsers();
 
     @Select("select count(*) as authoritiesCount from alf_auth_status where authorized is TRUE")
@@ -272,44 +277,83 @@ public interface ExportMapper {
      * Jmx Properties
      */
     @Select("SELECT APSVk.string_value as propertyName,APSVv.string_value as propertyValue " +
-    "FROM alf_prop_link APL " +
-    "JOIN alf_prop_value APVv ON APL.value_prop_id=APVv.id " +
-    "JOIN alf_prop_value APVk ON APL.key_prop_id=APVk.id " +
-    "JOIN alf_prop_string_value APSVk ON APVk.long_value=APSVk.id " +
-    "JOIN alf_prop_string_value APSVv ON APVv.long_value=APSVv.id " +
-    "WHERE APL.key_prop_id <> APL.value_prop_id " +
-    "AND APL.root_prop_id IN (SELECT prop1_id FROM alf_prop_unique_ctx)")
+            "FROM alf_prop_link APL " +
+            "JOIN alf_prop_value APVv ON APL.value_prop_id=APVv.id " +
+            "JOIN alf_prop_value APVk ON APL.key_prop_id=APVk.id " +
+            "JOIN alf_prop_string_value APSVk ON APVk.long_value=APSVk.id " +
+            "JOIN alf_prop_string_value APSVv ON APVv.long_value=APSVv.id " +
+            "WHERE APL.key_prop_id <> APL.value_prop_id " +
+            "AND APL.root_prop_id IN (SELECT prop1_id FROM alf_prop_unique_ctx)")
     List<JmxPropertiesBean> findJmxProperties();
 
     /*
      * Workflows
      */
     @Select("select count(*) as occurrences, proc_def_id_ as procDefId, name_ as taskName " +
-    "FROM ACT_HI_TASKINST " +
-    "GROUP BY proc_def_id_, name_")
+            "FROM ACT_HI_TASKINST " +
+            "GROUP BY proc_def_id_, name_")
     List<WorkflowBean> listWorkflowsWithProcessesAndTasks();
 
     @Select("select count(proc_def_id_) as occurrences, proc_def_id_  as procDefId " +
-        "FROM ACT_HI_PROCINST " +
-        "WHERE end_time_ is null " +
-        "GROUP BY proc_def_id_")
+            "FROM ACT_HI_PROCINST " +
+            "WHERE end_time_ is null " +
+            "GROUP BY proc_def_id_")
     List<WorkflowBean> listOpenWorkflows();
 
     @Select("select count(proc_def_id_) as occurrences, proc_def_id_  as procDefId " +
-        "FROM ACT_HI_PROCINST " +
-        "WHERE end_time_ is not null " +
-        "GROUP BY proc_def_id_")
+            "FROM ACT_HI_PROCINST " +
+            "WHERE end_time_ is not null " +
+            "GROUP BY proc_def_id_")
     List<WorkflowBean> listClosedWorkflows();
 
     @Select("select count(proc_def_id_) as occurrences, proc_def_id_  as procDefId, name_ as taskName " +
-        "FROM ACT_HI_TASKINST " +
-        "WHERE end_time_ is null " +
-        "GROUP BY proc_def_id_, name_")
+            "FROM ACT_HI_TASKINST " +
+            "WHERE end_time_ is null " +
+            "GROUP BY proc_def_id_, name_")
     List<WorkflowBean> listOpenTasks();
 
     @Select("select count(proc_def_id_) as occurrences, proc_def_id_  as procDefId, name_ as taskName " +
-        "FROM ACT_HI_TASKINST " +
-        "WHERE end_time_ is not null " +
-        "GROUP BY proc_def_id_, name_")
+            "FROM ACT_HI_TASKINST " +
+            "WHERE end_time_ is not null " +
+            "GROUP BY proc_def_id_, name_")
     List<WorkflowBean> listClosedTasks();
+
+    /*
+     * Nodes
+     */
+    @Select("SELECT stores.protocol,stores.identifier,count(nodes.id) as occurrences, sum(contentUrl.content_size) total_content_size_bytes " +
+    "FROM alf_node nodes " +
+    "  inner join alf_store stores on stores.id=nodes.store_id " +
+    "  left join alf_node_properties nodes_props on nodes.id = nodes_props.node_id " +
+    "  left join alf_content_data content on nodes_props.qname_id in (select id from alf_qname where local_name = 'content') and nodes_props.long_value = content.id " +
+    "  left join alf_content_url contentUrl on contentUrl.id = content.content_url_id " +
+    "group by stores.protocol,stores.identifier")
+    List<NodeStoreBean> listNodesByStore();
+
+    @Select("SELECT mimetype_str mimeType, count(nodes.id) as occurrences, sum(contentUrl.content_size) total_content_size_bytes " +
+    "FROM alf_node nodes " +
+    "  left join alf_node_properties nodes_props on nodes.id = nodes_props.node_id " +
+    "  left join alf_content_data content on nodes_props.qname_id in (select id from alf_qname where local_name = 'content') and nodes_props.long_value = content.id " +
+    "  left join alf_mimetype mime on content.content_mimetype_id = mime.id " +
+    "  left join alf_content_url contentUrl on contentUrl.id = content.content_url_id " +
+    "Where nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
+    "group by mimetype_str ")
+    List<NodeMimeTypeBean> listActiveNodesByMimetype();
+    
+    @Select("SELECT substring(nodes.audit_created,1,7) as createDate, ns.uri as namespace, names.local_name as propertyname, count(*) as occurrences " +
+    "FROM alf_node nodes " +
+    "  JOIN alf_qname names ON (nodes.type_qname_id = names.id) " +
+    "  JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
+    "WHERE nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
+    "GROUP BY substring(nodes.audit_created,1,7),ns.uri,names.local_name ")
+    List<NodeContentTypeMonthBean> listActiveNodesByContentTypeAndMonth();
+
+    @Select("SELECT ns.uri as namespace, names.local_name as propertyname, count(*) as occurrences " +
+    "FROM alf_node nodes " +
+    "  JOIN alf_qname names ON (nodes.type_qname_id = names.id) " +
+    "  JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
+    "WHERE nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
+    "GROUP BY ns.uri,names.local_name ")
+    List<NodeContentTypeBean> listActiveNodesByContentType();
+
 }

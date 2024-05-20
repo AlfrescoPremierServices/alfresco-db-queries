@@ -1,6 +1,8 @@
 package com.alfresco.support.alfrescodb.export.beans;
 
-public class ContentModelBean {
+import java.io.Serializable;
+
+public class ContentModelBean implements Serializable {
 	private String model;
 	private String property;
     

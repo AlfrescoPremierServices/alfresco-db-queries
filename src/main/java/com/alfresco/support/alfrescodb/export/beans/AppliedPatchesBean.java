@@ -3,7 +3,7 @@ package com.alfresco.support.alfrescodb.export.beans;
 import java.io.Serializable;
 
 
-public class AppliedPatchesBean implements Serializable  {
+public class AppliedPatchesBean implements Serializable {
     private String id;
     private String appliedToSchema;
     private String appliedOnDate;

@@ -1,10 +1,12 @@
 package com.alfresco.support.alfrescodb.export.beans;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
-public class ArchivedNodesBean {
+public class ArchivedNodesBean implements Serializable {
     private String auditmodifier;
     private BigInteger occurrences;
+    
     public String getAuditmodifier() {
         return auditmodifier;
     }

@@ -1,8 +1,9 @@
 package com.alfresco.support.alfrescodb.export.beans;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
-public class LargeTransactionBean {
+public class LargeTransactionBean implements Serializable {
     private Long trxId;
     private BigInteger nodes;
     

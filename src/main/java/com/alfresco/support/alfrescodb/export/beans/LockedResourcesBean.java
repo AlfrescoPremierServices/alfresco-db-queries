@@ -1,6 +1,8 @@
 package com.alfresco.support.alfrescodb.export.beans;
 
-public class LockedResourcesBean {
+import java.io.Serializable;
+
+public class LockedResourcesBean implements Serializable {
     private int id;
     private String sharedResource;
     private String exclusiveResource;

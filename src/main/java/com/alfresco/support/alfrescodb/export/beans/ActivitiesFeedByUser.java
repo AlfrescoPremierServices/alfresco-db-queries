@@ -1,9 +1,10 @@
 package com.alfresco.support.alfrescodb.export.beans;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.sql.Date;
 
-public class ActivitiesFeedByUser {
+public class ActivitiesFeedByUser implements Serializable {
     private BigInteger occurrences;
     private Date post_date;
     private String sitenetwork;

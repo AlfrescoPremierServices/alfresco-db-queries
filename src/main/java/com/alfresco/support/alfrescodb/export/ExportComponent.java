@@ -23,6 +23,10 @@ import com.alfresco.support.alfrescodb.export.beans.DbPostgresBean;
 import com.alfresco.support.alfrescodb.export.beans.LargeFolderBean;
 import com.alfresco.support.alfrescodb.export.beans.LargeTransactionBean;
 import com.alfresco.support.alfrescodb.export.beans.LockedResourcesBean;
+import com.alfresco.support.alfrescodb.export.beans.NodeContentTypeBean;
+import com.alfresco.support.alfrescodb.export.beans.NodeContentTypeMonthBean;
+import com.alfresco.support.alfrescodb.export.beans.NodeMimeTypeBean;
+import com.alfresco.support.alfrescodb.export.beans.NodeStoreBean;
 import com.alfresco.support.alfrescodb.export.beans.WorkflowBean;
 
 public class ExportComponent {
@@ -170,6 +174,20 @@ public class ExportComponent {
 
             List<WorkflowBean> closedTasks = exportMapper.listClosedTasks();
             generatedFiles.add(this.exportToFile(closedTasks, "closedTasks"));
+
+            /* Nodes */
+            List<NodeStoreBean> nodeStoreBeans = exportMapper.listNodesByStore();
+            generatedFiles.add(this.exportToFile(nodeStoreBeans, "nodeStoreBeans"));
+
+            List<NodeMimeTypeBean> activeNodesByMimeType = exportMapper.listActiveNodesByMimetype();
+            generatedFiles.add(this.exportToFile(activeNodesByMimeType, "activeNodesByMimeType"));
+
+            List<NodeContentTypeMonthBean> activeNodeContentTypeMonths = exportMapper.listActiveNodesByContentTypeAndMonth();
+            generatedFiles.add(this.exportToFile(activeNodeContentTypeMonths, "activeNodeContentTypeMonths"));
+
+            List<NodeContentTypeBean> activeNodeContentTypeBeans = exportMapper.listActiveNodesByContentType();
+            generatedFiles.add(this.exportToFile(activeNodeContentTypeBeans, "activeNodeContentTypeBeans"));
+
 
             model.addAttribute("generatedFiles", generatedFiles);
         } catch (IOException ioex) {
