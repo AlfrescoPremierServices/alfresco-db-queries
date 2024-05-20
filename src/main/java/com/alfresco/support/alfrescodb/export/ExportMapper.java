@@ -21,6 +21,7 @@ import com.alfresco.support.alfrescodb.export.beans.JmxPropertiesBean;
 import com.alfresco.support.alfrescodb.export.beans.LargeFolderBean;
 import com.alfresco.support.alfrescodb.export.beans.LargeTransactionBean;
 import com.alfresco.support.alfrescodb.export.beans.LockedResourcesBean;
+import com.alfresco.support.alfrescodb.export.beans.WorkflowBean;
 
 @Mapper
 public interface ExportMapper {
@@ -279,4 +280,36 @@ public interface ExportMapper {
     "WHERE APL.key_prop_id <> APL.value_prop_id " +
     "AND APL.root_prop_id IN (SELECT prop1_id FROM alf_prop_unique_ctx)")
     List<JmxPropertiesBean> findJmxProperties();
+
+    /*
+     * Workflows
+     */
+    @Select("select count(*) as occurrences, proc_def_id_ as procDefId, name_ as taskName " +
+    "FROM ACT_HI_TASKINST " +
+    "GROUP BY proc_def_id_, name_")
+    List<WorkflowBean> listWorkflowsWithProcessesAndTasks();
+
+    @Select("select count(proc_def_id_) as occurrences, proc_def_id_  as procDefId " +
+        "FROM ACT_HI_PROCINST " +
+        "WHERE end_time_ is null " +
+        "GROUP BY proc_def_id_")
+    List<WorkflowBean> listOpenWorkflows();
+
+    @Select("select count(proc_def_id_) as occurrences, proc_def_id_  as procDefId " +
+        "FROM ACT_HI_PROCINST " +
+        "WHERE end_time_ is not null " +
+        "GROUP BY proc_def_id_")
+    List<WorkflowBean> listClosedWorkflows();
+
+    @Select("select count(proc_def_id_) as occurrences, proc_def_id_  as procDefId, name_ as taskName " +
+        "FROM ACT_HI_TASKINST " +
+        "WHERE end_time_ is null " +
+        "GROUP BY proc_def_id_, name_")
+    List<WorkflowBean> listOpenTasks();
+
+    @Select("select count(proc_def_id_) as occurrences, proc_def_id_  as procDefId, name_ as taskName " +
+        "FROM ACT_HI_TASKINST " +
+        "WHERE end_time_ is not null " +
+        "GROUP BY proc_def_id_, name_")
+    List<WorkflowBean> listClosedTasks();
 }

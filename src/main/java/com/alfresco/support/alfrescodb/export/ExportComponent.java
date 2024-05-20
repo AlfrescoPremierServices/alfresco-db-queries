@@ -23,6 +23,7 @@ import com.alfresco.support.alfrescodb.export.beans.DbPostgresBean;
 import com.alfresco.support.alfrescodb.export.beans.LargeFolderBean;
 import com.alfresco.support.alfrescodb.export.beans.LargeTransactionBean;
 import com.alfresco.support.alfrescodb.export.beans.LockedResourcesBean;
+import com.alfresco.support.alfrescodb.export.beans.WorkflowBean;
 
 public class ExportComponent {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -153,6 +154,22 @@ public class ExportComponent {
 
             String countGroups = exportMapper.countGroups();
             generatedFiles.add(this.exportToFile(countGroups, "countGroups"));
+
+            /* Workflows */
+            List<WorkflowBean> workflowProcessAndTasks = exportMapper.listWorkflowsWithProcessesAndTasks();
+            generatedFiles.add(this.exportToFile(workflowProcessAndTasks, "workflowProcessAndTasks"));
+
+            List<WorkflowBean> openWorkflows = exportMapper.listOpenWorkflows();
+            generatedFiles.add(this.exportToFile(openWorkflows, "openWorkflows"));
+
+            List<WorkflowBean> closedWorkflows = exportMapper.listClosedWorkflows();
+            generatedFiles.add(this.exportToFile(closedWorkflows, "closedWorkflows"));
+
+            List<WorkflowBean> openTasks = exportMapper.listOpenTasks();
+            generatedFiles.add(this.exportToFile(openTasks, "openTasks"));
+
+            List<WorkflowBean> closedTasks = exportMapper.listClosedTasks();
+            generatedFiles.add(this.exportToFile(closedTasks, "closedTasks"));
 
             model.addAttribute("generatedFiles", generatedFiles);
         } catch (IOException ioex) {
