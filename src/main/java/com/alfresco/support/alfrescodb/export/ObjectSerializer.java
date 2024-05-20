@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -20,7 +21,7 @@ public class ObjectSerializer {
                 serializeToJson(object, outputPath);
                 break;
             case EXPORT_CSV:
-                if (object instanceof List) {
+                if (object instanceof List && !((List<?>) object).isEmpty()) {
                     // Assume every element has the same type
                     serializeListToCsv((List<?>) object, outputPath);
                 } else if (object instanceof Map ) {
@@ -36,14 +37,12 @@ public class ObjectSerializer {
     
     private static void serializeToJson(Object object, String outputPath) throws IOException {
         ObjectMapper jsonMapper = new ObjectMapper();
+        jsonMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_DEFAULT); //Remove null and default values from serialization
         jsonMapper.enable(SerializationFeature.INDENT_OUTPUT); // Pretty print
         jsonMapper.writeValue(new File(outputPath), object);
     }
 
     private static void serializeListToCsv(List<?> list, String outputPath) throws IOException {
-        if (list.isEmpty()) {
-            throw new IllegalArgumentException("List is empty.");
-        }
         CsvMapper csvMapper = new CsvMapper();
         CsvSchema schema = csvMapper.schemaFor(list.get(0).getClass()).withHeader();
         csvMapper.writer(schema).writeValue(new File(outputPath), list);
