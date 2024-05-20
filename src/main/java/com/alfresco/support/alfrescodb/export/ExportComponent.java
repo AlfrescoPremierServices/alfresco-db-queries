@@ -8,9 +8,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 
+import com.alfresco.support.alfrescodb.config.DbQueriesProperties;
 import com.alfresco.support.alfrescodb.export.beans.AccessControlBean;
 import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByApplication;
 import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByTypeBean;
@@ -32,40 +32,19 @@ import com.alfresco.support.alfrescodb.export.beans.WorkflowBean;
 public class ExportComponent {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${reportFile}")
-    private String reportFile;
-
-    @Value("${reportSplit}")
-    private boolean multiReportFile;
-
-    @Value("${reportExportFolder}")
-    private String reportExportFolder;
-
-    @Value("${reportExportType}")
-    private String reportExportType;
-
-    @Value("${spring.datasource.platform}")
-    private String dbType;
-
-    @Value("${alf_auth_status}")
-    private Boolean isEnterpriseVersion;
-
-    @Value("${largeFolderSize}")
-    private Integer largeFolderSize;
-
-    @Value("${largeTransactionSize}")
-    private Integer largeTransactionSize;
+    @Autowired
+    DbQueriesProperties appProperties;
 
     @Autowired
     private ExportMapper exportMapper;
 
     public void exportReport(Model model) {
 
-        logger.debug("Full Export started. Multifile: " + multiReportFile + "; Export Type: " + reportExportType
-                + "; Export folder: " + reportExportFolder);
+        logger.debug("Full Export started. Multifile: " + appProperties.getReportSplit() + "; Export Type: " + appProperties.getReportExportType()
+                + "; Export folder: " + appProperties.getReportExportFolder());
 
         try {
-            checkAndCreateFolder(this.reportExportFolder);
+            checkAndCreateFolder(appProperties.getReportExportFolder());
             List<String> generatedFiles = new ArrayList<String>();
 
             /* Applied Patches */
@@ -73,24 +52,24 @@ public class ExportComponent {
             generatedFiles.add(this.exportToFile(listAppliedPatches, "listAppliedPatches"));
 
             /* DBSize */
-            if ("postgres".equalsIgnoreCase(dbType)) {
+            if ("postgres".equalsIgnoreCase(appProperties.getDbType())) {
                 List<DbPostgresBean> listDbPostgres = exportMapper.findTablesInfoPostgres();
                 generatedFiles.add(this.exportToFile(listDbPostgres, "listDbPostgres"));
-            } else if ("mysql".equalsIgnoreCase(dbType)) {
+            } else if ("mysql".equalsIgnoreCase(appProperties.getDbType())) {
                 List<DbMySQLBean> listDbMySQL = exportMapper.findTablesInfoMysql();
                 generatedFiles.add(this.exportToFile(listDbMySQL, "listDbMySQL"));
-            } else if ("oracle".equalsIgnoreCase(dbType)) {
+            } else if ("oracle".equalsIgnoreCase(appProperties.getDbType())) {
                 // XXX TODO
-            } else if ("microsoft".equalsIgnoreCase(dbType)) {
+            } else if ("microsoft".equalsIgnoreCase(appProperties.getDbType())) {
                 // XXX TODO
             }
 
             /* Large Folders */
-            List<LargeFolderBean> largeFolders = exportMapper.findLargeFolders(largeFolderSize);
+            List<LargeFolderBean> largeFolders = exportMapper.findLargeFolders(appProperties.getLargeFolderSizeThreshold());
             generatedFiles.add(this.exportToFile(largeFolders, "largeFolders"));
 
             /* Large Transactions */
-            List<LargeTransactionBean> largeTransaction = exportMapper.findLargeTransactions(largeTransactionSize);
+            List<LargeTransactionBean> largeTransaction = exportMapper.findLargeTransactions(appProperties.getLargeTransactionSizeThreshold());
             generatedFiles.add(this.exportToFile(largeTransaction, "largeTransaction"));
 
             /* ACLs */
@@ -100,17 +79,17 @@ public class ExportComponent {
             generatedFiles.add(this.exportToFile(listACLs, "findAclTypesRepartition"));
             listACLs = exportMapper.findAclsHeight();
             generatedFiles.add(this.exportToFile(listACLs, "findAclsHeight"));
-            if ("oracle".equalsIgnoreCase(dbType)) {
+            if ("oracle".equalsIgnoreCase(appProperties.getDbType())) {
                 listACLs = exportMapper.findACLNodeRepartitionOracle();
-            } else if ("microsoft".equalsIgnoreCase(dbType)) {
+            } else if ("microsoft".equalsIgnoreCase(appProperties.getDbType())) {
                 listACLs = exportMapper.findACLNodeRepartitionMSSql();
             } else {
                 listACLs = exportMapper.findACLNodeRepartition();
             }
             generatedFiles.add(this.exportToFile(listACLs, "findACLNodeRepartition"));
-            if ("oracle".equalsIgnoreCase(dbType)) {
+            if ("oracle".equalsIgnoreCase(appProperties.getDbType())) {
                 listACLs = exportMapper.findACEAuthoritiesOracle();
-            } else if ("microsoft".equalsIgnoreCase(dbType)) {
+            } else if ("microsoft".equalsIgnoreCase(appProperties.getDbType())) {
                 listACLs = exportMapper.findACEAuthoritiesMSSql();
             } else {
                 listACLs = exportMapper.findACEAuthorities();
@@ -151,7 +130,7 @@ public class ExportComponent {
             String countTotalUsers = exportMapper.countTotalUsers();
             generatedFiles.add(this.exportToFile(countTotalUsers, "countTotalUsers"));
 
-            if (this.isEnterpriseVersion) {
+            if (appProperties.getIsEnterpriseVersion()) {
                 String countAuthorizedUsers = exportMapper.countAuthorizedUsers();
                 generatedFiles.add(this.exportToFile(countAuthorizedUsers, "countAuthorizedUsers"));
             }
@@ -198,8 +177,8 @@ public class ExportComponent {
     }
 
     private String exportToFile(Object o, String filename) throws IOException {
-        String generatedFile = this.reportExportFolder + "/" + filename + "." + this.reportExportType;
-        ObjectSerializer.serialize(o, generatedFile, this.reportExportType);
+        String generatedFile = appProperties.getReportExportFolder() + "/" + filename + "." + appProperties.getReportExportType();
+        ObjectSerializer.serialize(o, generatedFile, appProperties.getReportExportType());
         return generatedFile;
     }
 
