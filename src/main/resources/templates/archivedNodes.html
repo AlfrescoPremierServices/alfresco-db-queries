@@ -2,105 +2,75 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:width="http://www.w3.org/1999/xhtml">
 
 <head>
-	<title>Archived Nodes</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <title>Archived Nodes</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="webjars/datatables/1.10.15/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 
 <body>
-	<script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
-	<script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript" class="init">
-        $(document).ready( function () {
+    <script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" language="javascript"
+        src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" class="init">
+        $(document).ready(function () {
             $('table.noPaging').DataTable({
-             "paging": false,
-             "info": false,
+                "paging": false,
+                "info": false,
             });
-        } );
+        });
 
-        $(document).ready( function () {
+        $(document).ready(function () {
             $('table.noPaging-noSearching').DataTable({
-             "paging": false,
-             "info": false,
-             "searching": false,
+                "paging": false,
+                "info": false,
+                "searching": false,
             });
-        } );
+        });
 
-        $(document).ready( function () {
+        $(document).ready(function () {
             $('table.display').DataTable();
-        } );
+        });
     </script>
 
     <!-- Add navigation bar here -->
-	<div th:insert="navBar :: navBar"></div>
-    	
-	<!-- Archived Nodes -->
-	<div class="center panel panel-primary">
-		<div class="panel-heading">
-            <b>Archived Nodes</b>
-        </div>
+    <div th:insert="navBar :: navBar"></div>
 
-            <div th:if="${not #lists.isEmpty(listArchivedNodes)}">
-                <table class="display noPaging-noSearching">
-                    <thead>
-                        <tr>
-                            <th>Total Archived Nodes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="archivedNodes : ${listArchivedNodes}">
-                            <td th:text="${archivedNodes.nodes}"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p></p>
-            </div>
-
-
-            <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listArchivedNodes)}">
-                <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-                No Results Found
-            </div>
-        </div>
-    </div>
-    <!-- End of section -->
-
-	<!-- Archived nodes by user -->
+    <!-- Archived nodes by user -->
 
     <div class="center panel panel-primary">
         <div class="panel-heading">
-            <b>Archived Nodes by User</b>
+            <b>Archived Nodes by User (Total archived nodes: <span th:text="${#numbers.formatInteger(totArchivedNodes,0,'POINT')}"></span>) </b>
         </div>
 
         <div th:if="${not #lists.isEmpty(listArchivedNodes)}">
             <table class="display" cellspacing="0" width="100%">
-	            <thead>
-	                <tr>
-	                    <th>Archived Nodes</th>
-	                    <th>User</th>
-	                </tr>
-	            </thead>
-	            <tbody>
-	                <tr th:each="archivedNodes : ${listArchivedNodesByUser}">
-	                    <td th:text="${archivedNodes.nodes}"></td>
-	                    <td th:text="${archivedNodes.auditModifier}"></td>
-	                </tr>
-	            </tbody>
-	        </table>
+                <thead>
+                    <tr>
+                        <th>Archived Nodes</th>
+                        <th>User</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="archivedNodes : ${listArchivedNodes}">
+                        <td th:text="${#numbers.formatInteger(archivedNodes.occurrences,0,'POINT')}"></td>
+                        <td th:text="${archivedNodes.auditmodifier}"></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-	
-        <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listArchivedNodesByUser)}">
+
+        <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listArchivedNodes)}">
             <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
             No Results Found
         </div>
 
     </div>
-	<!-- End of section -->
+    <!-- End of section -->
 
- </body>
+</body>
 
 </html>

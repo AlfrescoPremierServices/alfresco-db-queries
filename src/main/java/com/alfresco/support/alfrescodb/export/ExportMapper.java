@@ -41,10 +41,10 @@ public interface ExportMapper {
      * DB Size
      */
     // Postgres Queries
-    @Select("SELECT pg_namespace.nspname schemaname, pg_class.relname tablename, pg_class.reltuples rowEstimates, " +
-            "pg_relation_size(pg_catalog.pg_class.oid) table_size, pg_size_pretty(pg_relation_size(pg_catalog.pg_class.oid)) pretty_size, "
+    @Select("SELECT pg_namespace.nspname schemaname, pg_class.relname tablename, cast(pg_class.reltuples as int8) rowEstimates, " +
+            "pg_relation_size(pg_catalog.pg_class.oid) table_size_bytes, pg_size_pretty(pg_relation_size(pg_catalog.pg_class.oid)) pretty_size, "
             +
-            "pg_indexes_size(pg_class.oid) AS index_bytes, stats.last_vacuum, stats.last_autovacuum, stats.last_analyze, stats.last_autoanalyze "
+            "pg_indexes_size(pg_class.oid) AS index_size_bytes, stats.last_vacuum, stats.last_autovacuum, stats.last_analyze, stats.last_autoanalyze "
             +
             "FROM pg_catalog.pg_class " +
             "JOIN pg_catalog.pg_namespace ON relnamespace = pg_catalog.pg_namespace.oid " +
@@ -54,7 +54,7 @@ public interface ExportMapper {
 
     // MySQL Queries/
     @Select("SELECT table_schema as schemaname, table_name as tablename, engine, " +
-            "data_length as tableSize, index_length as indexSize, table_rows as rowEstimates, " +
+            "data_length as table_size_bytes, index_length as index_size_bytes, table_rows as rowEstimates, " +
             "(data_length +index_length) as total_size_bytes " +
             "FROM information_schema.TABLES " +
             "where table_schema not in ('sys','performance_schema','information_schema','mysql') ")
@@ -135,53 +135,53 @@ public interface ExportMapper {
     @Select("select count(*) occurences from alf_access_control_list")
     String countTotalAcls();
 
-    @Select({ "SELECT count(*) occurrences from alf_access_control_list aacl " +
+    @Select("SELECT count(*) occurrences from alf_access_control_list aacl " +
             "LEFT OUTER JOIN alf_node an ON an.acl_id=aacl.id " +
-            "WHERE aacl.id IS NULL" })
+            "WHERE aacl.id IS NULL")
     String countTotalOrphanedAcls();
 
-    @Select({ "select ap.name permission, count(*) permissionCount " +
+    @Select("select ap.name permission, count(*) permissionCount " +
             "from alf_access_control_entry aace, alf_permission ap " +
             "where ap.id = aace.permission_id " +
-            "group by ap.name" })
+            "group by ap.name")
     List<AccessControlBean> findAccessControlListEntries();
 
-    @Select({ "SELECT acl_id aclid, count(*) numNodes " +
+    @Select("SELECT acl_id aclid, count(*) numNodes " +
             "FROM alf_node " +
-            "GROUP BY acl_id ORDER BY numNodes DESC LIMIT 10" })
+            "GROUP BY acl_id ORDER BY numNodes DESC LIMIT 10")
     List<AccessControlBean> findACLNodeRepartition();
 
-    @Select({ "SELECT * FROM (SELECT acl_id aclid, count(*) numNodes " +
+    @Select("SELECT * FROM (SELECT acl_id aclid, count(*) numNodes " +
             "FROM alf_node " +
             "GROUP BY acl_id ORDER BY numNodes DESC) " +
-            "WHERE ROWNUM <= 10" })
+            "WHERE ROWNUM <= 10")
     List<AccessControlBean> findACLNodeRepartitionOracle();
 
-    @Select({ "SELECT TOP 10 acl_id aclid, count(*) numNodes " +
+    @Select("SELECT TOP 10 acl_id aclid, count(*) numNodes " +
             "FROM alf_node " +
-            "GROUP BY acl_id ORDER BY numNodes DESC" })
+            "GROUP BY acl_id ORDER BY numNodes DESC")
     List<AccessControlBean> findACLNodeRepartitionMSSql();
 
-    @Select({ "SELECT md5(aa.authority) AS authorityHash, count(*) AS numAces " +
+    @Select("SELECT md5(aa.authority) AS authorityHash, count(*) AS numAces " +
             "FROM alf_access_control_entry ace " +
             "JOIN alf_authority aa ON aa.id=ace.authority_id " +
-            "GROUP BY authorityHash HAVING count(*) > 0" })
+            "GROUP BY authorityHash HAVING count(*) > 0")
     List<AccessControlBean> findACEAuthorities();
 
-    @Select({ "SELECT 'xxx' AS authorityHash, count(*) AS numAces " +
+    @Select("SELECT 'xxx' AS authorityHash, count(*) AS numAces " +
             "FROM alf_access_control_entry ace " +
             "JOIN alf_authority aa ON aa.id=ace.authority_id " +
-            "GROUP BY aa.authority HAVING count(*) > 0" })
+            "GROUP BY aa.authority HAVING count(*) > 0")
     List<AccessControlBean> findACEAuthoritiesOracle();
 
-    @Select({ "SELECT CONVERT(VARCHAR(32), HashBytes('MD5', aa.authority), 2) AS authorityHash, count(*) AS numAces "
+    @Select("SELECT CONVERT(VARCHAR(32), HashBytes('MD5', aa.authority), 2) AS authorityHash, count(*) AS numAces "
             +
             "FROM alf_access_control_entry ace " +
             "JOIN alf_authority aa ON aa.id=ace.authority_id " +
-            "GROUP BY aa.authority HAVING count(*) > 0" })
+            "GROUP BY aa.authority HAVING count(*) > 0")
     List<AccessControlBean> findACEAuthoritiesMSSql();
 
-    @Select({ "SELECT CASE type WHEN 0 THEN 'OLD' " +
+    @Select("SELECT CASE type WHEN 0 THEN 'OLD' " +
             "WHEN 1 THEN 'DEFINING' " +
             "WHEN 2 THEN 'SHARED' " +
             "WHEN 3 THEN  'FIXED' " +
@@ -190,22 +190,21 @@ public interface ExportMapper {
             "ELSE 'UNKNOWN' " +
             "END as aclType, inherits, count(*) as occurrences " +
             "FROM alf_access_control_list " +
-            "GROUP BY type, inherits"
-    })
+            "GROUP BY type, inherits")
     List<AccessControlBean> findAclTypesRepartition();
 
-    @Select({ "SELECT acm.acl_id as aclid, count(*) as numAces FROM \n" +
+    @Select("SELECT acm.acl_id as aclid, count(*) as numAces FROM \n" +
             "alf_acl_member acm INNER JOIN alf_access_control_list \n" +
             "aacl ON aacl.id=acm.acl_id AND aacl.type=1 \n" +
-            "GROUP BY acm.acl_id" })
+            "GROUP BY acm.acl_id")
     List<AccessControlBean> findAclsHeight();
 
     /*
      * Content Model
      */
-    @Select({ "select an.uri model, local_name property " +
+    @Select("select an.uri model, local_name property " +
             "from alf_qname aq, alf_namespace an " +
-            "where an.id = aq.ns_id " })
+            "where an.id = aq.ns_id ")
     List<ContentModelBean> listContentModels();
 
     /*
@@ -215,7 +214,7 @@ public interface ExportMapper {
             +
             "from alf_activity_feed " +
             "where feed_user_id = post_user_id " +
-            "group by post_date, site_network, activity_type ")
+            "group by CAST(post_date AS DATE), site_network, activity_type ")
     List<ActivitiesFeedByTypeBean> listActivitiesByActivityType();
 
     @Select("select count(*) as occurrences, CAST(post_date AS DATE) post_date, site_network as siteNetwork, feed_user_id as feedUserId "

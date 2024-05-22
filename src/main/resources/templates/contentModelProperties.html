@@ -38,7 +38,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="contentModel : ${listContentModelProperties}">
-                    <td th:text="${contentModel.model}"></td>
+                    <td th:text="${'{' + contentModel.model + '}' }"></td>
                     <td th:text="${contentModel.property}"></td>
                 </tr>
                 </tbody>

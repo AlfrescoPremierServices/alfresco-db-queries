@@ -2,218 +2,147 @@ package com.alfresco.support.alfrescodb.controllers;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import com.alfresco.support.alfrescodb.dao.ArchivedNodesMapper;
-import com.alfresco.support.alfrescodb.dao.AuthorityMapper;
-import com.alfresco.support.alfrescodb.dao.DbSizeMapper;
-import com.alfresco.support.alfrescodb.dao.JmxPropertiesMapper;
-import com.alfresco.support.alfrescodb.dao.LargeTransactionMapper;
-import com.alfresco.support.alfrescodb.dao.LockedResourcesMapper;
-import com.alfresco.support.alfrescodb.dao.WorkflowMapper;
+import com.alfresco.support.alfrescodb.config.DbQueriesProperties;
 import com.alfresco.support.alfrescodb.export.ExportComponent;
-import com.alfresco.support.alfrescodb.model.AccessControlList;
-import com.alfresco.support.alfrescodb.model.ActivitiesFeed;
-import com.alfresco.support.alfrescodb.model.AppliedPatches;
-import com.alfresco.support.alfrescodb.model.ArchivedNodes;
-import com.alfresco.support.alfrescodb.model.Authority;
-import com.alfresco.support.alfrescodb.model.ContentModelProperties;
-import com.alfresco.support.alfrescodb.model.JmxProperties;
-import com.alfresco.support.alfrescodb.model.LargeFolder;
-import com.alfresco.support.alfrescodb.model.LargeTransaction;
-import com.alfresco.support.alfrescodb.model.LockedResources;
-import com.alfresco.support.alfrescodb.model.MSSqlRelationInfo;
-import com.alfresco.support.alfrescodb.model.NodesList;
-import com.alfresco.support.alfrescodb.model.OracleRelationInfo;
-import com.alfresco.support.alfrescodb.model.RelationInfo;
-import com.alfresco.support.alfrescodb.model.SolrMemory;
-import com.alfresco.support.alfrescodb.model.Workflow;
+import com.alfresco.support.alfrescodb.export.ExportMapper;
+import com.alfresco.support.alfrescodb.export.beans.AccessControlBean;
+import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByApplication;
+import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByTypeBean;
+import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByUser;
+import com.alfresco.support.alfrescodb.export.beans.AppliedPatchesBean;
+import com.alfresco.support.alfrescodb.export.beans.ArchivedNodesBean;
+import com.alfresco.support.alfrescodb.export.beans.ContentModelBean;
+import com.alfresco.support.alfrescodb.export.beans.DbMySQLBean;
+import com.alfresco.support.alfrescodb.export.beans.DbPostgresBean;
+import com.alfresco.support.alfrescodb.export.beans.JmxPropertiesBean;
+import com.alfresco.support.alfrescodb.export.beans.LargeFolderBean;
+import com.alfresco.support.alfrescodb.export.beans.LargeTransactionBean;
+import com.alfresco.support.alfrescodb.export.beans.LockedResourcesBean;
+import com.alfresco.support.alfrescodb.export.beans.NodeContentTypeBean;
+import com.alfresco.support.alfrescodb.export.beans.NodeContentTypeMonthBean;
+import com.alfresco.support.alfrescodb.export.beans.NodeMimeTypeBean;
+import com.alfresco.support.alfrescodb.export.beans.NodeStoreBean;
+import com.alfresco.support.alfrescodb.export.beans.WorkflowBean;
 
 @Controller
 public class WebController {
-    //private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    SqlMapperController sqlMapper;
-
-    @Value("${largeFolderSize}")
-    private Integer largeFolderSize;
-
-    @Value("${largeTransactionSize}")
-    private Integer largeTransactionSize;
-
-    @Value("${reportFile}")
-    private String reportFile;
-
-    @Value("${spring.datasource.platform}")
-    private String dbType;
-
-    // Alfresco Solr caches
-    @Value("${alfresco.solr.filterCache.size}")
-    private Long alfrescoSolrFilterCacheSize;
-
-    @Value("${alfresco.solr.queryResultCache.size}")
-    private Long alfrescoSolrQueryResultCacheSize;
-
-    @Value("${alfresco.solr.authorityCache.size}")
-    private Long alfrescoSolrAuthorityCacheSize;
-
-    @Value("${alfresco.solr.pathCache.size}")
-    private Long alfrescoSolrPathCacheSize;
-
-    // Archive Solr caches
-    @Value("${archive.solr.filterCache.size}")
-    private Long archiveSolrFilterCacheSize;
-
-    @Value("${archive.solr.queryResultCache.size}")
-    private Long archiveSolrQueryResultCacheSize;
-
-    @Value("${archive.solr.authorityCache.size}")
-    private Long archiveSolrAuthorityCacheSize;
-
-    @Value("${archive.solr.pathCache.size}")
-    private Long archiveSolrPathCacheSize;
-
-    @Value("${alf_auth_status}")
-    private Boolean alfAuthStatus;
+    DbQueriesProperties appProperties;
 
     @Autowired
     ExportComponent exportController;
 
     @Autowired
-    private WorkflowMapper workflowMapper;
+    private ExportMapper exportMapper;
 
     @RequestMapping("/")
     public String index(String name, Model model) {
-        addAdditionalParamsToModel(model);
         return "index";
     }
 
     @RequestMapping("/report")
     public void report(Model model) {
-        addAdditionalParamsToModel(model);
         exportController.exportReport(model);
     }
 
-
-    @RequestMapping("/workflows")
-    public String workflows(Model model) {
-
-        // Count workflows by process def and task name
-        List < Workflow > listWorkflows = workflowMapper.findAll();
-        model.addAttribute("listWorkflows", listWorkflows);
-
-        // Count open processes
-        List < Workflow > listOpenWorkflows = workflowMapper.openWorkflows();
-        model.addAttribute("listOpenWorkflows", listOpenWorkflows);
-
-        // Count closed processes
-        List < Workflow > listClosedWorkflows = workflowMapper.closedWorkflows();
-        model.addAttribute("listClosedWorkflows", listClosedWorkflows);
-
-        // Count open taks
-        List < Workflow > listOpenTasks = workflowMapper.openTasks();
-        model.addAttribute("listOpenTasks", listOpenTasks);
-
-        // Count closed tasks
-        List < Workflow > listClosedTasks = workflowMapper.closedTasks();
-        model.addAttribute("listClosedTasks", listClosedTasks);
-
-        addAdditionalParamsToModel(model);
-
-        return null;
-    }
-
     @RequestMapping("/appliedPatches")
-    public String appliedPatches(Model model) {
-
-        // Count workflows by process def and task name
-        List < AppliedPatches > listAppliedPatches = sqlMapper.findAppliedPatches();
+    public void appliedPatches(Model model) {
+        List<AppliedPatchesBean> listAppliedPatches = exportMapper.listAppliedPatches();
         model.addAttribute("listAppliedPatches", listAppliedPatches);
-
-        addAdditionalParamsToModel(model);
-
-        return null;
-    }
-
-    @Autowired
-    private DbSizeMapper dbSizeMapper;
-
-    @RequestMapping("/dbSize")
-    public String dbSize(Model model) {
-        if (dbType.equalsIgnoreCase("mysql") || dbType.equalsIgnoreCase("postgres")) {
-            List < RelationInfo > listRelationInfos = sqlMapper.findTablesInfo();
-            model.addAttribute("listRelationInfos", listRelationInfos);
-
-            String dbSize = sqlMapper.findDbSize();
-            model.addAttribute("dbSize", dbSize);
-        } else if (dbType.equalsIgnoreCase("oracle")){
-            List<OracleRelationInfo> OracleListRelationInfos = sqlMapper.findTablesInfo();
-            model.addAttribute("OracleListRelationInfos", OracleListRelationInfos);
-
-            List<OracleRelationInfo> OracleListIndexesInfos = dbSizeMapper.findIndexesInfoOracle();
-            model.addAttribute("OracleListIndexesInfos", OracleListIndexesInfos);
-        } else if (dbType.equalsIgnoreCase("microsoft")) {
-            List<MSSqlRelationInfo> MSSqlListRelationInfos = sqlMapper.findTablesInfo();
-            model.addAttribute("MSSqlListRelationInfos", MSSqlListRelationInfos);
-
-            List<MSSqlRelationInfo> MSSqlListIndexesInfos = dbSizeMapper.findIndexesInfoMSSql();
-            model.addAttribute("MSSqlListIndexesInfos", MSSqlListIndexesInfos);
-        }
-
-        addAdditionalParamsToModel(model);
-
-        return null;
     }
 
     @RequestMapping("/largeFolders")
-    public String largeFolders(@RequestParam(value = "size", required = true) String size, Model model) {
-        List < LargeFolder > listLargeFolders = sqlMapper.findLargeFolders();
-
-        model.addAttribute("largeFolderSize", largeFolderSize);
+    public void largeFolders(Model model) {
+        List<LargeFolderBean> listLargeFolders = exportMapper.findLargeFolders(appProperties.getLargeFolderSizeThreshold());
         model.addAttribute("listLargeFolders", listLargeFolders);
-        model.addAttribute("size", size);
+        model.addAttribute("size", appProperties.getLargeFolderSizeThreshold());
+    }
 
-        addAdditionalParamsToModel(model);
+    @RequestMapping("/largeTransactions")
+    public void largeTransactions(Model model) {
+        List<LargeTransactionBean> listLargeTransactions = exportMapper.findLargeTransactions(appProperties.getLargeTransactionSizeThreshold());
+        model.addAttribute("listLargeTransactions", listLargeTransactions);
+        model.addAttribute("size", appProperties.getLargeTransactionSizeThreshold());
+    }
 
+    @RequestMapping("/dbSize")
+    public String dbSize(Model model) {
+        /* DBSize */
+        if ("postgres".equalsIgnoreCase(appProperties.getDbType())) {
+            List<DbPostgresBean> listDbPostgres = exportMapper.findTablesInfoPostgres();
+            model.addAttribute("listRelationInfosPostgres", listDbPostgres);
+        } else if ("mysql".equalsIgnoreCase(appProperties.getDbType())) {
+            List<DbMySQLBean> listDbMySQL = exportMapper.findTablesInfoMysql();
+            model.addAttribute("listRelationInfosMySQL", listDbMySQL);
+        //} else if ("oracle".equalsIgnoreCase(appProperties.getDbType())) {
+            // XXX TODO
+        //} else if ("microsoft".equalsIgnoreCase(appProperties.getDbType())) {
+            // XXX TODO
+        } else {
+            throw new IllegalArgumentException("DB Type not recognized: " + appProperties.getDbType());
+        }
         return null;
     }
 
-    @Autowired
-    private LargeTransactionMapper largeTransactionMapper;
+    @RequestMapping("/workflows")
+    public void workflows(Model model) {
+        // Count workflows by process def and task name
+        List<WorkflowBean> listWorkflows = exportMapper.listWorkflowsWithProcessesAndTasks();
+        model.addAttribute("listWorkflows", listWorkflows);
 
-    @RequestMapping("/largeTransactions")
-    public String largeTransactions(@RequestParam(value = "size", required = true) String size, Model model) {
-        List < LargeTransaction > listLargeTransactions = largeTransactionMapper.findBySize(largeTransactionSize);
+        // Count open processes
+        List<WorkflowBean> listOpenWorkflows = exportMapper.listOpenWorkflows();
+        model.addAttribute("listOpenWorkflows", listOpenWorkflows);
 
-        model.addAttribute("largeTransactionSize", largeTransactionSize);
-        model.addAttribute("listLargeTransactions", listLargeTransactions);
-        model.addAttribute("size", size);
+        // Count closed processes
+        List<WorkflowBean> listClosedWorkflows = exportMapper.listClosedWorkflows();
+        model.addAttribute("listClosedWorkflows", listClosedWorkflows);
 
-        addAdditionalParamsToModel(model);
+        // Count open taks
+        List<WorkflowBean> listOpenTasks = exportMapper.listOpenTasks();
+        model.addAttribute("listOpenTasks", listOpenTasks);
 
-        return null;
+        // Count closed tasks
+        List<WorkflowBean> listClosedTasks = exportMapper.listClosedTasks();
+        model.addAttribute("listClosedTasks", listClosedTasks);
     }
 
     @RequestMapping("/accessControlList")
-    public String accessControlList(Model model) {
-        String aclSize = sqlMapper.findAccessControlList();
+    public void accessControlList(Model model) {
+        // Some count
+        String aclSize = exportMapper.countTotalAcls();
+        String orphanedAcls = exportMapper.countTotalOrphanedAcls();
         model.addAttribute("aclSize", aclSize);
-
-        List < AccessControlList > aclNodeRepartition = sqlMapper.findACLNodeRepartition();
-        model.addAttribute("aclNodeRepartition", aclNodeRepartition);
-
-        List < AccessControlList > listAccessControlListEntries = sqlMapper.findAccessControlListEntries();
-        model.addAttribute("listAccessControlListEntries", listAccessControlListEntries);
-
-        String orphanedAcls = sqlMapper.findOrphanedAcls();
         model.addAttribute("orphanedAcls", orphanedAcls);
+        
+        // ACL IDs more used
+        List<AccessControlBean> listACLs;
+        if ("oracle".equalsIgnoreCase(appProperties.getDbType())) {
+            listACLs = exportMapper.findACLNodeRepartitionOracle();
+        } else if ("microsoft".equalsIgnoreCase(appProperties.getDbType())) {
+            listACLs = exportMapper.findACLNodeRepartitionMSSql();
+        } else {
+            listACLs = exportMapper.findACLNodeRepartition();
+        }
+        model.addAttribute("aclNodeRepartition", listACLs);
 
+        // Nodes per ACL Types (aka: DEFINING, SHARED, ...)
+        List<AccessControlBean> listAclTypeRepartition = exportMapper.findAclTypesRepartition();
+        model.addAttribute("listAclTypeRepartition", listAclTypeRepartition);
+
+        // ACEs by permission
+        List<AccessControlBean> listAccessControlListEntries = exportMapper.findAccessControlListEntries();
+        model.addAttribute("listAccessControlListEntries", listAccessControlListEntries);
+        // Count total permissions
         Integer aceSize = 0;
         for (int i = 0; i < listAccessControlListEntries.size(); i++) {
             Integer count = Integer.valueOf(listAccessControlListEntries.get(i).getPermissionCount());
@@ -221,229 +150,101 @@ public class WebController {
         }
         model.addAttribute("aceSize", aceSize);
 
-        List < AccessControlList > listACEAuthorities = sqlMapper.findACEAuthorities();
+        // ACEs by Authority (Group/User names are hashed)
+        List<AccessControlBean> listACEAuthorities;
+        if ("oracle".equalsIgnoreCase(appProperties.getDbType())) {
+            listACEAuthorities = exportMapper.findACEAuthoritiesOracle();
+        } else if ("microsoft".equalsIgnoreCase(appProperties.getDbType())) {
+            listACEAuthorities = exportMapper.findACEAuthoritiesMSSql();
+        } else {
+            listACEAuthorities = exportMapper.findACEAuthorities();
+        }
         model.addAttribute("listACEAuthorities", listACEAuthorities);
 
-        List < AccessControlList > listAclTypeRepartition = sqlMapper.findAclTypeRepartition();
-        model.addAttribute("listAclTypeRepartition", listAclTypeRepartition);
-
-        List < AccessControlList > listAclsHeight = sqlMapper.findAclsHeight();
+        // ACL Height
+        List<AccessControlBean> listAclsHeight = exportMapper.findAclsHeight();
         model.addAttribute("listAclsHeight", listAclsHeight);
-
-        addAdditionalParamsToModel(model);
-
-        return null;
     }
 
     @RequestMapping("/contentModelProperties")
-    public String contentModelProperties(Model model) {
-        List < ContentModelProperties > listContentModelProperties = sqlMapper.findContentModelProperties();
-        model.addAttribute("listContentModelProperties", listContentModelProperties);
-
-        addAdditionalParamsToModel(model);
-
-        return null;
+    public void contentModelProperties(Model model) {
+        List<ContentModelBean> contentModelBean = exportMapper.listContentModels();
+        model.addAttribute("listContentModelProperties", contentModelBean);
     }
 
     @RequestMapping("/activitiesFeed")
-    public String activitiesFeed(Model model) {
-
+    public void activitiesFeed(Model model) {
         // Activities by activity type
-        List < ActivitiesFeed > listActivitiesFeed = sqlMapper.findActivitiesByActivityType();
-
-        model.addAttribute("listActivitiesFeedByActivityType", listActivitiesFeed);
-
+        List<ActivitiesFeedByTypeBean> activitiesFeedType = exportMapper.listActivitiesByActivityType();
+        model.addAttribute("listActivitiesFeedByActivityType", activitiesFeedType);
+        
         // Activities by user
-        listActivitiesFeed = sqlMapper.findActivitiesByUser();
-
-        model.addAttribute("listActivitiesFeedByUser", listActivitiesFeed);
-
+        List<ActivitiesFeedByUser> activitiesFeedByUser = exportMapper.listActivitiesByUser();
+        model.addAttribute("listActivitiesFeedByUser", activitiesFeedByUser);
+        
         // Activities by application interface
-        listActivitiesFeed = sqlMapper.findActivitiesByApplicationInterface();
-
-        model.addAttribute("listActivitiesFeedByAppTool", listActivitiesFeed);
-
-        addAdditionalParamsToModel(model);
-
-        return null;
+        List<ActivitiesFeedByApplication> activitiesFeedByApplication = exportMapper.listActivitiesByApplication();
+        model.addAttribute("listActivitiesFeedByAppTool", activitiesFeedByApplication);
     }
 
-    @Autowired
-    private ArchivedNodesMapper archivedNodesMapper;
-
     @RequestMapping("/archivedNodes")
-    public String archivedNodes(Model model) {
-
-        // Archived nodes
-        List < ArchivedNodes > listArchivedNodes = archivedNodesMapper.findArchivedNodes();
-
-        model.addAttribute("listArchivedNodes", listArchivedNodes);
-
-        // Archived nodes by user
-        List < ArchivedNodes > listArchivedNodesByUser = archivedNodesMapper.findArchivedNodesByUser();
-
-        model.addAttribute("listArchivedNodesByUser", listArchivedNodesByUser);
-        addAdditionalParamsToModel(model);
-
-        return null;
+    public void archivedNodes(Model model) {
+        List<ArchivedNodesBean> archivedNodesByUser = exportMapper.listArchivedNodesByUser();
+        String totArchivedNodes = exportMapper.countTotalArchivedNodes();
+        model.addAttribute("listArchivedNodes", archivedNodesByUser);
+        model.addAttribute("totArchivedNodes", totArchivedNodes);
     }
 
     @RequestMapping("/listNodesByMimeType")
     public void nodesByMimeType(Model model) {
-        // Nodes by mime type
-        List < NodesList > listNodesByMimeType = sqlMapper.findNodesSizeByMimeType();
-
+        List<NodeMimeTypeBean> listNodesByMimeType = exportMapper.listActiveNodesByMimetype();
         model.addAttribute("listNodesByMimeType", listNodesByMimeType);
-
-        addAdditionalParamsToModel(model);
     }
 
     @RequestMapping("/listNodesByType")
-    public String nodesByType(Model model) {
-        // Nodes by type
-        List < NodesList > listNodesByType = sqlMapper.findNodesByContentType();
-
+    public void nodesByType(Model model) {
+        List<NodeContentTypeBean> listNodesByType = exportMapper.listActiveNodesByContentType();
         model.addAttribute("listNodesByType", listNodesByType);
-
-        addAdditionalParamsToModel(model);
-
-        return null;
     }
 
     @RequestMapping("/listNodesByTypeAndMonth")
-    public String listNodesByTypeAndMonth(Model model) {
-        // Nodes by type and month
-        List < NodesList > listNodesByTypeAndMonth = sqlMapper.findNodesByContentTypeAndMonth();
-
+    public void listNodesByTypeAndMonth(Model model) {
+        List<NodeContentTypeMonthBean> listNodesByTypeAndMonth = exportMapper.listActiveNodesByContentTypeAndMonth();
         model.addAttribute("listNodesByTypeAndMonth", listNodesByTypeAndMonth);
-
-        addAdditionalParamsToModel(model);
-
-        return null;
     }
 
     @RequestMapping("/listNodesByStore")
-    public String nodesByStore(Model model) {
-        // Nodes disk space
-        List < NodesList > diskSpace = sqlMapper.findNodesSize();
-
-        model.addAttribute("totalDiskSpace", diskSpace);
-        // Nodes by store
-        List < NodesList > listNodesByStore = sqlMapper.findNodesByStore();
-
+    public void nodesByStore(Model model) {
+        List<NodeStoreBean> listNodesByStore = exportMapper.listNodesByStore();
         model.addAttribute("listNodesByStore", listNodesByStore);
-
-        addAdditionalParamsToModel(model);
-
-        return null;
     }
-
-    @Autowired
-    private LockedResourcesMapper lockedResourcesMapper;
 
     @RequestMapping("/lockedResources")
-    public String lockedResources(Model model) {
-
-        List < LockedResources > listLockedResources = lockedResourcesMapper.findAll();
-
+    public void lockedResources(Model model) {
+        List<LockedResourcesBean> listLockedResources = exportMapper.lockedResources();
         model.addAttribute("listLockedResources", listLockedResources);
-
-        addAdditionalParamsToModel(model);
-
-        return null;
     }
-
-    @Autowired
-    private AuthorityMapper authorityMapper;
 
     @RequestMapping("/authorities")
-    public String authorities(Model model) {
+    public void authorities(Model model) {
+        // Count users
+        String countTotalUsers = exportMapper.countTotalUsers();
+        model.addAttribute("countTotalUsers", countTotalUsers);
 
-        //Count users
-        List < Authority > listUsers = authorityMapper.findUsers();
-
-        model.addAttribute("listUsers", listUsers);
-
-        if (alfAuthStatus == true) {
-            //Count authorized users
-            List<Authority> listAuthorizedUsers = sqlMapper.findAuthorizedUsers();
-
-            model.addAttribute("listAuthorizedUsers", listAuthorizedUsers);
-            model.addAttribute("alfAuthStatus", alfAuthStatus);
+        if (appProperties.getIsEnterpriseVersion()) {
+            // Count authorized users
+            String countAuthorizedUsers = exportMapper.countAuthorizedUsers();
+            model.addAttribute("countAuthorizedUsers", countAuthorizedUsers);
+            model.addAttribute("isEnterpriseVersion", appProperties.getIsEnterpriseVersion());
         }
-
-        //Count groups
-        List < Authority > listGroups = authorityMapper.findGroups();
-
-        model.addAttribute("listGroups", listGroups);
-
-        addAdditionalParamsToModel(model);
-
-        return null;
+        // Count groups
+        String countGroups = exportMapper.countGroups();
+        model.addAttribute("countGroups", countGroups);
     }
-
-    @Autowired
-    private JmxPropertiesMapper jmxPropertiesMapper;
 
     @RequestMapping("/jmxProperties")
-    public String jmxProperties(Model model) {
-
-        //JMX Properties
-        List < JmxProperties > listJmxProperties = jmxPropertiesMapper.findJmxProperties();
-
+    public void jmxProperties(Model model) {
+        List<JmxPropertiesBean> listJmxProperties = exportMapper.findJmxProperties();
         model.addAttribute("listJmxProperties", listJmxProperties);
-        addAdditionalParamsToModel(model);
-
-        return null;
-    }
-
-    @RequestMapping("/solrMemory")
-    public String solrMemory(Model model) {
-        List < SolrMemory > solrMemoryList = sqlMapper.solrMemory();
-        model.addAttribute("solrMemoryList", solrMemoryList);
-
-        for (int i = 0; i < solrMemoryList.size(); i++) {
-            Long alfrescoNodes = Long.valueOf(solrMemoryList.get(i).getAlfrescoNodes());
-            Long archiveNodes = Long.valueOf(solrMemoryList.get(i).getArchiveNodes());
-            Long transactions = Long.valueOf(solrMemoryList.get(i).getTransactions());
-            Long acls = Long.valueOf(solrMemoryList.get(i).getAcls());
-            Long aclTransactions = Long.valueOf(solrMemoryList.get(i).getAclTransactions());
-
-            double alfrescoCoreMemory = (double)(120*alfrescoNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
-            double archiveCoreMemory = (double)(120*archiveNodes + 32*(transactions + acls + aclTransactions))/1024/1024/1024;
-            double totalDataStructuresMemory = (double)alfrescoCoreMemory + archiveCoreMemory;
-            double alfrescoSolrCachesMemory = (double)(alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (double)(2*alfrescoNodes + transactions + acls + aclTransactions)/8/1024/1024/1024;
-            double archiveSolrCachesMemory = (double)(alfrescoSolrFilterCacheSize + alfrescoSolrQueryResultCacheSize + alfrescoSolrAuthorityCacheSize + alfrescoSolrPathCacheSize) * (double)(2*archiveNodes + transactions + acls + aclTransactions)/8/1024/1024/1024;
-            double totalSolrCachesMemory = (double)alfrescoSolrCachesMemory + archiveSolrCachesMemory;
-            double totalSolrMemory = (double)totalDataStructuresMemory + totalSolrCachesMemory;
-
-            model.addAttribute("alfrescoCoreMemory", alfrescoCoreMemory);
-            model.addAttribute("archiveCoreMemory", archiveCoreMemory);
-            model.addAttribute("alfrescoSolrQueryResultCacheSize", alfrescoSolrQueryResultCacheSize);
-            model.addAttribute("alfrescoSolrAuthorityCacheSize", alfrescoSolrAuthorityCacheSize);
-            model.addAttribute("alfrescoSolrPathCacheSize", alfrescoSolrPathCacheSize);
-            model.addAttribute("alfrescoSolrFilterCacheSize", alfrescoSolrFilterCacheSize);
-            model.addAttribute("archiveSolrQueryResultCacheSize", archiveSolrQueryResultCacheSize);
-            model.addAttribute("archiveSolrAuthorityCacheSize", archiveSolrAuthorityCacheSize);
-            model.addAttribute("archiveSolrPathCacheSize", archiveSolrPathCacheSize);
-            model.addAttribute("archiveSolrFilterCacheSize", archiveSolrFilterCacheSize);
-            model.addAttribute("solrDataStructuresTotalMemory", totalDataStructuresMemory);
-            model.addAttribute("alfrescoSolrCachesMemory", alfrescoSolrCachesMemory);
-            model.addAttribute("archiveSolrCachesMemory", archiveSolrCachesMemory);
-            model.addAttribute("totalSolrCachesMemory", totalSolrCachesMemory);
-            model.addAttribute("totalSolrMemory", 2*totalSolrMemory);
-            model.addAttribute("alfrescoSolrFilterCacheSize", alfrescoSolrFilterCacheSize);
-        }
-
-        addAdditionalParamsToModel(model);
-
-        return null;
-    }
-
-    private void addAdditionalParamsToModel(Model model) {
-        // Need this entry for large folders url
-        model.addAttribute("largeFolderSize", largeFolderSize);
-        // Need this entry for large transactions url
-        model.addAttribute("largeTransactionSize", largeTransactionSize);
     }
 }

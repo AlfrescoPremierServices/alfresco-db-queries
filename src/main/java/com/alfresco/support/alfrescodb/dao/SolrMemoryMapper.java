@@ -1,11 +1,11 @@
 package com.alfresco.support.alfrescodb.dao;
 
-import com.alfresco.support.alfrescodb.model.ArchivedNodes;
-import com.alfresco.support.alfrescodb.model.SolrMemory;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
-import java.util.List;
+import com.alfresco.support.alfrescodb.model.SolrMemory;
 
 @Mapper
 public interface SolrMemoryMapper {

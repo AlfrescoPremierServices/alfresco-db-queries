@@ -41,7 +41,7 @@
          
 	<div class="center panel panel-primary">
 		<div class="panel-heading">
-			<b>Large Transactions ( > <span th:text="${size}"></span> nodes )</b>
+			<b>Large Transactions (involving more than <span th:text="${size}"></span> nodes)</b>
 		</div>
 
 		<div th:if="${not #lists.isEmpty(listLargeTransactions)}">

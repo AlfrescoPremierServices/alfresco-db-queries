@@ -15,8 +15,21 @@
     <script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" class="init">
         $(document).ready( function () {
-            $('table.orderingPostgresMySql').DataTable({
-             "order": [1, 'desc'],
+            $('table.orderingPostgres').DataTable({
+             order: [1, 'desc'],
+             columnDefs: [
+                { 
+                    targets: [2, 4, 5], 
+                    type: "num"
+                }
+            ]
+            });
+        } );
+
+        $(document).ready( function () {
+            $('table.orderingMySql').DataTable({
+             order: [1, 'desc'],
+             
             });
         } );
 
@@ -56,38 +69,82 @@
 
 
     <!-- Database Info -->
-    <div th:if="${not #lists.isEmpty(listRelationInfos)}">
+    <div th:if="${not #lists.isEmpty(listRelationInfosPostgres)}">
 
         <div class="center panel panel-primary">
             <div class="panel-heading">
                 <b>Database Information</b>
             </div>
 
-            <table class="display orderingPostgresMySql" cellspacing="0" width="100%">
+            <table class="display orderingPostgres" cellspacing="0" width="100%">
 
                 <thead>
                 <tr>
+                    <th>Schema Name</th>
                     <th>Table Name</th>
-                    <th>Total Size MB</th>
-                    <th>Table Size MB</th>
-                    <th>Index Size MB</th>
                     <th>Row Estimate</th>
+                    <th>Total Size</th>
+                    <th>Table Size</th>
+                    <th>Index Size</th>
+                    <th>Last Vacuum</th>
+                    <th>Last Auto Vacuum</th>
+                    <th>Last Analyze</th>
+                    <th>Last Auto Analyze</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="rel : ${listRelationInfos}">
-                    <td th:text="${rel.tableName}"></td>
-                    <td th:text="${rel.total}"></td>
-                    <td th:text="${rel.table}"></td>
-                    <td th:text="${rel.index}"></td>
-                    <td th:text="${rel.rowEstimate}"></td>
+                <tr th:each="rel : ${listRelationInfosPostgres}">
+                    <td th:text="${rel.schemaname}"></td>
+                    <td th:text="${rel.tablename}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.rowestimates,0,'POINT')}"></td>
+                    <td th:text="${rel.pretty_size}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.table_size_bytes,0,'POINT')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.index_size_bytes,0,'POINT')}"></td>
+                    <td th:text="${#calendars.format(rel.last_vacuum, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
+                    <td th:text="${#calendars.format(rel.last_autovacuum, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
+                    <td th:text="${#calendars.format(rel.last_analyze, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
+                    <td th:text="${#calendars.format(rel.last_autoanalyze, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <div th:if="${not #lists.isEmpty(listRelationInfos)}">
+    <div th:if="${not #lists.isEmpty(listRelationInfosMySQL)}">
+
+        <div class="center panel panel-primary">
+            <div class="panel-heading">
+                <b>Database Information</b>
+            </div>
+
+            <table class="display orderingMySql" cellspacing="0" width="100%">
+
+                <thead>
+                <tr>
+                    <th>Schema Name</th>
+                    <th>Table Name</th>
+                    <th>Row Estimate</th>
+                    <th>Engine</th>
+                    <th>Total Size</th>
+                    <th>Table Size</th>
+                    <th>Index Size</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="rel : ${listRelationInfosMySQL}">
+                    <td th:text="${rel.schemaname}"></td>
+                    <td th:text="${rel.tablename}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.rowestimates,0,'POINT')}"></td>
+                    <td th:text="${rel.engine}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.total_size_bytes,0,'POINT')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.table_size_bytes,0,'POINT')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.index_size_bytes,0,'POINT')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<!--     <div th:if="${not #lists.isEmpty(listRelationInfos)}">
 
         <div class="center panel panel-primary">
             <div class="panel-heading">
@@ -108,7 +165,7 @@
             </table>
             </p>
         </div>
-    </div>
+    </div> -->
 
     <!--Oracle -->
     <div th:if="${not #lists.isEmpty(OracleListRelationInfos)}">

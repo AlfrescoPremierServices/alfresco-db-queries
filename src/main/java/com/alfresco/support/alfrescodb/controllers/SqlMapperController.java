@@ -27,10 +27,7 @@ public class SqlMapperController {
 
     @Value("${spring.datasource.platform}")
     private String dbType;
-
-    @Value("${largeFolderSize}")
-    private Integer largeFolderSize;
-
+    
     @Autowired
     private DbSizeMapper dbSizeMapper;
 
@@ -112,7 +109,7 @@ public class SqlMapperController {
         return null;
     }
 
-    public List< LargeFolder > findLargeFolders(){
+    public List< LargeFolder > findLargeFolders(Integer largeFolderSize){
         if (dbType.equalsIgnoreCase("postgres")){
             return largeFolderMapper.findBySize(largeFolderSize);
         } else if (dbType.equalsIgnoreCase("mysql")){

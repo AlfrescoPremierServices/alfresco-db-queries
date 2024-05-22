@@ -50,12 +50,14 @@
 		                <tr>
 		                    <th>Store</th>
 		                    <th>Nodes Count</th>
+		                    <th>Size (Bytes)</th>
 		                </tr>
 		            </thead>
 		            <tbody>
 		                <tr th:each="nodes : ${listNodesByStore}">
-		                    <td th:text="${nodes.store}"></td>
-		                    <td th:text="${nodes.occurrences}"></td>
+							<td th:text="${nodes.protocol + '://' + nodes.identifier}"></td>
+                            <td th:text="${#numbers.formatInteger(nodes.occurrences,0,'POINT')}"></td>
+                            <td th:text="${#numbers.formatInteger(nodes.total_content_size_bytes,0,'POINT')}"></td>
 		                </tr>
 		            </tbody>
 		        </table>
@@ -69,30 +71,5 @@
 		</div>
 	</div>
 	<!-- End of section -->
-
-	<!-- Size of content -->
-	<div class="center panel panel-primary">
-		<div class="panel-heading">
-			<b>Nodes Disk Space</b>
-		</div>
-
-		<table class="display noPaging-noSearching">
-			<thead>
-			<tr>
-				<th>Total Disk Space MB</th>
-			</tr>
-			</thead>
-			<tbody>
-			<tr th:each="nodes : ${totalDiskSpace}">
-				<td th:text="${nodes.diskSpace}"></td>
-			</tr>
-			</tbody>
-		</table>
-		<p></p>
-	</div>
-	</div>
-	<!-- End of section -->
-
  </body>
-
 </html>

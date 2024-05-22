@@ -2,11 +2,11 @@ package com.alfresco.support.alfrescodb.export.beans;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.sql.Timestamp;
+import java.sql.Date;
 
 public class ActivitiesFeedByTypeBean implements Serializable {
     private BigInteger occurrences;
-    private Timestamp post_date;
+    private Date post_date;
     private String sitenetwork;
     private String activitytype;
     
@@ -16,10 +16,10 @@ public class ActivitiesFeedByTypeBean implements Serializable {
     public void setOccurrences(BigInteger occurrences) {
         this.occurrences = occurrences;
     }
-    public Timestamp getPost_date() {
+    public Date getPost_date() {
         return post_date;
     }
-    public void setPost_date(Timestamp post_date) {
+    public void setPost_date(Date post_date) {
         this.post_date = post_date;
     }
     public String getSitenetwork() {

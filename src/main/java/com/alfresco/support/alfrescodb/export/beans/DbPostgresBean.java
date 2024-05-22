@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class DbPostgresBean implements Serializable{
     private String schemaname;
     private String tablename;
-    private String rowestimates;
+    private BigInteger rowestimates;
     private BigInteger table_size_bytes;
     private String pretty_size;
     private BigInteger index_size_bytes;
@@ -33,10 +33,10 @@ public class DbPostgresBean implements Serializable{
         this.tablename = tablename;
     }
 
-    public String getRowestimates() {
+    public BigInteger getRowestimates() {
         return rowestimates;
     }
-    public void setRowestimates(String rowestimates) {
+    public void setRowestimates(BigInteger rowestimates) {
         this.rowestimates = rowestimates;
     }
 

@@ -1,5 +1,9 @@
 package com.alfresco.support.alfrescodb.config;
 
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -17,7 +21,17 @@ public class DbQueriesProperties {
 
     @Value("${spring.datasource.platform}")
     private String dbType;
-    
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @PostConstruct
+    private void logValues() {
+        logger.debug("Configuration loaded: DbQueriesProperties [isEnterpriseVersion=" + isEnterpriseVersion + ", largeFolderSizeThreshold="
+                + largeFolderSizeThreshold + ", largeTransactionSizeThreshold=" + largeTransactionSizeThreshold
+                + ", reportFile=" + reportFile + ", reportSplit=" + reportSplit + ", reportExportType="
+                + reportExportType + ", reportExportFolder=" + reportExportFolder + ", dbType=" + dbType + "]");
+    }
+
     public Boolean getIsEnterpriseVersion() {
         return isEnterpriseVersion;
     }
