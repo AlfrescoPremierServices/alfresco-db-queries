@@ -2,39 +2,35 @@ package com.alfresco.support.alfrescodb.controllers;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.alfresco.support.alfrescodb.DAOMapper;
+import com.alfresco.support.alfrescodb.beans.AccessControlBean;
+import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByApplication;
+import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByTypeBean;
+import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByUser;
+import com.alfresco.support.alfrescodb.beans.AppliedPatchesBean;
+import com.alfresco.support.alfrescodb.beans.ArchivedNodesBean;
+import com.alfresco.support.alfrescodb.beans.ContentModelBean;
+import com.alfresco.support.alfrescodb.beans.DbMySQLBean;
+import com.alfresco.support.alfrescodb.beans.DbPostgresBean;
+import com.alfresco.support.alfrescodb.beans.JmxPropertiesBean;
+import com.alfresco.support.alfrescodb.beans.LargeFolderBean;
+import com.alfresco.support.alfrescodb.beans.LargeTransactionBean;
+import com.alfresco.support.alfrescodb.beans.LockedResourcesBean;
+import com.alfresco.support.alfrescodb.beans.NodeContentTypeBean;
+import com.alfresco.support.alfrescodb.beans.NodeContentTypeMonthBean;
+import com.alfresco.support.alfrescodb.beans.NodeMimeTypeBean;
+import com.alfresco.support.alfrescodb.beans.NodeStoreBean;
+import com.alfresco.support.alfrescodb.beans.WorkflowBean;
 import com.alfresco.support.alfrescodb.config.DbQueriesProperties;
 import com.alfresco.support.alfrescodb.export.ExportComponent;
-import com.alfresco.support.alfrescodb.export.ExportMapper;
-import com.alfresco.support.alfrescodb.export.beans.AccessControlBean;
-import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByApplication;
-import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByTypeBean;
-import com.alfresco.support.alfrescodb.export.beans.ActivitiesFeedByUser;
-import com.alfresco.support.alfrescodb.export.beans.AppliedPatchesBean;
-import com.alfresco.support.alfrescodb.export.beans.ArchivedNodesBean;
-import com.alfresco.support.alfrescodb.export.beans.ContentModelBean;
-import com.alfresco.support.alfrescodb.export.beans.DbMySQLBean;
-import com.alfresco.support.alfrescodb.export.beans.DbPostgresBean;
-import com.alfresco.support.alfrescodb.export.beans.JmxPropertiesBean;
-import com.alfresco.support.alfrescodb.export.beans.LargeFolderBean;
-import com.alfresco.support.alfrescodb.export.beans.LargeTransactionBean;
-import com.alfresco.support.alfrescodb.export.beans.LockedResourcesBean;
-import com.alfresco.support.alfrescodb.export.beans.NodeContentTypeBean;
-import com.alfresco.support.alfrescodb.export.beans.NodeContentTypeMonthBean;
-import com.alfresco.support.alfrescodb.export.beans.NodeMimeTypeBean;
-import com.alfresco.support.alfrescodb.export.beans.NodeStoreBean;
-import com.alfresco.support.alfrescodb.export.beans.WorkflowBean;
 
 @Controller
 public class WebController {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     DbQueriesProperties appProperties;
 
@@ -42,7 +38,7 @@ public class WebController {
     ExportComponent exportController;
 
     @Autowired
-    private ExportMapper exportMapper;
+    private DAOMapper exportMapper;
 
     @RequestMapping("/")
     public String index(String name, Model model) {
