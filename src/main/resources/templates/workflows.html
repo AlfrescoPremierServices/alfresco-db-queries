@@ -62,9 +62,9 @@
                 </thead>
                 <tbody>
                     <tr th:each="workflow : ${listWorkflows}">
-                        <td th:text="${workflow.procdefid}"></td>
-                        <td th:text="${workflow.taskname}"></td>
-                        <td th:text="${workflow.occurrences}"></td>
+                        <td th:text="${workflow.procDefId}"></td>
+                        <td th:text="${workflow.taskName}"></td>
+                        <td th:text="${workflow.count}"></td>
                     </tr>
                 </tbody>
             </table>
@@ -97,8 +97,8 @@
                 </thead>
                 <tbody>
                     <tr th:each="workflow : ${listOpenWorkflows}">
-                        <td th:text="${workflow.procdefid}"></td>
-                        <td th:text="${workflow.occurrences}"></td>
+                        <td th:text="${workflow.procDefId}"></td>
+                        <td th:text="${workflow.count}"></td>
                     </tr>
                 </tbody>
             </table>
@@ -131,8 +131,8 @@
                 </thead>
                 <tbody>
                     <tr th:each="workflow : ${listClosedWorkflows}">
-                        <td th:text="${workflow.procdefid}"></td>
-                        <td th:text="${workflow.occurrences}"></td>
+                        <td th:text="${workflow.procDefId}"></td>
+                        <td th:text="${workflow.count}"></td>
                     </tr>
                 </tbody>
             </table>
@@ -166,9 +166,9 @@
                 </thead>
                 <tbody>
                     <tr th:each="workflow : ${listOpenTasks}">
-                        <td th:text="${workflow.procdefid}"></td>
-                        <td th:text="${workflow.taskname}"></td>
-                        <td th:text="${workflow.occurrences}"></td>
+                        <td th:text="${workflow.procDefId}"></td>
+                        <td th:text="${workflow.taskName}"></td>
+                        <td th:text="${workflow.count}"></td>
                     </tr>
                 </tbody>
             </table>
@@ -202,9 +202,9 @@
                 </thead>
                 <tbody>
                     <tr th:each="workflow : ${listClosedTasks}">
-                        <td th:text="${workflow.procdefid}"></td>
-                        <td th:text="${workflow.taskname}"></td>
-                        <td th:text="${workflow.occurrences}"></td>
+                        <td th:text="${workflow.procDefId}"></td>
+                        <td th:text="${workflow.taskName}"></td>
+                        <td th:text="${workflow.count}"></td>
                     </tr>
                 </tbody>
             </table>

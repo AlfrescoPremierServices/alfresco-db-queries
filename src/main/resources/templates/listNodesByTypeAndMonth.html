@@ -54,8 +54,8 @@
 		            <tbody>
 		                <tr th:each="nodes : ${listNodesByTypeAndMonth}">
 		                    <td th:text="${nodes.createdate}"></td>
-							<td th:text="${'{' + nodes.namespace + '}' + nodes.propertyname}"></td>
-                            <td th:text="${#numbers.formatInteger(nodes.occurrences,0,'POINT')}"></td>
+							<td th:text="${'{' + nodes.namespace + '}' + nodes.propertyName}"></td>
+                            <td th:text="${#numbers.formatInteger(nodes.count,0,'POINT')}"></td>
 		                </tr>
 		            </tbody>
 		        </table>

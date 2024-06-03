@@ -55,8 +55,8 @@
                 </thead>
                 <tbody>
                     <tr th:each="archivedNodes : ${listArchivedNodes}">
-                        <td th:text="${#numbers.formatInteger(archivedNodes.occurrences,0,'POINT')}"></td>
-                        <td th:text="${archivedNodes.auditmodifier}"></td>
+                        <td th:text="${#numbers.formatInteger(archivedNodes.count,0,'POINT')}"></td>
+                        <td th:text="${archivedNodes.auditModifier}"></td>
                     </tr>
                 </tbody>
             </table>

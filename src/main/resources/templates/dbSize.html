@@ -94,16 +94,16 @@
                 </thead>
                 <tbody>
                 <tr th:each="rel : ${listRelationInfosPostgres}">
-                    <td th:text="${rel.schemaname}"></td>
-                    <td th:text="${rel.tablename}"></td>
-                    <td th:text="${#numbers.formatInteger(rel.rowestimates,0,'POINT')}"></td>
-                    <td th:text="${rel.pretty_size}"></td>
-                    <td th:text="${#numbers.formatInteger(rel.table_size_bytes,0,'POINT')}"></td>
-                    <td th:text="${#numbers.formatInteger(rel.index_size_bytes,0,'POINT')}"></td>
-                    <td th:text="${#calendars.format(rel.last_vacuum, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
-                    <td th:text="${#calendars.format(rel.last_autovacuum, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
-                    <td th:text="${#calendars.format(rel.last_analyze, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
-                    <td th:text="${#calendars.format(rel.last_autoanalyze, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
+                    <td th:text="${rel.schemaName}"></td>
+                    <td th:text="${rel.tableName}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.rowEstimates,0,'POINT')}"></td>
+                    <td th:text="${rel.prettySize}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.tableSizeBytes,0,'POINT')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.indexSizeBytes,0,'POINT')}"></td>
+                    <td th:text="${#calendars.format(rel.lastVacuum, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
+                    <td th:text="${#calendars.format(rel.lastAutoVacuum, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
+                    <td th:text="${#calendars.format(rel.lastAnalyze, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
+                    <td th:text="${#calendars.format(rel.lastAutoAnalyze, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -132,13 +132,13 @@
                 </thead>
                 <tbody>
                 <tr th:each="rel : ${listRelationInfosMySQL}">
-                    <td th:text="${rel.schemaname}"></td>
-                    <td th:text="${rel.tablename}"></td>
-                    <td th:text="${#numbers.formatInteger(rel.rowestimates,0,'POINT')}"></td>
+                    <td th:text="${rel.schemaName}"></td>
+                    <td th:text="${rel.tableName}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.rowEstimates,0,'POINT')}"></td>
                     <td th:text="${rel.engine}"></td>
-                    <td th:text="${#numbers.formatInteger(rel.total_size_bytes,0,'POINT')}"></td>
-                    <td th:text="${#numbers.formatInteger(rel.table_size_bytes,0,'POINT')}"></td>
-                    <td th:text="${#numbers.formatInteger(rel.index_size_bytes,0,'POINT')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.totalSizeBytes,0,'POINT')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.tableSizeBytes,0,'POINT')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.indexSizeBytes,0,'POINT')}"></td>
                 </tr>
                 </tbody>
             </table>

@@ -8,88 +8,88 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 
 public class DbPostgresBean implements Serializable{
-    private String schemaname;
-    private String tablename;
-    private BigInteger rowestimates;
-    private BigInteger table_size_bytes;
-    private String pretty_size;
-    private BigInteger index_size_bytes;
-    private Timestamp last_vacuum;
-    private Timestamp last_autovacuum;
-    private Timestamp last_analyze;
-    private Timestamp last_autoanalyze;
+    private String schemaName;
+    private String tableName;
+    private BigInteger rowEstimates;
+    private BigInteger tableSizeBytes;
+    private String prettySize;
+    private BigInteger indexSizeBytes;
+    private Timestamp lastVacuum;
+    private Timestamp lastAutoVacuum;
+    private Timestamp lastAnalyze;
+    private Timestamp lastAutoAnalyze;
 
-    public String getSchemaname() {
-        return schemaname;
+    public String getSchemaName() {
+        return schemaName;
     }
-    public void setSchemaname(String schemaname) {
-        this.schemaname = schemaname;
-    }
-
-    public String getTablename() {
-        return tablename;
-    }
-    public void setTablename(String tablename) {
-        this.tablename = tablename;
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
     }
 
-    public BigInteger getRowestimates() {
-        return rowestimates;
+    public String getTableName() {
+        return tableName;
     }
-    public void setRowestimates(BigInteger rowestimates) {
-        this.rowestimates = rowestimates;
-    }
-
-    public BigInteger getTable_size_bytes() {
-        return table_size_bytes;
-    }
-    public void setTable_size_bytes(BigInteger table_size) {
-        this.table_size_bytes = table_size;
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
-    public String getPretty_size() {
-        return pretty_size;
+    public BigInteger getRowEstimates() {
+        return rowEstimates;
     }
-    public void setPretty_size(String pretty_size) {
-        this.pretty_size = pretty_size;
-    }
-
-    public BigInteger getIndex_size_bytes() {
-        return index_size_bytes;
-    }
-    public void setIndex_size_bytes(BigInteger index_bytes) {
-        this.index_size_bytes = index_bytes;
+    public void setRowEstimates(BigInteger rowEstimates) {
+        this.rowEstimates = rowEstimates;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSZ")
-    public Timestamp getLast_vacuum() {
-        return last_vacuum;
+    public BigInteger getTableSizeBytes() {
+        return tableSizeBytes;
     }
-    public void setLast_vacuum(Timestamp last_vacuum) {
-        this.last_vacuum = last_vacuum;
+    public void setTableSizeBytes(BigInteger tableSizeBytes) {
+        this.tableSizeBytes = tableSizeBytes;
+    }
+
+    public String getPrettySize() {
+        return prettySize;
+    }
+    public void setPrettySize(String prettySize) {
+        this.prettySize = prettySize;
+    }
+
+    public BigInteger getIndexSizeBytes() {
+        return indexSizeBytes;
+    }
+    public void setIndexSizeBytes(BigInteger indexSizeBytes) {
+        this.indexSizeBytes = indexSizeBytes;
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSZ")
-    public Timestamp getLast_autovacuum() {
-        return last_autovacuum;
+    public Timestamp getLastVacuum() {
+        return lastVacuum;
     }
-    public void setLast_autovacuum(Timestamp last_autovacuum) {
-        this.last_autovacuum = last_autovacuum;
-    }
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSZ")
-    public Timestamp getLast_analyze() {
-        return last_analyze;
-    }
-    public void setLast_analyze(Timestamp last_analyze) {
-        this.last_analyze = last_analyze;
+    public void setLastVacuum(Timestamp lastVacuum) {
+        this.lastVacuum = lastVacuum;
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSZ")
-    public Timestamp getLast_autoanalyze() {
-        return last_autoanalyze;
+    public Timestamp getLastAutoVacuum() {
+        return lastAutoVacuum;
     }
-    public void setLast_autoanalyze(Timestamp last_autoanalyze) {
-        this.last_autoanalyze = last_autoanalyze;
+    public void setLastAutoVacuum(Timestamp lastAutoVacuum) {
+        this.lastAutoVacuum = lastAutoVacuum;
+    }
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSZ")
+    public Timestamp getLastAnalyze() {
+        return lastAnalyze;
+    }
+    public void setLastAnalyze(Timestamp lastAnalyze) {
+        this.lastAnalyze = lastAnalyze;
+    }
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSZ")
+    public Timestamp getLastAutoAnalyze() {
+        return lastAutoAnalyze;
+    }
+    public void setLastAutoAnalyze(Timestamp lastAutoAnalyze) {
+        this.lastAutoAnalyze = lastAutoAnalyze;
     }
 }

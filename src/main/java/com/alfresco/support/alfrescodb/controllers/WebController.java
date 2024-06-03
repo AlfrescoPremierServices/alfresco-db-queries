@@ -11,7 +11,7 @@ import com.alfresco.support.alfrescodb.DAOMapper;
 import com.alfresco.support.alfrescodb.beans.AccessControlBean;
 import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByApplication;
 import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByTypeBean;
-import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByUser;
+import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByUserBean;
 import com.alfresco.support.alfrescodb.beans.AppliedPatchesBean;
 import com.alfresco.support.alfrescodb.beans.ArchivedNodesBean;
 import com.alfresco.support.alfrescodb.beans.ContentModelBean;
@@ -42,6 +42,9 @@ public class WebController {
 
     @RequestMapping("/")
     public String index(String name, Model model) {
+        //add some value to show in the index page
+        model.addAttribute("largeFolderSize", appProperties.getLargeFolderSizeThreshold());
+        model.addAttribute("largeTransactionSize", appProperties.getLargeTransactionSizeThreshold());
         return "index";
     }
 
@@ -141,7 +144,7 @@ public class WebController {
         // Count total permissions
         Integer aceSize = 0;
         for (int i = 0; i < listAccessControlListEntries.size(); i++) {
-            Integer count = Integer.valueOf(listAccessControlListEntries.get(i).getPermissionCount());
+            Integer count = Integer.valueOf(listAccessControlListEntries.get(i).getCount());
             aceSize = aceSize + count;
         }
         model.addAttribute("aceSize", aceSize);
@@ -175,7 +178,7 @@ public class WebController {
         model.addAttribute("listActivitiesFeedByActivityType", activitiesFeedType);
         
         // Activities by user
-        List<ActivitiesFeedByUser> activitiesFeedByUser = exportMapper.listActivitiesByUser();
+        List<ActivitiesFeedByUserBean> activitiesFeedByUser = exportMapper.listActivitiesByUser();
         model.addAttribute("listActivitiesFeedByUser", activitiesFeedByUser);
         
         // Activities by application interface

@@ -5,8 +5,8 @@ import java.math.BigInteger;
 
 public class NodeContentTypeBean implements Serializable {
     private String namespace;
-    private String propertyname;
-    private BigInteger occurrences;
+    private String propertyName;
+    private BigInteger count;
 
     public String getNamespace() {
         return namespace;
@@ -14,16 +14,16 @@ public class NodeContentTypeBean implements Serializable {
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
-    public String getPropertyname() {
-        return propertyname;
+    public String getPropertyName() {
+        return propertyName;
     }
-    public void setPropertyname(String propertyname) {
-        this.propertyname = propertyname;
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
     }
-    public BigInteger getOccurrences() {
-        return occurrences;
+    public BigInteger getCount() {
+        return count;
     }
-    public void setOccurrences(BigInteger occurrences) {
-        this.occurrences = occurrences;
+    public void setCount(BigInteger count) {
+        this.count = count;
     }
 }

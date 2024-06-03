@@ -5,8 +5,8 @@ import java.math.BigInteger;
 
 public class NodeMimeTypeBean implements Serializable {
     private String mimetype;
-    private BigInteger occurrences;
-    private BigInteger total_content_size_bytes;
+    private BigInteger count;
+    private BigInteger totalContentSizeBytes;
     
     public String getMimetype() {
         return mimetype;
@@ -14,16 +14,16 @@ public class NodeMimeTypeBean implements Serializable {
     public void setMimetype(String mimetype) {
         this.mimetype = mimetype;
     }
-    public BigInteger getOccurrences() {
-        return occurrences;
+    public BigInteger getCount() {
+        return count;
     }
-    public void setOccurrences(BigInteger occurrences) {
-        this.occurrences = occurrences;
+    public void setCount(BigInteger count) {
+        this.count = count;
     }
-    public BigInteger getTotal_content_size_bytes() {
-        return total_content_size_bytes;
+    public BigInteger getTotalContentSizeBytes() {
+        return totalContentSizeBytes;
     }
-    public void setTotal_content_size_bytes(BigInteger total_content_size_bytes) {
-        this.total_content_size_bytes = total_content_size_bytes;
+    public void setTotalContentSizeBytes(BigInteger totalContentSizeBytes) {
+        this.totalContentSizeBytes = totalContentSizeBytes;
     }
 }

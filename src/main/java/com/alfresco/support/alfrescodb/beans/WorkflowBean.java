@@ -4,26 +4,26 @@ import java.io.Serializable;
 import java.math.BigInteger;
 
 public class WorkflowBean implements Serializable {
-    private BigInteger occurrences;
-    private String procdefid;
-    private String taskname;
+    private BigInteger count;
+    private String procDefId;
+    private String taskName;
 
-    public BigInteger getOccurrences() {
-        return occurrences;
+    public BigInteger getCount() {
+        return count;
     }
-    public void setOccurrences(BigInteger occurrences) {
-        this.occurrences = occurrences;
+    public void setCount(BigInteger count) {
+        this.count = count;
     }
-    public String getProcdefid() {
-        return procdefid;
+    public String getProcDefId() {
+        return procDefId;
     }
-    public void setProcdefid(String procdefid) {
-        this.procdefid = procdefid;
+    public void setProcDefId(String procDefId) {
+        this.procDefId = procDefId;
     }
-    public String getTaskname() {
-        return taskname;
+    public String getTaskName() {
+        return taskName;
     }
-    public void setTaskname(String taskname) {
-        this.taskname = taskname;
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 }
