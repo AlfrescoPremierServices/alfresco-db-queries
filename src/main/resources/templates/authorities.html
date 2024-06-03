@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-	
+
 <head>
     <title>Authorities</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -10,111 +10,41 @@
 </head>
 
 <body>
-<script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
-<script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script type="text/javascript" language="javascript" src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" class="init">
-    $(document).ready( function () {
-        $('table.noPaging').DataTable({
-            "paging": false,
-            "info": false,
+    <script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" language="javascript"
+        src="webjars/datatables/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" class="init">
+        $(document).ready(function () {
+            $('table.noPaging').DataTable({
+                "paging": false,
+                "info": false,
+            });
         });
-    } );
 
-    $(document).ready( function () {
-        $('table.noPaging-noSearching').DataTable({
-            "paging": false,
-            "info": false,
-            "searching": false,
+        $(document).ready(function () {
+            $('table.noPaging-noSearching').DataTable({
+                "paging": false,
+                "info": false,
+                "searching": false,
+            });
         });
-    } );
 
-    $(document).ready( function () {
-        $('table.display').DataTable();
-    } );
-</script>
+        $(document).ready(function () {
+            $('table.display').DataTable();
+        });
+    </script>
 
     <!-- Add navigation bar here -->
-	<div th:insert="navBar :: navBar"></div>
-    	
-	<!-- Users -->
+    <div th:insert="navBar :: navBar"></div>
+
     <div class="center panel panel-primary">
-        <div class="panel-heading">
-            <b>Users Count</b>
-        </div>
-
-        <div th:if="${not #lists.isEmpty(listUsers)}">
-	        <table class="display noPaging-noSearching">
-	            <thead>
-	                <tr>
-	                    <th>Users</th>
-
-	                </tr>
-	            </thead>
-	            <tbody>
-	                <tr th:each="users : ${listUsers}">
-	                    <td th:text="${users.authoritiesCount}"></td>
-	                </tr>
-	            </tbody>
-	        </table>
-            <p></p>
-        </div>
-	</div>
-	<!-- end of section -->
-
-	<!-- Authorized Users -->
-    <div th:if="${not #lists.isEmpty(listAuthorizedUsers)}">
-        <div class="center panel panel-primary">
-            <div class="panel-heading">
-                <b>Authorized Users Count</b>
-            </div>
-
-            <table class="display noPaging-noSearching">
-                <thead>
-                <tr>
-                    <th>Authorized Users</th>
-
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="authorizedUsers : ${listAuthorizedUsers}">
-                    <td th:text="${authorizedUsers.authoritiesCount}"></td>
-                </tr>
-                </tbody>
-            </table>
-            <p></p>
-		</div>
-
-        <div class="panel panel-default panel-heading" th:if="${#lists.isEmpty(listAuthorizedUsers)} and ${alfAuthStatus} == true">
-            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> </span>
-            No Results Found
+        <div>
+            <p>Users Count: <span th:text="${countTotalUsers}"></span></p>
+            <p>Autorized Users Count: <span th:text="${countAuthorizedUsers}"></span></p>
+            <p>Groups Count: <span th:text="${countGroups}"></span></p>
         </div>
     </div>
-    <!-- End of section -->
-
-	<!-- Groups -->
-    <div th:if="${not #lists.isEmpty(listGroups)}">
-        <div class="center panel panel-primary">
-            <div class="panel-heading">
-                <b>Groups Count</b>
-            </div>
-			<table class="display noPaging-noSearching">
-				<thead>
-				<tr>
-					<th>Groups</th>
-
-				</tr>
-				</thead>
-				<tbody>
-				<tr th:each="groups : ${listGroups}">
-					<td th:text="${groups.authoritiesCount}"></td>
-				</tr>
-				</tbody>
-			</table>
-            <p></p>
-		</div>
-	</div>
-
- </body>
+</body>
 
 </html>

@@ -13,11 +13,11 @@ Alfresco Database Queries Report is a Spring-Boot application developed to run a
   - List Workflows and Tasks
   - Archived Nodes
   - Authorities count
-  - Solr Memory Configuration
   - JMX changes
   - Export Report
 
-  Works with Postgres, MySQL, Oracle and MS-SQL databases.
+  Works with Postgres, MySQL databases.
+  Future releases will be compatible with Oracle and MS-SQL databases too.
 
 ### Technologies
 

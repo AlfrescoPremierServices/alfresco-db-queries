@@ -41,7 +41,7 @@
 
     <div class="center panel panel-primary">
         <div class="panel-heading">
-            <b>Large Folders ( > <span th:text="${size}"></span> nodes )</b>
+            <b>Large Folders (involving more than <span th:text="${size}"></span> nodes)</b>
         </div>
 
 	    <div th:if="${not #lists.isEmpty(listLargeFolders)}">
@@ -57,9 +57,9 @@
 				</thead>
 				<tbody>
 					<tr th:each="alf_node : ${listLargeFolders}">
-						<td th:text="${alf_node.nodeName}"></td>
-						<td th:text="${alf_node.nodeRef}"></td>
-						<td th:text="${alf_node.localName}"></td>
+						<td th:text="${alf_node.nodename}"></td>
+						<td th:text="${alf_node.protocol + '://' + alf_node.identifier + '/' + alf_node.uuid}"></td>
+						<td th:text="${alf_node.localname}"></td>
 						<td th:text="${alf_node.occurrences}"></td>
 					</tr>
 				</tbody>
