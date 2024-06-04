@@ -49,7 +49,7 @@ mvn compile install -P<profile>
 If you need to use Oracle Driver, due to Oracle license restriction, there are no public repositories that provide ojdbc jar so you need to install manually (just once) before compiling 
 ```sh
 $ cd alfresco-db-queries
-$ mvn install:install-file -Dfile=./lib/ojdbc6.jar -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.3 -Dpackaging=jar
+$ mvn install:install-file -Dfile=./lib/ojdbc11.jar -DgroupId=com.oracle -DartifactId=ojdbc11 -Dversion=23.4.0.24.05 -Dpackaging=jar
 $ mvn compile install -Poracle
 ```
 
