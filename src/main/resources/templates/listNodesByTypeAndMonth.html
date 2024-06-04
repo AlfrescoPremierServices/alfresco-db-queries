@@ -53,7 +53,7 @@
 		            </thead>
 		            <tbody>
 		                <tr th:each="nodes : ${listNodesByTypeAndMonth}">
-		                    <td th:text="${nodes.createdate}"></td>
+		                    <td th:text="${nodes.creationDate}"></td>
 							<td th:text="${'{' + nodes.namespace + '}' + nodes.propertyName}"></td>
                             <td th:text="${#numbers.formatInteger(nodes.count,0,'POINT')}"></td>
 		                </tr>

@@ -339,7 +339,7 @@ public interface DAOMapper {
     "group by mimetype_str ")
     List<NodeMimeTypeBean> listActiveNodesByMimetype();
     
-    @Select("SELECT substring(nodes.audit_created,1,7) as createDate, ns.uri as namespace, names.local_name as propertyName, count(*) as count " +
+    @Select("SELECT substring(nodes.audit_created,1,7) as creationDate, ns.uri as namespace, names.local_name as propertyName, count(*) as count " +
     "FROM alf_node nodes " +
     "  JOIN alf_qname names ON (nodes.type_qname_id = names.id) " +
     "  JOIN alf_namespace ns ON (names.ns_id = ns.id) " +

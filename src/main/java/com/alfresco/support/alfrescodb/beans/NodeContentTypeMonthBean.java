@@ -4,16 +4,16 @@ import java.io.Serializable;
 import java.math.BigInteger;
 
 public class NodeContentTypeMonthBean implements Serializable {
-    private String createdate;
+    private String creationDate;
     private String namespace;
     private String propertyName;
     private BigInteger count;
 
-    public String getCreatedate() {
-        return createdate;
+    public String getCreationDate() {
+        return creationDate;
     }
-    public void setCreatedate(String createdate) {
-        this.createdate = createdate;
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
     }
     public String getNamespace() {
         return namespace;
