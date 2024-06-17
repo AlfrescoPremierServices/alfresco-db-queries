@@ -57,10 +57,10 @@
 				</thead>
 				<tbody>
 					<tr th:each="alf_node : ${listLargeFolders}">
-						<td th:text="${alf_node.nodename}"></td>
+						<td th:text="${alf_node.nodeName}"></td>
 						<td th:text="${alf_node.protocol + '://' + alf_node.identifier + '/' + alf_node.uuid}"></td>
-						<td th:text="${alf_node.localname}"></td>
-						<td th:text="${alf_node.occurrences}"></td>
+						<td th:text="${alf_node.localName}"></td>
+						<td th:text="${alf_node.count}"></td>
 					</tr>
 				</tbody>
 			</table>

@@ -14,7 +14,7 @@ import com.alfresco.support.alfrescodb.DAOMapper;
 import com.alfresco.support.alfrescodb.beans.AccessControlBean;
 import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByApplication;
 import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByTypeBean;
-import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByUser;
+import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByUserBean;
 import com.alfresco.support.alfrescodb.beans.AppliedPatchesBean;
 import com.alfresco.support.alfrescodb.beans.ArchivedNodesBean;
 import com.alfresco.support.alfrescodb.beans.ContentModelBean;
@@ -41,7 +41,7 @@ public class ExportComponent {
 
     public void exportReport(Model model) {
 
-        logger.debug("Full Export started. Multifile: " + appProperties.getReportSplit() + "; Export Type: " + appProperties.getReportExportType()
+        logger.debug("Full Export started. Export Type: " + appProperties.getReportExportType()
                 + "; Export folder: " + appProperties.getReportExportFolder());
 
         try {
@@ -110,8 +110,8 @@ public class ExportComponent {
             List<ActivitiesFeedByTypeBean> activitiesFeedTypeBean = exportMapper.listActivitiesByActivityType();
             generatedFiles.add(this.exportToFile(activitiesFeedTypeBean, "activitiesFeedByType"));
 
-            List<ActivitiesFeedByUser> activitiesFeedByUser = exportMapper.listActivitiesByUser();
-            generatedFiles.add(this.exportToFile(activitiesFeedByUser, "activitiesFeedByUser"));
+            List<ActivitiesFeedByUserBean> activitiesFeedByUserBean = exportMapper.listActivitiesByUser();
+            generatedFiles.add(this.exportToFile(activitiesFeedByUserBean, "activitiesFeedByUser"));
 
             List<ActivitiesFeedByApplication> activitiesFeedByApplication = exportMapper.listActivitiesByApplication();
             generatedFiles.add(this.exportToFile(activitiesFeedByApplication, "activitiesFeedByApplication"));

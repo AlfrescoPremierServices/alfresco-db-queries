@@ -4,19 +4,19 @@ import java.io.Serializable;
 import java.math.BigInteger;
 
 public class ArchivedNodesBean implements Serializable {
-    private String auditmodifier;
-    private BigInteger occurrences;
+    private String auditModifier;
+    private BigInteger count;
     
-    public String getAuditmodifier() {
-        return auditmodifier;
+    public String getAuditModifier() {
+        return auditModifier;
     }
-    public void setAuditmodifier(String auditmodifier) {
-        this.auditmodifier = auditmodifier;
+    public void setAuditModifier(String auditModifier) {
+        this.auditModifier = auditModifier;
     }
-    public BigInteger getOccurrences() {
-        return occurrences;
+    public BigInteger getCount() {
+        return count;
     }
-    public void setOccurrences(BigInteger occurrences) {
-        this.occurrences = occurrences;
+    public void setCount(BigInteger count) {
+        this.count = count;
     }
 }

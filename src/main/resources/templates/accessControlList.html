@@ -55,8 +55,8 @@
             </thead>
             <tbody>
             <tr th:each="aclidNode : ${aclNodeRepartition}">
-                <td th:text="${aclidNode.aclid}"></td>
-                <td th:text="${aclidNode.numNodes}"></td>
+                <td th:text="${aclidNode.aclId}"></td>
+                <td th:text="${aclidNode.count}"></td>
             </tr>
             </tbody>
         </table>
@@ -79,7 +79,7 @@
             <tr th:each="aclTypeRepartition : ${listAclTypeRepartition}">
                 <td th:text="${aclTypeRepartition.aclType}"></td>
                 <td th:text="${aclTypeRepartition.inherits}"></td>
-                <td th:text="${aclTypeRepartition.occurrences}"></td>
+                <td th:text="${aclTypeRepartition.count}"></td>
             </tr>
             </tbody>
         </table>
@@ -107,7 +107,7 @@
             <tbody>
             <tr th:each="aceAuthority: ${listACEAuthorities}">
                 <td th:text="${aceAuthority.authorityHash}"></td>
-                <td th:text="${aceAuthority.numAces}"></td>
+                <td th:text="${aceAuthority.count}"></td>
             </tr>
             </tbody>
         </table>
@@ -128,7 +128,7 @@
                 <tbody>
                 <tr th:each="accessControlListeEntry : ${listAccessControlListEntries}">
                     <td th:text="${accessControlListeEntry.permission}"></td>
-                    <td th:text="${accessControlListeEntry.permissionCount}"></td>
+                    <td th:text="${accessControlListeEntry.count}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -147,8 +147,8 @@
                 </thead>
                 <tbody>
                 <tr th:each="aclHeight : ${listAclsHeight}">
-                    <td th:text="${aclHeight.aclid}"></td>
-                    <td th:text="${aclHeight.numAces}"></td>
+                    <td th:text="${aclHeight.aclId}"></td>
+                    <td th:text="${aclHeight.count}"></td>
                 </tr>
                 </tbody>
             </table>

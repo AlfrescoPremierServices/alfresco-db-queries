@@ -5,25 +5,25 @@ import java.math.BigInteger;
 
 
 public class DbMySQLBean implements Serializable {
-    private String schemaname;
-    private String tablename;
+    private String schemaName;
+    private String tableName;
     private String engine;
-    private String rowestimates;
-    private BigInteger table_size_bytes;
-    private String total_size_bytes;
-    private BigInteger index_size_bytes;
+    private String rowEstimates;
+    private BigInteger tableSizeBytes;
+    private String totalSizeBytes;
+    private BigInteger indexSizeBytes;
 
-    public String getSchemaname() {
-        return schemaname;
+    public String getSchemaName() {
+        return schemaName;
     }
-    public void setSchemaname(String schemaname) {
-        this.schemaname = schemaname;
+    public void setSchemaName(String schemaname) {
+        this.schemaName = schemaname;
     }
-    public String getTablename() {
-        return tablename;
+    public String getTableName() {
+        return tableName;
     }
-    public void setTablename(String tablename) {
-        this.tablename = tablename;
+    public void setTableName(String tablename) {
+        this.tableName = tablename;
     }
     public String getEngine() {
         return engine;
@@ -31,28 +31,28 @@ public class DbMySQLBean implements Serializable {
     public void setEngine(String engine) {
         this.engine = engine;
     }
-    public String getRowestimates() {
-        return rowestimates;
+    public String getRowEstimates() {
+        return rowEstimates;
     }
-    public void setRowestimates(String rowestimates) {
-        this.rowestimates = rowestimates;
+    public void setRowEstimates(String rowestimates) {
+        this.rowEstimates = rowestimates;
     }
-    public BigInteger getTable_size_bytes() {
-        return table_size_bytes;
+    public BigInteger getTableSizeBytes() {
+        return tableSizeBytes;
     }
-    public void setTable_size_bytes(BigInteger table_size_bytes) {
-        this.table_size_bytes = table_size_bytes;
+    public void setTableSizeBytes(BigInteger table_size_bytes) {
+        this.tableSizeBytes = table_size_bytes;
     }
-    public String getTotal_size_bytes() {
-        return total_size_bytes;
+    public String getTotalSizeBytes() {
+        return totalSizeBytes;
     }
-    public void setTotal_size_bytes(String total_size_bytes) {
-        this.total_size_bytes = total_size_bytes;
+    public void setTotalSizeBytes(String total_size_bytes) {
+        this.totalSizeBytes = total_size_bytes;
     }
-    public BigInteger getIndex_size_bytes() {
-        return index_size_bytes;
+    public BigInteger getIndexSizeBytes() {
+        return indexSizeBytes;
     }
-    public void setIndex_size_bytes(BigInteger index_size_bytes) {
-        this.index_size_bytes = index_size_bytes;
+    public void setIndexSizeBytes(BigInteger index_size_bytes) {
+        this.indexSizeBytes = index_size_bytes;
     }    
 }

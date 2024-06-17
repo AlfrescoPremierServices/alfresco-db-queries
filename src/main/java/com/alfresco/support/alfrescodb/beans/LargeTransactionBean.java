@@ -4,19 +4,19 @@ import java.io.Serializable;
 import java.math.BigInteger;
 
 public class LargeTransactionBean implements Serializable {
-    private Long trxId;
-    private BigInteger nodes;
+    private Long transactionId;
+    private BigInteger count;
     
-    public Long getTrxId() {
-        return trxId;
+    public Long getTransactionId() {
+        return transactionId;
     }
-    public void setTrxId(Long trxId) {
-        this.trxId = trxId;
+    public void setTransactionId(Long transactionId) {
+        this.transactionId = transactionId;
     }
-    public BigInteger getNodes() {
-        return nodes;
+    public BigInteger getCount() {
+        return count;
     }
-    public void setNodes(BigInteger nodes) {
-        this.nodes = nodes;
+    public void setCount(BigInteger count) {
+        this.count = count;
     }
 }

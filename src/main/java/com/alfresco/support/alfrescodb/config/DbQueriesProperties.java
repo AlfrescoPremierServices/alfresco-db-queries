@@ -15,7 +15,6 @@ public class DbQueriesProperties {
     private Integer largeFolderSizeThreshold;
     private Integer largeTransactionSizeThreshold;
     private String reportFile;
-    private Boolean reportSplit;
     private String reportExportType;
     private String reportExportFolder;
 
@@ -28,7 +27,7 @@ public class DbQueriesProperties {
     private void logValues() {
         logger.debug("Configuration loaded: DbQueriesProperties [isEnterpriseVersion=" + isEnterpriseVersion + ", largeFolderSizeThreshold="
                 + largeFolderSizeThreshold + ", largeTransactionSizeThreshold=" + largeTransactionSizeThreshold
-                + ", reportFile=" + reportFile + ", reportSplit=" + reportSplit + ", reportExportType="
+                + ", reportFile=" + reportFile + ", reportExportType="
                 + reportExportType + ", reportExportFolder=" + reportExportFolder + ", dbType=" + dbType + "]");
     }
 
@@ -62,12 +61,6 @@ public class DbQueriesProperties {
     public void setDbType(String dbType) {
         this.dbType = dbType;
     }
-    public Boolean getReportSplit() {
-        return reportSplit;
-    }
-    public void setReportSplit(Boolean reportSplit) {
-        this.reportSplit = reportSplit;
-    }
     public String getReportExportType() {
         return reportExportType;
     }
@@ -80,5 +73,4 @@ public class DbQueriesProperties {
     public void setReportExportFolder(String reportExportFolder) {
         this.reportExportFolder = reportExportFolder;
     }
-    
 }
