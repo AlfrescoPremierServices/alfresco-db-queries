@@ -4,18 +4,18 @@ import java.io.Serializable;
 import java.math.BigInteger;
 
 public class LargeFolderBean implements Serializable {
-    private BigInteger occurrences;
+    private BigInteger count;
     private String protocol;
     private String identifier;
     private String uuid;
-    private String nodename;
-    private String localname;
+    private String nodeName;
+    private String localName;
 
-    public BigInteger getOccurrences() {
-        return occurrences;
+    public BigInteger getCount() {
+        return count;
     }
-    public void setOccurrences(BigInteger occurrences) {
-        this.occurrences = occurrences;
+    public void setCount(BigInteger occurrences) {
+        this.count = occurrences;
     }
     public String getProtocol() {
         return protocol;
@@ -35,16 +35,16 @@ public class LargeFolderBean implements Serializable {
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
-    public String getNodename() {
-        return nodename;
+    public String getNodeName() {
+        return nodeName;
     }
-    public void setNodename(String nodename) {
-        this.nodename = nodename;
+    public void setNodeName(String nodeName) {
+        this.nodeName = nodeName;
     }
-    public String getLocalname() {
-        return localname;
+    public String getLocalName() {
+        return localName;
     }
-    public void setLocalname(String localname) {
-        this.localname = localname;
+    public void setLocalName(String localName) {
+        this.localName = localName;
     }
 }

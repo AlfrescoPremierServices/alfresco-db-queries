@@ -56,10 +56,10 @@
                 </thead>
                 <tbody>
                     <tr th:each="activityFeed : ${listActivitiesFeedByActivityType}">
-                        <td th:text="${activityFeed.post_date}"></td>
-                        <td th:text="${activityFeed.sitenetwork}"></td>
-                        <td th:text="${activityFeed.activitytype}"></td>
-                        <td th:text="${#numbers.formatInteger(activityFeed.occurrences,0,'POINT')}"></td>
+                        <td th:text="${activityFeed.postDate}"></td>
+                        <td th:text="${activityFeed.siteNetwork}"></td>
+                        <td th:text="${activityFeed.activityType}"></td>
+                        <td th:text="${#numbers.formatInteger(activityFeed.count,0,'POINT')}"></td>
                     </tr>
                 </tbody>
 		    </table>
@@ -94,10 +94,10 @@
                 </thead>
                 <tbody>
                     <tr th:each="activityFeed : ${listActivitiesFeedByUser}">
-                        <td th:text="${activityFeed.post_date}"></td>
-                        <td th:text="${activityFeed.sitenetwork}"></td>
-                        <td th:text="${activityFeed.feeduserid}"></td>
-                        <td th:text="${#numbers.formatInteger(activityFeed.occurrences,0,'POINT')}"></td>
+                        <td th:text="${activityFeed.postDate}"></td>
+                        <td th:text="${activityFeed.siteNetwork}"></td>
+                        <td th:text="${activityFeed.feedUserId}"></td>
+                        <td th:text="${#numbers.formatInteger(activityFeed.count,0,'POINT')}"></td>
                     </tr>
                 </tbody>
             </table>
@@ -132,10 +132,10 @@
                 </thead>
                 <tbody>
                     <tr th:each="activityFeed : ${listActivitiesFeedByAppTool}">
-                        <td th:text="${activityFeed.post_date}"></td>
-                        <td th:text="${activityFeed.sitenetwork}"></td>
-                        <td th:text="${activityFeed.apptool}"></td>
-                        <td th:text="${#numbers.formatInteger(activityFeed.occurrences,0,'POINT')}"></td>
+                        <td th:text="${activityFeed.postDate}"></td>
+                        <td th:text="${activityFeed.siteNetwork}"></td>
+                        <td th:text="${activityFeed.appTool}"></td>
+                        <td th:text="${#numbers.formatInteger(activityFeed.count,0,'POINT')}"></td>
                     </tr>
                 </tbody>
             </table>

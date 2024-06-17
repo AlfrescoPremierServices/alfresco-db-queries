@@ -4,23 +4,23 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.sql.Date;
 
-public class ActivitiesFeedByApplication implements Serializable {
+public class ActivitiesFeedByUserBean implements Serializable {
     private BigInteger count;
     private Date postDate;
     private String siteNetwork;
-    private String appTool;
+    private String feedUserId;
     
     public BigInteger getCount() {
         return count;
     }
-    public void setCount(BigInteger count) {
-        this.count = count;
+    public void setCount(BigInteger occurrences) {
+        this.count = occurrences;
     }
     public Date getPostDate() {
         return postDate;
     }
-    public void setPostDate(Date postDate) {
-        this.postDate = postDate;
+    public void setPostDate(Date post_date) {
+        this.postDate = post_date;
     }
     public String getSiteNetwork() {
         return siteNetwork;
@@ -28,11 +28,10 @@ public class ActivitiesFeedByApplication implements Serializable {
     public void setSiteNetwork(String siteNetwork) {
         this.siteNetwork = siteNetwork;
     }
-    public String getAppTool() {
-        return appTool;
+    public String getFeedUserId() {
+        return feedUserId;
     }
-    public void setAppTool(String appTool) {
-        this.appTool = appTool;
+    public void setFeedUserId(String feedUserId) {
+        this.feedUserId = feedUserId;
     }
-    
 }

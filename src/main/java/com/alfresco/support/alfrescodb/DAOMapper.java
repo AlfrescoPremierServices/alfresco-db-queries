@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import com.alfresco.support.alfrescodb.beans.AccessControlBean;
 import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByApplication;
 import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByTypeBean;
-import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByUser;
+import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByUserBean;
 import com.alfresco.support.alfrescodb.beans.AppliedPatchesBean;
 import com.alfresco.support.alfrescodb.beans.ArchivedNodesBean;
 import com.alfresco.support.alfrescodb.beans.ContentModelBean;
@@ -41,11 +41,11 @@ public interface DAOMapper {
      * DB Size
      */
     // Postgres Queries
-    @Select("SELECT pg_namespace.nspname schemaname, pg_class.relname tablename, cast(pg_class.reltuples as int8) rowEstimates, " +
-            "pg_relation_size(pg_catalog.pg_class.oid) table_size_bytes, pg_size_pretty(pg_relation_size(pg_catalog.pg_class.oid)) pretty_size, "
+    @Select("SELECT pg_namespace.nspname schemaName, pg_class.relname tableName, cast(pg_class.reltuples as int8) rowEstimates, " +
+            "pg_relation_size(pg_catalog.pg_class.oid) tableSizeBytes, pg_size_pretty(pg_relation_size(pg_catalog.pg_class.oid)) prettySize, "
             +
-            "pg_indexes_size(pg_class.oid) AS index_size_bytes, stats.last_vacuum, stats.last_autovacuum, stats.last_analyze, stats.last_autoanalyze "
-            +
+            "pg_indexes_size(pg_class.oid) AS indexSizeBytes, stats.last_vacuum as lastVacuum, stats.last_autovacuum as lastAutoVacuum, " +
+            "stats.last_analyze as lastAnalyze, stats.last_autoanalyze as lastAutoAnalyze " +
             "FROM pg_catalog.pg_class " +
             "JOIN pg_catalog.pg_namespace ON relnamespace = pg_catalog.pg_namespace.oid " +
             "left JOIN pg_catalog.pg_stat_all_tables stats on pg_class.oid = stats.relid " +
@@ -53,21 +53,21 @@ public interface DAOMapper {
     List<DbPostgresBean> findTablesInfoPostgres();
 
     // MySQL Queries/
-    @Select("SELECT table_schema as schemaname, table_name as tablename, engine, " +
-            "data_length as table_size_bytes, index_length as index_size_bytes, table_rows as rowEstimates, " +
-            "(data_length +index_length) as total_size_bytes " +
+    @Select("SELECT table_schema as schemaName, table_name as tableName, engine, " +
+            "data_length as tableSizeBytes, index_length as indexSizeBytes, table_rows as rowEstimates, " +
+            "(data_length +index_length) as totalSizeBytes " +
             "FROM information_schema.TABLES " +
             "where table_schema not in ('sys','performance_schema','information_schema','mysql') ")
     List<DbMySQLBean> findTablesInfoMysql();
 
     // Oracle Queries
-    @Select("select sum(bytes) Size, segment_name tableName " +
+    @Select("select sum(bytes) size, segment_name tableName " +
             "from user_extents " +
             "where segment_name in (select table_name from all_tables) " +
             "group by segment_name")
     List<DbOracleBean> findTablesInfoOracle();
 
-    @Select("select sum(u.bytes) Size, u.segment_name indexName, i.table_name tableName " +
+    @Select("select sum(u.bytes) size, u.segment_name indexName, i.table_name tableName " +
             "from user_extents u " +
             "join all_ind_columns i " +
             " on u.segment_name = i.index_name " +
@@ -110,7 +110,7 @@ public interface DAOMapper {
     /*
      * Large Folders
      */
-    @Select("SELECT count(*) as occurrences, stores.protocol, stores.identifier, nodes.uuid, " +
+    @Select("SELECT count(*) as count, stores.protocol, stores.identifier, nodes.uuid, " +
             "props.string_value as nodeName, qname.local_name as localName " +
             "FROM alf_node as nodes, alf_store as stores, alf_child_assoc as children, alf_node_properties as props, alf_qname as qname "
             +
@@ -123,7 +123,7 @@ public interface DAOMapper {
     /*
      * Large Transactions
      */
-    @Select("SELECT trx.id as trxId, count(*) as nodes " +
+    @Select("SELECT trx.id as transactionId, count(*) as count " +
             "FROM alf_transaction trx, alf_node an " +
             "WHERE an.transaction_id = trx.id " +
             "GROUP BY trx.id HAVING count(*) > #{size} ")
@@ -132,49 +132,49 @@ public interface DAOMapper {
     /*
      * Access Control List
      */
-    @Select("select count(*) occurences from alf_access_control_list")
+    @Select("select count(*) count from alf_access_control_list")
     String countTotalAcls();
 
-    @Select("SELECT count(*) occurrences from alf_access_control_list aacl " +
+    @Select("SELECT count(*) count from alf_access_control_list aacl " +
             "LEFT OUTER JOIN alf_node an ON an.acl_id=aacl.id " +
             "WHERE aacl.id IS NULL")
     String countTotalOrphanedAcls();
 
-    @Select("select ap.name permission, count(*) permissionCount " +
+    @Select("select ap.name permission, count(*) count " +
             "from alf_access_control_entry aace, alf_permission ap " +
             "where ap.id = aace.permission_id " +
             "group by ap.name")
     List<AccessControlBean> findAccessControlListEntries();
 
-    @Select("SELECT acl_id aclid, count(*) numNodes " +
+    @Select("SELECT acl_id aclId, count(*) count " +
             "FROM alf_node " +
-            "GROUP BY acl_id ORDER BY numNodes DESC LIMIT 10")
+            "GROUP BY acl_id ORDER BY count DESC LIMIT 10")
     List<AccessControlBean> findACLNodeRepartition();
 
-    @Select("SELECT * FROM (SELECT acl_id aclid, count(*) numNodes " +
+    @Select("SELECT * FROM (SELECT acl_id aclId, count(*) count " +
             "FROM alf_node " +
-            "GROUP BY acl_id ORDER BY numNodes DESC) " +
+            "GROUP BY acl_id ORDER BY count DESC) " +
             "WHERE ROWNUM <= 10")
     List<AccessControlBean> findACLNodeRepartitionOracle();
 
-    @Select("SELECT TOP 10 acl_id aclid, count(*) numNodes " +
+    @Select("SELECT TOP 10 acl_id aclId, count(*) count " +
             "FROM alf_node " +
-            "GROUP BY acl_id ORDER BY numNodes DESC")
+            "GROUP BY acl_id ORDER BY count DESC")
     List<AccessControlBean> findACLNodeRepartitionMSSql();
 
-    @Select("SELECT md5(aa.authority) AS authorityHash, count(*) AS numAces " +
+    @Select("SELECT md5(aa.authority) AS authorityHash, count(*) AS count " +
             "FROM alf_access_control_entry ace " +
             "JOIN alf_authority aa ON aa.id=ace.authority_id " +
             "GROUP BY authorityHash HAVING count(*) > 0")
     List<AccessControlBean> findACEAuthorities();
 
-    @Select("SELECT 'xxx' AS authorityHash, count(*) AS numAces " +
+    @Select("SELECT 'xxx' AS authorityHash, count(*) AS count " +
             "FROM alf_access_control_entry ace " +
             "JOIN alf_authority aa ON aa.id=ace.authority_id " +
             "GROUP BY aa.authority HAVING count(*) > 0")
     List<AccessControlBean> findACEAuthoritiesOracle();
 
-    @Select("SELECT CONVERT(VARCHAR(32), HashBytes('MD5', aa.authority), 2) AS authorityHash, count(*) AS numAces "
+    @Select("SELECT CONVERT(VARCHAR(32), HashBytes('MD5', aa.authority), 2) AS authorityHash, count(*) AS count "
             +
             "FROM alf_access_control_entry ace " +
             "JOIN alf_authority aa ON aa.id=ace.authority_id " +
@@ -188,14 +188,14 @@ public interface DAOMapper {
             "WHEN 4 THEN 'GLOBAL' " +
             "WHEN 5 THEN 'LAYERED' " +
             "ELSE 'UNKNOWN' " +
-            "END as aclType, inherits, count(*) as occurrences " +
+            "END as aclType, inherits, count(*) as count " +
             "FROM alf_access_control_list " +
             "GROUP BY type, inherits")
     List<AccessControlBean> findAclTypesRepartition();
 
-    @Select("SELECT acm.acl_id as aclid, count(*) as numAces FROM \n" +
-            "alf_acl_member acm INNER JOIN alf_access_control_list \n" +
-            "aacl ON aacl.id=acm.acl_id AND aacl.type=1 \n" +
+    @Select("SELECT acm.acl_id as aclId, count(*) as count FROM " +
+            "alf_acl_member acm INNER JOIN alf_access_control_list " +
+            "aacl ON aacl.id=acm.acl_id AND aacl.type=1 " +
             "GROUP BY acm.acl_id")
     List<AccessControlBean> findAclsHeight();
 
@@ -210,22 +210,22 @@ public interface DAOMapper {
     /*
      * Activities Feed
      */
-    @Select("select count(*) as occurrences, CAST(post_date AS DATE) post_date, site_network as siteNetwork, activity_type as activityType "
+    @Select("select count(*) as count, CAST(post_date AS DATE) postDate, site_network as siteNetwork, activity_type as activityType "
             +
             "from alf_activity_feed " +
             "where feed_user_id = post_user_id " +
             "group by CAST(post_date AS DATE), site_network, activity_type ")
     List<ActivitiesFeedByTypeBean> listActivitiesByActivityType();
 
-    @Select("select count(*) as occurrences, CAST(post_date AS DATE) post_date, site_network as siteNetwork, feed_user_id as feedUserId "
+    @Select("select count(*) as count, CAST(post_date AS DATE) postDate, site_network as siteNetwork, feed_user_id as feedUserId "
             +
             "from alf_activity_feed " +
             "where feed_user_id != '@@NULL@@' " +
             "and feed_user_id = post_user_id " +
             "group by CAST(post_date AS DATE), site_network, feed_user_id ")
-    List<ActivitiesFeedByUser> listActivitiesByUser();
+    List<ActivitiesFeedByUserBean> listActivitiesByUser();
 
-    @Select("select count(*) as occurrences, CAST(post_date AS DATE) as post_date, site_network as siteNetwork, app_tool as appTool "
+    @Select("select count(*) as count, CAST(post_date AS DATE) postDate, site_network as siteNetwork, app_tool as appTool "
             +
             "from alf_activity_feed " +
             "where feed_user_id != '@@NULL@@' " +
@@ -236,11 +236,11 @@ public interface DAOMapper {
     /*
      * Archived Nodes
      */
-    @Select("select count(*) as nodes from alf_node " +
+    @Select("select count(*) as count from alf_node " +
             "where store_id in (select id from alf_store where protocol = 'archive' and identifier = 'SpacesStore')")
     String countTotalArchivedNodes();
 
-    @Select("select audit_modifier as auditModifier, count(*) as occurrences " +
+    @Select("select audit_modifier as auditModifier, count(*) as count " +
             "from alf_node " +
             "where store_id in (select id from alf_store where protocol = 'archive' and identifier = 'SpacesStore') " +
             "group by audit_modifier ")
@@ -260,16 +260,16 @@ public interface DAOMapper {
     /*
      * Users and Groups
      */
-    @Select("select count(*) as authoritiesCount from alf_node_properties " +
+    @Select("select count(*) as count from alf_node_properties " +
             "where node_id in (select id from alf_node where type_qname_id in (select id from alf_qname where local_name = 'person')) "
             +
             "and qname_id in (select id from alf_qname where local_name ='userName')")
     String countTotalUsers();
 
-    @Select("select count(*) as authoritiesCount from alf_auth_status where authorized is TRUE")
+    @Select("select count(*) as count from alf_auth_status where authorized is TRUE")
     String countAuthorizedUsers();
 
-    @Select("select count(*) as authoritiesCount from alf_node_properties where qname_id in (select id from alf_qname where local_name = 'authorityName')")
+    @Select("select count(*) as count from alf_node_properties where qname_id in (select id from alf_qname where local_name = 'authorityName')")
     String countGroups();
 
     /*
@@ -288,30 +288,30 @@ public interface DAOMapper {
     /*
      * Workflows
      */
-    @Select("select count(*) as occurrences, proc_def_id_ as procDefId, name_ as taskName " +
+    @Select("select count(*) as count, proc_def_id_ as procDefId, name_ as taskName " +
             "FROM ACT_HI_TASKINST " +
             "GROUP BY proc_def_id_, name_")
     List<WorkflowBean> listWorkflowsWithProcessesAndTasks();
 
-    @Select("select count(proc_def_id_) as occurrences, proc_def_id_  as procDefId " +
+    @Select("select count(proc_def_id_) as count, proc_def_id_  as procDefId " +
             "FROM ACT_HI_PROCINST " +
             "WHERE end_time_ is null " +
             "GROUP BY proc_def_id_")
     List<WorkflowBean> listOpenWorkflows();
 
-    @Select("select count(proc_def_id_) as occurrences, proc_def_id_  as procDefId " +
+    @Select("select count(proc_def_id_) as count, proc_def_id_  as procDefId " +
             "FROM ACT_HI_PROCINST " +
             "WHERE end_time_ is not null " +
             "GROUP BY proc_def_id_")
     List<WorkflowBean> listClosedWorkflows();
 
-    @Select("select count(proc_def_id_) as occurrences, proc_def_id_  as procDefId, name_ as taskName " +
+    @Select("select count(proc_def_id_) as count, proc_def_id_  as procDefId, name_ as taskName " +
             "FROM ACT_HI_TASKINST " +
             "WHERE end_time_ is null " +
             "GROUP BY proc_def_id_, name_")
     List<WorkflowBean> listOpenTasks();
 
-    @Select("select count(proc_def_id_) as occurrences, proc_def_id_  as procDefId, name_ as taskName " +
+    @Select("select count(proc_def_id_) as count, proc_def_id_  as procDefId, name_ as taskName " +
             "FROM ACT_HI_TASKINST " +
             "WHERE end_time_ is not null " +
             "GROUP BY proc_def_id_, name_")
@@ -320,7 +320,7 @@ public interface DAOMapper {
     /*
      * Nodes
      */
-    @Select("SELECT stores.protocol,stores.identifier,count(nodes.id) as occurrences, sum(contentUrl.content_size) total_content_size_bytes " +
+    @Select("SELECT stores.protocol, stores.identifier, count(nodes.id) as count, sum(contentUrl.content_size) totalContentSizeBytes " +
     "FROM alf_node nodes " +
     "  inner join alf_store stores on stores.id=nodes.store_id " +
     "  left join alf_node_properties nodes_props on nodes.id = nodes_props.node_id " +
@@ -329,7 +329,7 @@ public interface DAOMapper {
     "group by stores.protocol,stores.identifier")
     List<NodeStoreBean> listNodesByStore();
 
-    @Select("SELECT mimetype_str mimeType, count(nodes.id) as occurrences, sum(contentUrl.content_size) total_content_size_bytes " +
+    @Select("SELECT mimetype_str mimeType, count(nodes.id) as count, sum(contentUrl.content_size) totalContentSizeBytes " +
     "FROM alf_node nodes " +
     "  left join alf_node_properties nodes_props on nodes.id = nodes_props.node_id " +
     "  left join alf_content_data content on nodes_props.qname_id in (select id from alf_qname where local_name = 'content') and nodes_props.long_value = content.id " +
@@ -339,7 +339,7 @@ public interface DAOMapper {
     "group by mimetype_str ")
     List<NodeMimeTypeBean> listActiveNodesByMimetype();
     
-    @Select("SELECT substring(nodes.audit_created,1,7) as createDate, ns.uri as namespace, names.local_name as propertyname, count(*) as occurrences " +
+    @Select("SELECT substring(nodes.audit_created,1,7) as creationDate, ns.uri as namespace, names.local_name as propertyName, count(*) as count " +
     "FROM alf_node nodes " +
     "  JOIN alf_qname names ON (nodes.type_qname_id = names.id) " +
     "  JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
@@ -347,7 +347,7 @@ public interface DAOMapper {
     "GROUP BY substring(nodes.audit_created,1,7),ns.uri,names.local_name ")
     List<NodeContentTypeMonthBean> listActiveNodesByContentTypeAndMonth();
 
-    @Select("SELECT ns.uri as namespace, names.local_name as propertyname, count(*) as occurrences " +
+    @Select("SELECT ns.uri as namespace, names.local_name as propertyname, count(*) as count " +
     "FROM alf_node nodes " +
     "  JOIN alf_qname names ON (nodes.type_qname_id = names.id) " +
     "  JOIN alf_namespace ns ON (names.ns_id = ns.id) " +

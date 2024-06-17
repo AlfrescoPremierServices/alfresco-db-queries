@@ -54,8 +54,8 @@
 				</thead>
 				<tbody>
 					<tr th:each="trx : ${listLargeTransactions}">
-						<td th:text="${trx.trxId}"></td>
-						<td th:text="${trx.nodes}"></td>
+						<td th:text="${trx.transactionId}"></td>
+						<td th:text="${trx.count}"></td>
 					</tr>
 				</tbody>
 			</table>
