@@ -16,19 +16,8 @@ Alfresco Database Queries Report is a Spring-Boot application developed to run a
   - JMX changes
   - Export Report
 
-  Works with Postgres, MySQL databases.
+  Works with PostgreSQL, MySQL databases.
   Future releases will be compatible with Oracle and MS-SQL databases too.
-
-### Technologies
-
-This project has been developed with a number of open source projects such as:
-  - Built using Maven
-  - Developed using Spring-Boot (https://projects.spring.io/spring-boot/)
-  - Using mybatis for SQL mapping
-  - Using Thymeleaf server-side Java template engine for manipulating object on HTML pages (http://www.thymeleaf.org/)
-  - Using Bootstrap for Front-End Web development (http://getbootstrap.com/)
-  - Datatables for table formatting (https://datatables.net/)
-
 
 ### Installation
 
@@ -41,30 +30,49 @@ The steps to build the application are:
  - Adjust alfresco-db-queries/src/main/resources/application.properties file
     - Set database details
     - Set port for web server
-    - Adjust Solr cache values coming from solrcore.properties
-    - Set alf_auth_status to false if table does not exists in your database
  - Compile and build application
 
 ### Compiling and building the executable jar file
 
-**Note** : There is an executable jar file available in the target directory in case you want to use that one.
+The build is based on Maven profiles. The available profiles are:
+- postgresql
+- mysql
+- mssql
+- oracle
 
-Compile and build the application using Maven. Due to Oracle license restriction, there are no public repositories that provide ojdbc jar so you need to install manually (just once) before compiling 
+To compile
+```sh
+cd alfresco-db-queries
+mvn compile install -P<profile>
+```
+
+If you need to use Oracle Driver, due to Oracle license restriction, there are no public repositories that provide ojdbc jar so you need to install manually (just once) before compiling 
 ```sh
 $ cd alfresco-db-queries
 $ mvn install:install-file -Dfile=./lib/ojdbc6.jar -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.3 -Dpackaging=jar
-$ mvn compile install
+$ mvn compile install -Poracle
 ```
 
-The generated jar file should be located in the target folder i.e. target/alfresco-db-0.0.1-SNAPSHOT.jar.
+The generated jar file should be located in the target folder i.e. target/alfresco-db-0.0.2-SNAPSHOT.jar.
 
 ### Running the application
+
+The application specific parameters:
+| Parameter | default | Meaning | 
+| -| -| -| 
+| db.queries.is_enterprise_version | true | Boolean. To specify if you are using ACS Enterprise or Community |
+| db.queries.largeFolderSizeThreshold | 1000 | The max number of direct children a folder can have to not be considered "Large" |
+| db.queries.largeTransactionSizeThreshold | 10000 | The max amount of nodes that a transaction can modified to not be considered "Large" |
+| db.queries.reportExportType | json | Enum. Possible types: json, csv. The export format |
+| db.queries.reportExportFolder=./export | ./export | Path. The path where to export the files
+
+**Remember** to set also the spring parameters about DB and server port as well
 
 Copy the application.properties file to the same folder as the jar file and execute the jar file:
 
 ```sh
 $ cd target
-$ java --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED -jar alfresco-db-0.0.1-SNAPSHOT.jar
+$ java --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED -jar alfresco-db-0.0.2-SNAPSHOT.jar
 ```
 Finally connect to the running application on [http://localhost:8888](http://localhost:8888) or the port specified by "server.port" parameter in application.properties. 
 
@@ -80,6 +88,15 @@ Finally connect to the running application on [http://localhost:8888](http://loc
 
 ![alt text](images/db-info.png)
 
+### Technologies
+
+This project has been developed with a number of open source projects such as:
+  - Built using Maven
+  - Developed using Spring-Boot (https://projects.spring.io/spring-boot/)
+  - Using mybatis for SQL mapping
+  - Using Thymeleaf server-side Java template engine for manipulating object on HTML pages (http://www.thymeleaf.org/)
+  - Using Bootstrap for Front-End Web development (http://getbootstrap.com/)
+  - Datatables for table formatting (https://datatables.net/)
 
 ### Todos
 
