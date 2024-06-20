@@ -4,8 +4,11 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.sql.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class ActivitiesFeedByTypeBean implements Serializable {
     private BigInteger count;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss.SSSZ")
     private Date postDate;
     private String siteNetwork;
     private String activityType;

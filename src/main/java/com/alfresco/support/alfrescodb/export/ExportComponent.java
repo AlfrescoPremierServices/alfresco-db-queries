@@ -19,6 +19,8 @@ import com.alfresco.support.alfrescodb.beans.AppliedPatchesBean;
 import com.alfresco.support.alfrescodb.beans.ArchivedNodesBean;
 import com.alfresco.support.alfrescodb.beans.ContentModelBean;
 import com.alfresco.support.alfrescodb.beans.DbMySQLBean;
+import com.alfresco.support.alfrescodb.beans.DbOracleIndexBean;
+import com.alfresco.support.alfrescodb.beans.DbOracleTableBean;
 import com.alfresco.support.alfrescodb.beans.DbPostgresBean;
 import com.alfresco.support.alfrescodb.beans.LargeFolderBean;
 import com.alfresco.support.alfrescodb.beans.LargeTransactionBean;
@@ -60,7 +62,10 @@ public class ExportComponent {
                 List<DbMySQLBean> listDbMySQL = exportMapper.findTablesInfoMysql();
                 generatedFiles.add(this.exportToFile(listDbMySQL, "listDbMySQL"));
             } else if ("oracle".equalsIgnoreCase(appProperties.getDbType())) {
-                // XXX TODO
+                List<DbOracleTableBean> listDbOracleTables = exportMapper.findTablesInfoOracle();
+                generatedFiles.add(this.exportToFile(listDbOracleTables, "listDbOracleTables"));
+                List<DbOracleIndexBean> listDbOracleIndexes = exportMapper.findIndexesInfoOracle();
+                generatedFiles.add(this.exportToFile(listDbOracleIndexes, "listDbOracleIndexes"));
             } else if ("microsoft".equalsIgnoreCase(appProperties.getDbType())) {
                 // XXX TODO
             }
@@ -132,7 +137,12 @@ public class ExportComponent {
             generatedFiles.add(this.exportToFile(countTotalUsers, "countTotalUsers"));
 
             if (appProperties.getIsEnterpriseVersion()) {
-                String countAuthorizedUsers = exportMapper.countAuthorizedUsers();
+                String countAuthorizedUsers = "";
+                if ("oracle".equalsIgnoreCase(appProperties.getDbType())) {
+                    countAuthorizedUsers = exportMapper.countAuthorizedUsersOracle();
+                } else {
+                    countAuthorizedUsers = exportMapper.countAuthorizedUsers();
+                }                
                 generatedFiles.add(this.exportToFile(countAuthorizedUsers, "countAuthorizedUsers"));
             }
 

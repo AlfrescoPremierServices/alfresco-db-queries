@@ -15,7 +15,8 @@ import com.alfresco.support.alfrescodb.beans.ArchivedNodesBean;
 import com.alfresco.support.alfrescodb.beans.ContentModelBean;
 import com.alfresco.support.alfrescodb.beans.DbMSSQLBean;
 import com.alfresco.support.alfrescodb.beans.DbMySQLBean;
-import com.alfresco.support.alfrescodb.beans.DbOracleBean;
+import com.alfresco.support.alfrescodb.beans.DbOracleIndexBean;
+import com.alfresco.support.alfrescodb.beans.DbOracleTableBean;
 import com.alfresco.support.alfrescodb.beans.DbPostgresBean;
 import com.alfresco.support.alfrescodb.beans.JmxPropertiesBean;
 import com.alfresco.support.alfrescodb.beans.LargeFolderBean;
@@ -61,19 +62,17 @@ public interface DAOMapper {
     List<DbMySQLBean> findTablesInfoMysql();
 
     // Oracle Queries
-    @Select("select sum(bytes) size, segment_name tableName " +
-            "from user_extents " +
-            "where segment_name in (select table_name from all_tables) " +
-            "group by segment_name")
-    List<DbOracleBean> findTablesInfoOracle();
+    @Select("SELECT ut.TABLE_NAME tableName, us.BYTES, ut.NUM_ROWS numRows, ut.LAST_ANALYZED lastAnalyzed, ut.AVG_ROW_LEN averageRowLength " +
+            "FROM USER_SEGMENTS us " +
+            "inner join USER_TABLES ut on us.SEGMENT_NAME = ut.TABLE_NAME " +
+            "where us.SEGMENT_TYPE in ('TABLE')")
+    List<DbOracleTableBean> findTablesInfoOracle();
 
-    @Select("select sum(u.bytes) size, u.segment_name indexName, i.table_name tableName " +
-            "from user_extents u " +
-            "join all_ind_columns i " +
-            " on u.segment_name = i.index_name " +
-            " and i.column_position = 1 " +
-            "group by u.segment_name, i.table_name")
-    List<DbOracleBean> findIndexesInfoOracle();
+    @Select("SELECT ui.INDEX_NAME indexName, us.BYTES, ui.TABLE_NAME tableName, ui.LAST_ANALYZED lastAnalyzed, ui.NUM_ROWS numRows, ui.DISTINCT_KEYS distinctKeys, ui.status " +
+            "FROM USER_SEGMENTS us " +
+            "inner join USER_INDEXES ui on us.SEGMENT_NAME = ui.INDEX_NAME " +
+            "where us.SEGMENT_TYPE in ('INDEX') ")
+    List<DbOracleIndexBean> findIndexesInfoOracle();
 
     // MS SQL Queries
     @Select("SELECT \n" +
@@ -110,14 +109,17 @@ public interface DAOMapper {
     /*
      * Large Folders
      */
-    @Select("SELECT count(*) as count, stores.protocol, stores.identifier, nodes.uuid, " +
-            "props.string_value as nodeName, qname.local_name as localName " +
-            "FROM alf_node as nodes, alf_store as stores, alf_child_assoc as children, alf_node_properties as props, alf_qname as qname "
-            +
-            "WHERE children.parent_node_id=nodes.id and stores.id=nodes.store_id and props.node_id = nodes.id and " +
-            "props.qname_id IN (SELECT id FROM alf_qname WHERE local_name = 'name') and qname.id = nodes.type_qname_id "
-            +
-            "GROUP BY stores.protocol, stores.identifier, nodes.uuid, string_value, local_name HAVING count(*) > #{size} ")
+    @Select("SELECT count(*) as count, alf_store.protocol, alf_store.identifier, alf_node.uuid, " +
+            "  alf_node_properties.string_value as nodeName, alf_qname.local_name as localName " +
+            "FROM alf_node, alf_store, alf_child_assoc, alf_node_properties, alf_qname " +
+            "WHERE alf_child_assoc.parent_node_id=alf_node.id " +
+            "  and alf_store.id=alf_node.store_id " +
+            "  and alf_node_properties.node_id = alf_node.id " +
+            "  and alf_node_properties.qname_id IN (SELECT id FROM alf_qname WHERE local_name = 'name') " +
+            "  and alf_qname.id = alf_node.type_qname_id " +
+            "GROUP BY alf_store.protocol,alf_store.identifier,alf_node.uuid, " +
+            "  alf_node_properties.string_value,alf_qname.local_name " +
+            "HAVING count(*) > #{size} ")
     List<LargeFolderBean> findLargeFolders(@Param("size") int size);
 
     /*
@@ -168,7 +170,7 @@ public interface DAOMapper {
             "GROUP BY authorityHash HAVING count(*) > 0")
     List<AccessControlBean> findACEAuthorities();
 
-    @Select("SELECT 'xxx' AS authorityHash, count(*) AS count " +
+    @Select("SELECT standard_hash(aa.authority, 'MD5') AS authorityHash, count(*) AS count " +
             "FROM alf_access_control_entry ace " +
             "JOIN alf_authority aa ON aa.id=ace.authority_id " +
             "GROUP BY aa.authority HAVING count(*) > 0")
@@ -269,6 +271,9 @@ public interface DAOMapper {
     @Select("select count(*) as count from alf_auth_status where authorized is TRUE")
     String countAuthorizedUsers();
 
+    @Select("select count(*) as count from alf_auth_status where authorized = 1")
+    String countAuthorizedUsersOracle();
+
     @Select("select count(*) as count from alf_node_properties where qname_id in (select id from alf_qname where local_name = 'authorityName')")
     String countGroups();
 
@@ -339,12 +344,12 @@ public interface DAOMapper {
     "group by mimetype_str ")
     List<NodeMimeTypeBean> listActiveNodesByMimetype();
     
-    @Select("SELECT substring(nodes.audit_created,1,7) as creationDate, ns.uri as namespace, names.local_name as propertyName, count(*) as count " +
+    @Select("SELECT substr(nodes.audit_created,1,7) as creationDate, ns.uri as namespace, names.local_name as propertyName, count(*) as count " +
     "FROM alf_node nodes " +
     "  JOIN alf_qname names ON (nodes.type_qname_id = names.id) " +
     "  JOIN alf_namespace ns ON (names.ns_id = ns.id) " +
     "WHERE nodes.store_id in (select id from alf_store where protocol = 'workspace' and identifier = 'SpacesStore') " +
-    "GROUP BY substring(nodes.audit_created,1,7),ns.uri,names.local_name ")
+    "GROUP BY substr(nodes.audit_created,1,7),ns.uri,names.local_name ")
     List<NodeContentTypeMonthBean> listActiveNodesByContentTypeAndMonth();
 
     @Select("SELECT ns.uri as namespace, names.local_name as propertyname, count(*) as count " +
