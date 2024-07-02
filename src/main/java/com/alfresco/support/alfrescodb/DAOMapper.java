@@ -13,7 +13,8 @@ import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByUserBean;
 import com.alfresco.support.alfrescodb.beans.AppliedPatchesBean;
 import com.alfresco.support.alfrescodb.beans.ArchivedNodesBean;
 import com.alfresco.support.alfrescodb.beans.ContentModelBean;
-import com.alfresco.support.alfrescodb.beans.DbMSSQLBean;
+import com.alfresco.support.alfrescodb.beans.DbMsSQLIndexBean;
+import com.alfresco.support.alfrescodb.beans.DbMsSQLTableBean;
 import com.alfresco.support.alfrescodb.beans.DbMySQLBean;
 import com.alfresco.support.alfrescodb.beans.DbOracleBean;
 import com.alfresco.support.alfrescodb.beans.DbPostgresBean;
@@ -75,37 +76,25 @@ public interface DAOMapper {
             "group by u.segment_name, i.table_name")
     List<DbOracleBean> findIndexesInfoOracle();
 
-    // MS SQL Queries
-    @Select("SELECT \n" +
-            " s.Name as SchemaName, t.NAME AS TableName, p.rows AS RowCounts,\n" +
-            " (SUM(a.total_pages) * 8 * 1024) AS TotalSpace, \n" +
-            " (SUM(a.used_pages) * 8 * 1024) AS UsedSpace, \n" +
-            " ((SUM(a.total_pages) - SUM(a.used_pages)) * 8 *1024 ) AS UnusedSpace \n" +
-            "FROM sys.tables t \n" +
-            "INNER JOIN sys.schemas s ON s.schema_id = t.schema_id \n" +
-            "INNER JOIN sys.indexes i ON t.OBJECT_ID = i.object_id \n" +
-            "INNER JOIN sys.partitions p ON i.object_id = p.OBJECT_ID AND i.index_id = p.index_id \n" +
-            "INNER JOIN sys.allocation_units a ON p.partition_id = a.container_id \n" +
-            "WHERE \n" +
-            " t.NAME NOT LIKE 'dt%'    -- filter out system tables for diagramming \n" +
-            " AND t.is_ms_shipped = 0 \n" +
-            " AND i.OBJECT_ID > 255 \n" +
-            "GROUP BY \n" +
-            " t.Name, s.Name, p.Rows")
-    List<DbMSSQLBean> findTablesInfoMSSql();
+    // MS SQL Queries - table stats are from first index, usually the PK
+    @Select("SELECT OBJECT_NAME(t.object_id) AS tableName, SUM(u.total_pages) * 8 * 1024 AS totalReservedBytes, " +
+            "SUM(u.used_pages) * 8 * 1024 AS usedSpaceBytes, MAX(p.rows) AS rowsCount, STATS_DATE(p.object_id,s.stats_id) AS statisticsUpdateDate " +
+            "FROM sys.allocation_units AS u " +
+            "JOIN sys.partitions AS p ON u.container_id = p.hobt_id " +
+            "JOIN sys.tables AS t ON p.object_id = t.object_id " +
+            "JOIN sys.stats AS s ON p.object_id = s.object_id and s.stats_id = 1 " +
+            "GROUP BY OBJECT_NAME(t.object_id), STATS_DATE(p.object_id,s.stats_id) ")
+    List<DbMsSQLTableBean> findTablesInfoMSSql();
 
-    @Select("SELECT\n" +
-            " s.Name as SchemaName, OBJECT_NAME(i.OBJECT_ID) AS TableName,\n" +
-            " i.name AS IndexName,\n" +
-            " i.index_id AS IndexID,\n" +
-            " (8 * SUM(a.used_pages) * 1024) AS 'IndexSize'\n" +
-            "FROM sys.indexes AS i\n" +
-            "JOIN sys.partitions AS p ON p.OBJECT_ID = i.OBJECT_ID AND p.index_id = i.index_id \n" +
-            "JOIN sys.allocation_units AS a ON a.container_id = p.partition_id \n" +
-            "JOIN sys.tables t ON t.OBJECT_ID = i.object_id \n" +
-            "JOIN sys.schemas s ON s.schema_id = t.schema_id \n" +
-            "GROUP BY i.OBJECT_ID,i.index_id,i.name")
-    List<DbMSSQLBean> findIndexesInfoMSSql();
+    @Select("SELECT OBJECT_NAME(i.OBJECT_ID) AS tableName, " +
+            "i.name AS indexName, i.index_id AS indexID, 8 * 1024 * SUM(a.used_pages) AS indexSizeBytes, " +
+            "STATS_DATE(p.object_id,i.index_id) AS statisticsUpdateDate " +
+            "FROM sys.indexes i " +
+            "JOIN sys.partitions p ON p.OBJECT_ID = i.OBJECT_ID AND p.index_id = i.index_id " +
+            "JOIN sys.allocation_units a ON a.container_id = p.partition_id " +
+            "GROUP BY i.OBJECT_ID,i.index_id,i.[name],STATS_DATE(p.object_id,i.index_id) " +
+            "ORDER BY OBJECT_NAME(i.OBJECT_ID),i.index_id ")
+    List<DbMsSQLIndexBean> findIndexesInfoMSSql();
 
     /*
      * Large Folders
@@ -210,14 +199,14 @@ public interface DAOMapper {
     /*
      * Activities Feed
      */
-    @Select("select count(*) as count, CAST(post_date AS DATE) postDate, site_network as siteNetwork, activity_type as activityType "
+    @Select("select count(*) as count, TRIM(cast(CAST(post_date AS date) as char)) postDate, site_network as siteNetwork, activity_type as activityType "
             +
             "from alf_activity_feed " +
             "where feed_user_id = post_user_id " +
             "group by CAST(post_date AS DATE), site_network, activity_type ")
     List<ActivitiesFeedByTypeBean> listActivitiesByActivityType();
 
-    @Select("select count(*) as count, CAST(post_date AS DATE) postDate, site_network as siteNetwork, feed_user_id as feedUserId "
+    @Select("select count(*) as count, TRIM(cast(CAST(post_date AS date) as char)) postDate, site_network as siteNetwork, feed_user_id as feedUserId "
             +
             "from alf_activity_feed " +
             "where feed_user_id != '@@NULL@@' " +
@@ -225,7 +214,7 @@ public interface DAOMapper {
             "group by CAST(post_date AS DATE), site_network, feed_user_id ")
     List<ActivitiesFeedByUserBean> listActivitiesByUser();
 
-    @Select("select count(*) as count, CAST(post_date AS DATE) postDate, site_network as siteNetwork, app_tool as appTool "
+    @Select("select count(*) as count, TRIM(cast(CAST(post_date AS date) as char)) postDate, site_network as siteNetwork, app_tool as appTool "
             +
             "from alf_activity_feed " +
             "where feed_user_id != '@@NULL@@' " +
@@ -268,6 +257,9 @@ public interface DAOMapper {
 
     @Select("select count(*) as count from alf_auth_status where authorized is TRUE")
     String countAuthorizedUsers();
+
+    @Select("select count(*) as count from alf_auth_status where authorized = 1")
+    String countAuthorizedUsersMicrosoft();
 
     @Select("select count(*) as count from alf_node_properties where qname_id in (select id from alf_qname where local_name = 'authorityName')")
     String countGroups();

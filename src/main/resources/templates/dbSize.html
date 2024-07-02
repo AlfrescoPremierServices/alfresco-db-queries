@@ -218,39 +218,39 @@
     <!-- End of section -->
 
     <!--MS SQL -->
-    <div th:if="${not #lists.isEmpty(MSSqlListRelationInfos)}">
+    <div th:if="${not #lists.isEmpty(listMsSQLTable)}">
         <div class="center panel panel-primary">
             <div class="panel-heading">
-                <b>Tables Size</b>
+                <b>Tables</b>
             </div>
 
             <table class="display orderingMsSql" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>Table Name</th>
+                    <th>Total Space (Bytes)</th>
+                    <th>Used Space (Bytes)</th>
                     <th>Rows Count</th>
-                    <th>Total Space MB</th>
-                    <th>Used Space MB</th>
-                    <th>Unused Space MB</th>
+                    <th>Last updated</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="rel : ${MSSqlListRelationInfos}">
-                    <td th:text="${rel.TableName}"></td>
-                    <td th:text="${rel.RowCounts}"></td>
-                    <td th:text="${rel.TotalSpace}"></td>
-                    <td th:text="${rel.UsedSpace}"></td>
-                    <td th:text="${rel.UnusedSpace}"></td>
+                <tr th:each="rel : ${listMsSQLTable}">
+                    <td th:text="${rel.tableName}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.totalReservedBytes,0,'POINT')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.usedSpaceBytes,0,'POINT')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.rowsCount,0,'POINT')}"></td>
+                    <td th:text="${#calendars.format(rel.statisticsUpdateDate, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <div th:if="${not #lists.isEmpty(MSSqlListIndexesInfos)}">
+    <div th:if="${not #lists.isEmpty(listMsSQLIndex)}">
         <div class="center panel panel-primary">
             <div class="panel-heading">
-                <b>Indexes Size</b>
+                <b>Indexes</b>
             </div>
 
             <table class="display orderingMsSql" cellspacing="0" width="100%">
@@ -258,14 +258,18 @@
                 <tr>
                     <th>Table Name</th>
                     <th>Index Name</th>
-                    <th>Index Size MB</th>
+                    <th>Index ID</th>
+                    <th>Size (Bytes)</th>
+                    <th>Last Updated</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="rel : ${MSSqlListIndexesInfos}">
-                    <td th:text="${rel.TableName}"></td>
-                    <td th:text="${rel.IndexName}"></td>
-                    <td th:text="${rel.IndexSize}"></td>
+                <tr th:each="rel : ${listMsSQLIndex}">
+                    <td th:text="${rel.tableName}"></td>
+                    <td th:text="${rel.indexName}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.indexID,0,'POINT')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.indexSizeBytes,0,'POINT')}"></td>
+                    <td th:text="${#calendars.format(rel.statisticsUpdateDate, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
                 </tr>
                 </tbody>
             </table>

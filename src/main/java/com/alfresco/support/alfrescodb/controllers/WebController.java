@@ -15,6 +15,8 @@ import com.alfresco.support.alfrescodb.beans.ActivitiesFeedByUserBean;
 import com.alfresco.support.alfrescodb.beans.AppliedPatchesBean;
 import com.alfresco.support.alfrescodb.beans.ArchivedNodesBean;
 import com.alfresco.support.alfrescodb.beans.ContentModelBean;
+import com.alfresco.support.alfrescodb.beans.DbMsSQLIndexBean;
+import com.alfresco.support.alfrescodb.beans.DbMsSQLTableBean;
 import com.alfresco.support.alfrescodb.beans.DbMySQLBean;
 import com.alfresco.support.alfrescodb.beans.DbPostgresBean;
 import com.alfresco.support.alfrescodb.beans.JmxPropertiesBean;
@@ -84,8 +86,11 @@ public class WebController {
             model.addAttribute("listRelationInfosMySQL", listDbMySQL);
         //} else if ("oracle".equalsIgnoreCase(appProperties.getDbType())) {
             // XXX TODO
-        //} else if ("microsoft".equalsIgnoreCase(appProperties.getDbType())) {
-            // XXX TODO
+        } else if ("microsoft".equalsIgnoreCase(appProperties.getDbType())) {
+            List<DbMsSQLTableBean> listMsSQLTable = exportMapper.findTablesInfoMSSql();
+            model.addAttribute("listMsSQLTable", listMsSQLTable);
+            List<DbMsSQLIndexBean> listMsSQLIndex = exportMapper.findIndexesInfoMSSql();
+            model.addAttribute("listMsSQLIndex", listMsSQLIndex);
         } else {
             throw new IllegalArgumentException("DB Type not recognized: " + appProperties.getDbType());
         }
@@ -232,7 +237,15 @@ public class WebController {
 
         if (appProperties.getIsEnterpriseVersion()) {
             // Count authorized users
-            String countAuthorizedUsers = exportMapper.countAuthorizedUsers();
+            String countAuthorizedUsers = "";
+            if ("oracle".equalsIgnoreCase(appProperties.getDbType())) {
+                //NOOP
+            } else if ("microsoft".equalsIgnoreCase(appProperties.getDbType())) {
+                countAuthorizedUsers = exportMapper.countAuthorizedUsersMicrosoft();
+            } else {
+                countAuthorizedUsers = exportMapper.countAuthorizedUsers();
+            }
+
             model.addAttribute("countAuthorizedUsers", countAuthorizedUsers);
             model.addAttribute("isEnterpriseVersion", appProperties.getIsEnterpriseVersion());
         }
