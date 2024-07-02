@@ -16,6 +16,8 @@ import com.alfresco.support.alfrescodb.beans.AppliedPatchesBean;
 import com.alfresco.support.alfrescodb.beans.ArchivedNodesBean;
 import com.alfresco.support.alfrescodb.beans.ContentModelBean;
 import com.alfresco.support.alfrescodb.beans.DbMySQLBean;
+import com.alfresco.support.alfrescodb.beans.DbOracleIndexBean;
+import com.alfresco.support.alfrescodb.beans.DbOracleTableBean;
 import com.alfresco.support.alfrescodb.beans.DbPostgresBean;
 import com.alfresco.support.alfrescodb.beans.JmxPropertiesBean;
 import com.alfresco.support.alfrescodb.beans.LargeFolderBean;
@@ -82,8 +84,11 @@ public class WebController {
         } else if ("mysql".equalsIgnoreCase(appProperties.getDbType())) {
             List<DbMySQLBean> listDbMySQL = exportMapper.findTablesInfoMysql();
             model.addAttribute("listRelationInfosMySQL", listDbMySQL);
-        //} else if ("oracle".equalsIgnoreCase(appProperties.getDbType())) {
-            // XXX TODO
+        } else if ("oracle".equalsIgnoreCase(appProperties.getDbType())) {
+            List<DbOracleTableBean> listDbOracleTables = exportMapper.findTablesInfoOracle();
+            model.addAttribute("listDbOracleTables", listDbOracleTables);
+            List<DbOracleIndexBean> listDbOracleIndexes = exportMapper.findIndexesInfoOracle();
+            model.addAttribute("listDbOracleIndexes", listDbOracleIndexes);
         //} else if ("microsoft".equalsIgnoreCase(appProperties.getDbType())) {
             // XXX TODO
         } else {
@@ -232,7 +237,13 @@ public class WebController {
 
         if (appProperties.getIsEnterpriseVersion()) {
             // Count authorized users
-            String countAuthorizedUsers = exportMapper.countAuthorizedUsers();
+            String countAuthorizedUsers = "";
+            if ("oracle".equalsIgnoreCase(appProperties.getDbType())) {
+                countAuthorizedUsers = exportMapper.countAuthorizedUsersOracle();
+            } else {
+                countAuthorizedUsers = exportMapper.countAuthorizedUsers();
+            }
+            
             model.addAttribute("countAuthorizedUsers", countAuthorizedUsers);
             model.addAttribute("isEnterpriseVersion", appProperties.getIsEnterpriseVersion());
         }
