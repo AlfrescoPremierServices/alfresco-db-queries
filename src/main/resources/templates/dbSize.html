@@ -47,7 +47,7 @@
 
         $(document).ready( function () {
             $('table.orderingIndexesOracle').DataTable({
-             "order": [2, 'desc'],
+             "order": [1, 'desc'],
             });
         } );
 
@@ -168,7 +168,7 @@
     </div> -->
 
     <!--Oracle -->
-    <div th:if="${not #lists.isEmpty(OracleListRelationInfos)}">
+    <div th:if="${not #lists.isEmpty(listDbOracleTables)}">
         <div class="center panel panel-primary">
             <div class="panel-heading">
                 <b>Tables Size</b>
@@ -178,20 +178,26 @@
                 <thead>
                 <tr>
                     <th>Table Name</th>
-                    <th>Size MB</th>
+                    <th>Size (bytes)</th>
+                    <th>Rows</th>
+                    <th>Last Analyzed</th>
+                    <th>Average Row Length (bytes)</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="rel : ${OracleListRelationInfos}">
+                <tr th:each="rel : ${listDbOracleTables}">
                     <td th:text="${rel.tableName}"></td>
-                    <td th:text="${rel.sizeMB}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.bytes,0,'POINT')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.numRows,0,'POINT')}"></td>
+                    <td th:text="${#calendars.format(rel.lastAnalyzed, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.averageRowLength,0,'POINT')}"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <div th:if="${not #lists.isEmpty(OracleListIndexesInfos)}">
+    <div th:if="${not #lists.isEmpty(listDbOracleIndexes)}">
         <div class="center panel panel-primary">
             <div class="panel-heading">
                 <b>Indexes Size</b>
@@ -200,16 +206,24 @@
             <table class="display orderingIndexesOracle" cellspacing="0" width="100%">
                 <thead>
                 <tr>
-                    <th>Table Name</th>
                     <th>Index Name</th>
-                    <th>Size MB</th>
+                    <th>Size (bytes)</th>
+                    <th>Table Name</th>
+                    <th>Last Analyzed</th>
+                    <th>Rows</th>
+                    <th>Distinct Keys</th>
+                    <th>Status</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="rel : ${OracleListIndexesInfos}">
-                    <td th:text="${rel.tableName}"></td>
+                <tr th:each="rel : ${listDbOracleIndexes}">
                     <td th:text="${rel.indexName}"></td>
-                    <td th:text="${rel.sizeMB}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.bytes,0,'POINT')}"></td>
+                    <td th:text="${rel.tableName}"></td>
+                    <td th:text="${#calendars.format(rel.lastAnalyzed, 'yyyy-MM-dd HH:mm:ss.SSSZ')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.numRows,0,'POINT')}"></td>
+                    <td th:text="${#numbers.formatInteger(rel.distinctKeys,0,'POINT')}"></td>
+                    <td th:text="${rel.status}"></td>
                 </tr>
                 </tbody>
             </table>
